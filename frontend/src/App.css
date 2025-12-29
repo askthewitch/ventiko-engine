@@ -1,42 +1,194 @@
+/* --- VENTIKO DESIGN SYSTEM --- */
+:root {
+  /* YOUR PALETTE */
+  --bg-color: #FCF6EE;       /* Floral White */
+  --accent-mint: #23F0C7;    /* Tropical Mint */
+  --accent-lilac: #AAA1C8;   /* Lilac Ash */
+  --text-dark: #2c3e50;      /* Deep Grey for readability */
+  --text-light: #64748b;     /* Soft Grey for descriptions */
+  
+  /* FONTS */
+  --font-title: 'Major Mono Display', monospace;
+  --font-body: 'Roboto', sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 1000px;
   padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* --- TYPOGRAPHY --- */
+h1 {
+  font-family: var(--font-title);
+  font-size: 3.5rem;
   text-align: center;
+  margin-bottom: 3rem;
+  color: var(--text-dark);
+  letter-spacing: -2px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- SEARCH CONTAINER --- */
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto 4rem auto;
+  transition: all 0.5s ease;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* The Input Field */
+input {
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border: 2px solid var(--accent-lilac);
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  background: white;
+  color: var(--text-dark); /* THIS FIXES THE INVISIBLE TEXT */
+  outline: none;
+  box-shadow: 0 4px 15px rgba(170, 161, 200, 0.2);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+input::placeholder {
+  color: #94a3b8; /* Ensures placeholder is visible but subtle */
+  opacity: 1;
 }
 
+input:focus {
+  border-color: var(--accent-mint);
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(35, 240, 199, 0.4);
+}
+
+/* The Search Button */
+/* The Search Button */
+button {
+  align-self: center;
+  padding: 1rem 3rem;
+  background-color: var(--accent-mint);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-title);
+  font-weight: 400;             /* Was 900. Changed to 400 to match Title */
+  letter-spacing: 0.5px;         /* Tighten it up like the Title */
+  font-size: 1.25rem;
+  /* ------------------ */
+
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* This is the PURPLE BLOCK shadow under the button. 
+     If you want the button flat, remove this line below: */
+  box-shadow: 4px 4px 0px var(--accent-lilac); 
+}
+
+button:hover {
+  transform: translateY(-4px) translateX(-2px);
+  box-shadow: 8px 8px 0px var(--accent-lilac);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0px var(--accent-lilac);
+}
+
+button:disabled {
+  background-color: #e2e8f0;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- RESULTS GRID --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+/* --- CARD DESIGN --- */
 .card {
-  padding: 2em;
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.4s ease;
+  animation: fadeUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
-.read-the-docs {
-  color: #888;
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-mint);
+  box-shadow: 0 20px 40px rgba(35, 240, 199, 0.2);
+}
+
+.card h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-dark);
+}
+
+.card p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 2px dashed #f1f5f9;
+}
+
+.price {
+  font-family: var(--font-title);
+  font-weight: bold;
+  color: var(--text-dark);
+  background: var(--accent-mint);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.score {
+  font-size: 0.8rem;
+  color: var(--accent-lilac);
+  font-weight: bold;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
