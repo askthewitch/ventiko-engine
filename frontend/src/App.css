@@ -258,3 +258,82 @@ button.main-search-btn:disabled {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+/* --- FOOTER STYLES --- */
+.site-footer {
+  width: 100%;
+  padding: 2rem;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 10;
+  position: relative;
+  flex-wrap: wrap;
+  box-sizing: border-box; /* Crucial for centering */
+}
+
+.footer-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center; /* Ensures items inside group are centered */
+}
+
+.footer-divider {
+  color: #AAA1C8;
+  font-weight: 300;
+  display: block;
+}
+
+/* Links (<a>) */
+.footer-link {
+  text-decoration: none;
+  color: #2c3e50dd;
+  font-family: 'Major Mono Display', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--text-dark);
+}
+
+/* Buttons (<button>) */
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: #2c3e50dd;
+  cursor: pointer;
+  font-family: 'Major Mono Display', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.footer-link-btn:hover {
+  color: var(--text-dark);
+}
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 600px) {
+  .site-footer {
+    flex-direction: column; /* Stack rows */
+    gap: 1.5rem;
+    padding: 2rem 1rem 4rem 1rem; /* Extra bottom padding for mobile scroll */
+    text-align: center;
+  }
+  
+  .footer-divider {
+    display: none;
+  }
+  
+  .footer-group {
+    width: 100%; /* Force full width so centering works */
+    justify-content: center; /* Force items to middle */
+    flex-wrap: wrap; /* Allow wrapping if screen is tiny */
+    gap: 1.5rem;
+  }
+}
