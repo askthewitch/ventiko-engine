@@ -1,0 +1,175 @@
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T09:20:05.121Z
+
+
+
+================================================================
+FILE: README.md
+================================================================
+
+# Ventiko Bio-Optimization Engine
+Middleware for aggregating external affiliate feeds into health protocols.
+
+
+================================================================
+FILE: backend/ingest.py
+================================================================
+
+import os
+import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Load Environment Variables
+load_dotenv()
+
+# 2. Initialize the Database Connection
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+
+# 3. Initialize the AI Model (Deterministic/Exact Mode)
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 4. Parse the Data File
+file_path = "data/products.xml"
+tree = ET.parse(file_path)
+root = tree.getroot()
+
+vectors_to_upload = []
+
+print("Starting ingestion process...")
+
+for product in root.findall("product"):
+    # Extract Raw Data
+    p_id = product.find("id").text
+    title = product.find("title").text
+    desc = product.find("description").text
+    price = product.find("price").text
+    currency = product.find("currency").text
+    category = product.find("category").text
+
+    # Create the "Context String"
+    # This is what the AI actually "reads" to understand the product
+    combined_text = f"{title}. {desc}. Category: {category}"
+
+    # Generate Vector (Math)
+    vector = model.encode(combined_text).tolist()
+
+    # Prepare Metadata
+    # This is the data we retrieve later to show the user
+    metadata = {
+        "title": title,
+        "description": desc,
+        "price": price,
+        "currency": currency,
+        "category": category,
+        "raw_text": combined_text
+    }
+
+    # Add to the batch list
+    vectors_to_upload.append((p_id, vector, metadata))
+    print(f" -> Processed: {title}")
+
+# 5. Upload to Pinecone
+if vectors_to_upload:
+    index.upsert(vectors=vectors_to_upload)
+    print("\nUpload Successful.")
+else:
+    print("\nNo products found to upload.")
+
+# 6. Final Verification
+stats = index.describe_index_stats()
+print("\nFinal Database Stats:")
+print(stats)
+
+================================================================
+FILE: backend/main.py
+================================================================
+
+import os
+from fastapi import FastAPI
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+load_dotenv()
+
+# Setup Database
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+
+# Setup AI Brain
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+app = FastAPI()
+
+@app.get("/")
+def health_check():
+    return {"status": "online", "system": "Ventiko Engine"}
+
+@app.get("/search")
+def search(query: str):
+    print(f"Received query: {query}")
+    
+    # 1. Convert text to numbers
+    query_vector = model.encode(query).tolist()
+    
+    # 2. Search Pinecone
+    results = index.query(
+        vector=query_vector,
+        top_k=3,
+        include_metadata=True
+    )
+    
+    # 3. MANUAL PACKAGING (Safe Mode)
+    # We extract only the data we need to avoid library errors
+    final_matches = []
+    
+    for match in results['matches']:
+        final_matches.append({
+            "id": match['id'],
+            "score": match['score'],
+            "metadata": match['metadata']
+        })
+    
+    return {"matches": final_matches}
+
+================================================================
+FILE: backend/search.py
+================================================================
+
+import os
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Setup
+load_dotenv()
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 2. Define the User's Query
+query = "something to help me sleep"
+
+# 3. Convert Query to Vector (Math)
+query_vector = model.encode(query).tolist()
+
+# 4. Search the Database
+# We ask for the "top_k=1" (The single best match)
+results = index.query(
+    vector=query_vector,
+    top_k=1,
+    include_metadata=True
+)
+
+# 5. Print the Result
+print(f"Query: {query}")
+print("-" * 30)
+for match in results['matches']:
+    print(f"Found: {match['metadata']['title']}")
+    print(f"Score: {match['score']:.4f}") # Confidence score (0 to 1)
+    print(f"Price: {match['metadata']['price']} {match['metadata']['currency']}")

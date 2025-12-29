@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
@@ -15,6 +16,22 @@ index = pc.Index("ventiko-index")
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 app = FastAPI()
+
+# --- SECURITY CLEARANCE (CORS) ---
+# Allow the Frontend (Port 5173) to talk to this Backend
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ---------------------------------
 
 @app.get("/")
 def health_check():
@@ -34,8 +51,7 @@ def search(query: str):
         include_metadata=True
     )
     
-    # 3. MANUAL PACKAGING (Safe Mode)
-    # We extract only the data we need to avoid library errors
+    # 3. MANUAL PACKAGING
     final_matches = []
     
     for match in results['matches']:
