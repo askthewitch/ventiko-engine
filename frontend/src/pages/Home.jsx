@@ -73,7 +73,7 @@ function Home() {
 
       {hasSearched && results.length === 0 && !loading && (
         <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
-          NO MATCHES FOUND
+          no matches found
         </p>
       )}
     </>
