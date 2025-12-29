@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T12:08:21.917Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T19:29:43.820Z
 
 
 
@@ -739,50 +739,298 @@ button.main-search-btn:disabled {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+/* --- FOOTER STYLES --- */
+.site-footer {
+  width: 100%;
+  padding: 2rem;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 10;
+  position: relative;
+  flex-wrap: wrap;
+  box-sizing: border-box; /* Crucial for centering */
+}
+
+.footer-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center; /* Ensures items inside group are centered */
+}
+
+.footer-divider {
+  color: #AAA1C8;
+  font-weight: 300;
+  display: block;
+}
+
+/* Links (<a>) */
+.footer-link {
+  text-decoration: none;
+  color: #2c3e50dd;
+  font-family: 'Major Mono Display', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--text-dark);
+}
+
+/* Buttons (<button>) */
+.footer-link-btn {
+  background: none;
+  border: none;
+  color: #2c3e50dd;
+  cursor: pointer;
+  font-family: 'Major Mono Display', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.footer-link-btn:hover {
+  color: var(--text-dark);
+}
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 600px) {
+  .site-footer {
+    flex-direction: column; /* Stack rows */
+    gap: 1.5rem;
+    padding: 2rem 1rem 4rem 1rem; /* Extra bottom padding for mobile scroll */
+    text-align: center;
+  }
+  
+  .footer-divider {
+    display: none;
+  }
+  
+  .footer-group {
+    width: 100%; /* Force full width so centering works */
+    justify-content: center; /* Force items to middle */
+    flex-wrap: wrap; /* Allow wrapping if screen is tiny */
+    gap: 1.5rem;
+  }
+}
 
 ================================================================
 FILE: frontend/src/App.jsx
 ================================================================
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './App.css'
 
 // Import Pages
 import Home from './pages/Home'
 import About from './pages/About'
 import Archive from './pages/Archive'
+import Footer from './components/Footer'
 
 function App() {
   return (
     <Router>
-      {/* NAVIGATION BAR 
-        Top right corner, sitting above the dots (zIndex 10)
+      {/* NO TOP NAV! 
+         It is cleaner this way. Focus is 100% on the Search.
       */}
-      <nav style={{ 
-        position: 'absolute', 
-        top: '20px', 
-        right: '40px', 
-        display: 'flex', 
-        gap: '20px',
-        zIndex: 10 
-      }}>
-        <Link to="/" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>HOME</Link>
-        <Link to="/about" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>ABOUT</Link>
-        <Link to="/archive" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>ARCHIVE</Link>
-      </nav>
 
-      {/* THE PAGE SWITCHER */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
       </Routes>
 
+      <Footer /> 
+
     </Router>
   )
 }
 
 export default App
+
+================================================================
+FILE: frontend/src/components/Footer.jsx
+================================================================
+
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Modal from './Modal';
+
+const Footer = () => {
+  const [modalType, setModalType] = useState(null);
+
+  const openModal = (type) => setModalType(type);
+  const closeModal = () => setModalType(null);
+
+  return (
+    <>
+      <footer className="site-footer">
+        
+        {/* GROUP 1: MAIN NAVIGATION (Real Pages) */}
+        <div className="footer-group">
+          <Link to="/" className="footer-link">HoMe</Link>
+          <Link to="/about" className="footer-link">About</Link>
+          <Link to="/archive" className="footer-link">ARcHiVe</Link>
+        </div>
+
+        {/* Divider for visual separation (optional, but looks cool) */}
+        <div className="footer-divider">|</div>
+
+        {/* GROUP 2: UTILITIES (Modals) */}
+        <div className="footer-group">
+          <button onClick={() => openModal('privacy')} className="footer-link-btn">pRiVAcy</button>
+          <button onClick={() => openModal('terms')} className="footer-link-btn">teRMs</button>
+          <button onClick={() => openModal('contact')} className="footer-link-btn">contAct</button>
+        </div>
+
+      </footer>
+
+      {/* --- MODALS REMAIN THE SAME --- */}
+      <Modal isOpen={modalType === 'privacy'} onClose={closeModal} title="privacy policy">
+        <p><strong>Last Updated: December 2025</strong></p>
+        <p>At Ventiko, we value your privacy. We do not store your personal search data. Our database consists of bio-optimization protocols aggregated from public sources.</p>
+        <p>We use local storage for your preferences and standard analytics to improve the engine.</p>
+      </Modal>
+
+      <Modal isOpen={modalType === 'terms'} onClose={closeModal} title="terms of service">
+        <p><strong>1. Disclaimer</strong></p>
+        <p>Ventiko is a search engine for educational purposes. We are not doctors. All protocols found here should be discussed with a medical professional.</p>
+        <p><strong>2. Affiliate Links</strong></p>
+        <p>Some results may contain affiliate links. This supports our server costs at no extra cost to you.</p>
+      </Modal>
+
+      <Modal isOpen={modalType === 'contact'} onClose={closeModal} title="contact us">
+        <p>Have a question or a new protocol to suggest?</p>
+        <p><strong>Email:</strong> support@ventiko.com</p>
+        <p><strong>Location:</strong> London, UK</p>
+      </Modal>
+    </>
+  );
+};
+
+export default Footer;
+
+================================================================
+FILE: frontend/src/components/Modal.css
+================================================================
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.6); /* Dark tint */
+    backdrop-filter: blur(8px); /* The "Frosted Glass" effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Sit on top of EVERYTHING */
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh; /* Allow scrolling inside if text is long */
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px dashed #f1f5f9;
+    padding-bottom: 1rem;
+  }
+  
+  .modal-header h2 {
+    font-family: 'Major Mono Display', monospace;
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    letter-spacing: -1px;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .modal-close:hover {
+    color: #23F0C7; /* Mint hover */
+  }
+  
+  .modal-body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #475569;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+================================================================
+FILE: frontend/src/components/Modal.jsx
+================================================================
+
+import React, { useEffect } from 'react';
+import './Modal.css'; // We will create this next
+
+const Modal = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null;
+
+  // Close if user clicks Escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Modal;
 
 ================================================================
 FILE: frontend/src/index.css
@@ -878,29 +1126,253 @@ createRoot(document.getElementById('root')).render(
 FILE: frontend/src/pages/About.jsx
 ================================================================
 
+import { useState } from 'react'
+
 function About() {
-    return (
-      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-        <h1>About & faq</h1>
-        <p>The Bio-Optimization Protocol (Coming Soon)</p>
-      </div>
-    )
-  }
-  export default About
+  // FAQ Data Structure
+  const faqs = [
+    {
+      question: "How are you different to Amazon or any other website?", // LOWERCASE for readability
+      answer: "We are changing the game, we all like a little browse sometimes, but we know what we want and we want it now. We found shoppers were getting fed up with browsing, so we founded our deeply trained AI based product finder, to listen to you, and give you what you want. We do not own any products, we are an affiliate marketplace who will guide you to the best products. We basically, do the hard work for you, then we cheer and shout for you when you cross that finish line, we tell you how radiant your new skin routine looks and at Team Ventiko, we are always wanting more, so we expect you to be the same."
+    },
+    {
+      question: "Why should i use Ventiko?", // LOWERCASE for readability
+      answer: "Ventiko is basically your personal shopper, gone are the days searching and scrolling, we want you winning now. Ventiko partners with trusted global partners, and is trained to deliver the best products for you, right now. We don't want you to search 'running trainers' or 'electrolytes' or 'best protein for gains?' No, we want you to tell us why you are here and what you actually want 'I am training for my first half marathon in June, what trainers would be best for me?' and 'I am hitting the gym hard this year, what supplements should I take to keep me going and get stronger day after day?' You can also mix it up 'I am training for my next hyrox, I need a matching outfit, energy tablets for just before I start, and a nice moisteriser for when I finish to feel amazing!' All will work with Ventiko. We are the new way to shop."
+    },
+    {
+      question: "what is bio-optimization?", // LOWERCASE for readability
+      answer: "Bio-optimization is the systematic application of science, technology, and nature to improve human performance. Unlike 'bio-hacking' which often implies shortcuts, bio-optimization focuses on sustainable, long-term physiological improvements through protocols, supplements, and tools."
+    },
+    {
+      question: "how does ventiko work?",
+      answer: "We aggregate thousands of health products from trusted global suppliers. Our engine uses Vector Search (AI) to understand the 'context' of what you need (e.g., 'sleep recovery') rather than just matching keywords. We curate, you optimize."
+    },
+    {
+      question: "are these products verified?",
+      answer: "Ventiko indexes products from reputable affiliate networks. While we filter for quality brands, we always recommend consulting with a medical professional before starting any new supplement or health protocol."
+    },
+    {
+      question: "do you offer medical advice?",
+      answer: "No. Ventiko is a search engine and information aggregator. The content found here is for educational and informational purposes only."
+    }
+  ];
+
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+      
+      {/* SECTION 1: THE MISSION */}
+      <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
+        {/* LOWERCASE TITLE */}
+        <h1>about Ventiko</h1>
+        <p style={{ 
+          fontFamily: 'Roboto, sans-serif', 
+          fontSize: '1.1rem', 
+          lineHeight: '1.8', 
+          color: '#475569',
+          marginBottom: '2rem'
+        }}>
+          Ventiko is not a store. It is a product finder, that <strong>actually works for you</strong>.
+          <br /><br />
+          In an era of information overload, finding the specific tools for performance, sleep, 
+          focus, skin care, recovery and more, is too overwhelming. We cut through the noise using 
+          high-dimensional vector analysis to bring you the exact tools 
+          required for you to win. (And yes we are free to use, forever).
+        </p>
+      </section>
+
+      {/* SECTION 2: THE FAQ ACCORDION */}
+      <section>
+        <h2 style={{ 
+          fontFamily: 'Major Mono Display, monospace', 
+          textAlign: 'center', 
+          marginBottom: '2rem',
+          color: '#2c3e50'
+        }}>
+          Ventiko f.a.q.
+        </h2>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {faqs.map((faq, index) => (
+            <div 
+              key={index} 
+              onClick={() => toggleFAQ(index)}
+              style={{
+                background: 'white',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                boxShadow: openIndex === index ? '0 10px 30px rgba(35, 240, 199, 0.15)' : 'none',
+                borderColor: openIndex === index ? '#23F0C7' : '#e2e8f0'
+              }}
+            >
+              {/* Question Header */}
+              <div style={{ 
+                padding: '1.5rem', 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                fontFamily: 'Major Mono Display, monospace',
+                fontWeight: 'bold',
+                color: '#2c3e50'
+              }}>
+                {faq.question}
+                <span style={{ color: '#23F0C7', fontSize: '1.5rem' }}>
+                  {openIndex === index ? '-' : '+'}
+                </span>
+              </div>
+
+              {/* Answer Body */}
+              {openIndex === index && (
+                <div style={{ 
+                  padding: '0 1.5rem 1.5rem 1.5rem',
+                  fontFamily: 'Roboto, sans-serif',
+                  color: '#64748b',
+                  lineHeight: '1.6',
+                  animation: 'fadeIn 0.3s ease'
+                }}>
+                  {faq.answer}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  )
+}
+
+export default About
 
 ================================================================
 FILE: frontend/src/pages/Archive.jsx
 ================================================================
 
+import { useNavigate } from 'react-router-dom';
+
 function Archive() {
-    return (
-      <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-        <h1>ARcHiVe</h1>
-        <p>Past Protocols & Research (Coming Soon)</p>
+  const navigate = useNavigate();
+
+  // Function to drive traffic back to the engine
+  const runProtocol = (term) => {
+    navigate('/'); 
+  };
+
+  const protocols = [
+    {
+      title: "sleep architecture",
+      date: "v1.0 // 2025",
+      summary: "Optimizing REM and Deep Wave cycles requires thermal regulation and magnesium availability. This protocol targets the 90-minute ultradian rhythm.",
+      tags: ["magnesium", "circadian", "thermal"]
+    },
+    {
+      title: "cortisol management",
+      date: "v1.2 // 2025",
+      summary: "Chronic cortisol elevation degrades muscle protein and cognitive function. This stack focuses on adaptogens like Ashwagandha to blunt the stress response.",
+      tags: ["adaptogens", "adrenal", "recovery"]
+    },
+    {
+      title: "cognitive drive",
+      date: "v2.0 // 2025",
+      summary: "Sustained focus without the caffeine crash. Utilizing L-Theanine and Lion's Mane to support acetylcholine production and neuroplasticity.",
+      tags: ["nootropics", "focus", "flow"]
+    }
+  ];
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+      
+      <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
+        <h1>archive</h1>
+        <p style={{ fontFamily: 'Roboto', color: '#64748b' }}>
+          previous optimization stacks & research
+        </p>
+      </section>
+
+      <div style={{ display: 'grid', gap: '2rem' }}>
+        {protocols.map((p, i) => (
+          <div key={i} style={{ 
+            background: 'white', 
+            padding: '2rem', 
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
+            transition: 'transform 0.2s',
+            cursor: 'default'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
+              <h2 style={{ fontFamily: 'Major Mono Display', fontSize: '1.2rem', margin: 0, color: '#2c3e50' }}>
+                {p.title}
+              </h2>
+              <span style={{ fontFamily: 'Major Mono Display', fontSize: '0.7rem', color: '#AAA1C8' }}>
+                {p.date}
+              </span>
+            </div>
+            
+            <p style={{ fontFamily: 'Roboto', lineHeight: '1.6', color: '#475569', marginBottom: '1.5rem' }}>
+              {p.summary}
+            </p>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              {/* TAGS */}
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {p.tags.map(tag => (
+                  <span key={tag} style={{ 
+                    fontSize: '0.75rem', 
+                    background: '#f1f5f9', 
+                    padding: '4px 8px', 
+                    borderRadius: '4px',
+                    color: '#64748b',
+                    fontFamily: 'Major Mono Display'
+                  }}>
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* ACTION BUTTON */}
+              <button 
+                onClick={() => runProtocol(p.tags[0])}
+                style={{
+                  background: 'none',
+                  border: '1px solid #23F0C7',
+                  color: '#2c3e50',
+                  padding: '8px 16px',
+                  borderRadius: '50px',
+                  fontFamily: 'Major Mono Display',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = '#23F0C7';
+                  e.target.style.color = 'white';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'none';
+                  e.target.style.color = '#2c3e50';
+                }}
+              >
+                initiate {'->'}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-    )
-  }
-  export default Archive
+
+    </div>
+  )
+}
+
+export default Archive
 
 ================================================================
 FILE: frontend/src/pages/Home.jsx
@@ -981,7 +1453,7 @@ function Home() {
 
       {hasSearched && results.length === 0 && !loading && (
         <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
-          NO MATCHES FOUND
+          no matches found
         </p>
       )}
     </>
