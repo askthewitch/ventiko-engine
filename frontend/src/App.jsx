@@ -22,20 +22,39 @@ function App() {
     setLoading(false);
   }
 
+  // --- NEW: Function to clear everything ---
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setHasSearched(false);
+  }
+
   return (
     <>
-      {/* Title is now Uppercase in CSS to get the triangle glyphs */}
       <h1>Ventiko</h1>
       
       <div className="search-container">
-        <input 
-          type="text" 
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="What can we find for you today?"
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <button onClick={handleSearch} disabled={loading}>
+        
+        {/* Wrapper allows us to put the X button inside */}
+        <div className="input-wrapper">
+          <input 
+            type="text" 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="What can we find for you today?"
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          
+          {/* SHOW 'X' BUTTON IF THERE IS TEXT */}
+          {query.length > 0 && (
+            <button className="clear-btn" onClick={clearSearch}>
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Note: I added a specific class to this button in CSS to avoid conflict */}
+        <button className="main-search-btn" onClick={handleSearch} disabled={loading}>
           {loading ? "scanning..." : "search"}
         </button>
       </div>

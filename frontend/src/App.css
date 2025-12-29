@@ -1,19 +1,22 @@
 /* --- VENTIKO DESIGN SYSTEM --- */
 :root {
-  /* YOUR PALETTE */
   --bg-color: #FCF6EE;       /* Floral White */
   --accent-mint: #23F0C7;    /* Tropical Mint */
   --accent-lilac: #AAA1C8;   /* Lilac Ash */
-  --text-dark: #2c3e50;      /* Deep Grey for readability */
-  --text-light: #64748b;     /* Soft Grey for descriptions */
+  --text-dark: #2c3e50;      /* Deep Grey */
+  --text-light: #64748b;     /* Soft Grey */
   
-  /* FONTS */
   --font-title: 'Major Mono Display', monospace;
   --font-body: 'Roboto', sans-serif;
 }
 
+/* LAYER 0: THE CANVAS */
+html {
+  background-color: var(--bg-color);
+  height: 100%;
+}
+
 body {
-  /* BACKGROUND: Replaced solid color with Aurora Animation */
   color: var(--text-dark);
   font-family: var(--font-body);
   margin: 0;
@@ -21,31 +24,52 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  overflow-x: hidden; /* Prevents side-scroll if dots go wide */
 
-  /* THE AURORA BIO-GLOW */
+  /* LAYER 1: THE AURORA GLOW */
   background: linear-gradient(
     -45deg, 
-    #FCF6EE, /* Floral White */
-    #eefcf6, /* Hint of Mint */
-    #f3eefc, /* Hint of Lilac */
-    #FCF6EE  /* Back to White */
+    #FCF6EE, 
+    #eefcf6, 
+    #f3eefc, 
+    #FCF6EE
   );
   background-size: 400% 400%;
-  animation: aurora 15s ease infinite; /* Smooth, slow breathing effect */
+  animation: aurora 15s ease infinite;
 }
 
+/* LAYER 2: THE TECH DOTS */
+/* We moved z-index from -1 to 0 so it sits ON TOP of the background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0; /* Sits on top of the Aurora */
+  
+  /* The Dots - Made slightly darker/richer for visibility */
+  background-image: radial-gradient(#aaa1c87c 1.5px, transparent 1px);
+  background-size: 25px 25px;
+  
+  /* The Fade Mask */
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  opacity: 0.7; 
+}
+
+/* LAYER 3: THE CONTENT */
+/* We explicitly lift the content up so it floats ABOVE the dots */
 #root {
   width: 100%;
   max-width: 1000px;
   padding: 2rem;
   box-sizing: border-box;
-
-  /* THE TECH DOT OVERLAY */
-  /* Creates a subtle grid of dots that fades out at the edges */
-  background-image: radial-gradient(#AAA1C8 1px, transparent 1px);
-  background-size: 40px 40px; 
-  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  position: relative;
+  z-index: 1; 
 }
 
 /* --- TYPOGRAPHY --- */
@@ -68,10 +92,15 @@ h1 {
   transition: all 0.5s ease;
 }
 
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 /* The Input Field */
 input {
   width: 100%;
-  padding: 1.2rem 1.5rem;
+  padding: 1.2rem 3rem 1.2rem 1.5rem;
   border: 1.5px solid var(--text-dark);
   border-radius: 50px;
   font-family: var(--font-body);
@@ -95,8 +124,27 @@ input:focus {
   box-shadow: 0 8px 25px rgba(35, 240, 199, 0.4);
 }
 
+/* The 'X' Clear Button */
+.clear-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.clear-btn:hover {
+  color: var(--text-dark);
+}
+
 /* The Search Button */
-button {
+button.main-search-btn {
   align-self: center;
   padding: 1rem 3rem;
   background-color: var(--accent-mint);
@@ -104,25 +152,25 @@ button {
   border: none;
   border-radius: 50px;
   font-family: var(--font-title);
-  font-weight: 400;             /* CRISP TEXT FIX */
+  font-weight: 400;
   letter-spacing: 0.5px;
   font-size: 1.25rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 4px 4px 0px var(--text-dark); /* Your shadow choice */
+  box-shadow: 4px 4px 0px var(--text-dark);
 }
 
-button:hover {
+button.main-search-btn:hover {
   transform: translateY(-4px) translateX(-2px);
   box-shadow: 8px 8px 0px var(--accent-lilac);
 }
 
-button:active {
+button.main-search-btn:active {
   transform: translateY(0);
   box-shadow: 2px 2px 0px var(--accent-lilac);
 }
 
-button:disabled {
+button.main-search-btn:disabled {
   background-color: #e2e8f0;
   box-shadow: none;
   cursor: not-allowed;
@@ -205,15 +253,8 @@ button:disabled {
   }
 }
 
-/* AURORA ANIMATION KEYFRAMES */
 @keyframes aurora {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

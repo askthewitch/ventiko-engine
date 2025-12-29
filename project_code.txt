@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T10:52:20.464Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T11:42:42.216Z
 
 
 
@@ -493,7 +493,7 @@ FILE: frontend/src/App.css
 }
 
 body {
-  background-color: var(--bg-color);
+  /* BACKGROUND: Replaced solid color with Aurora Animation */
   color: var(--text-dark);
   font-family: var(--font-body);
   margin: 0;
@@ -501,6 +501,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* THE AURORA BIO-GLOW */
+  background: linear-gradient(
+    -45deg, 
+    #FCF6EE, /* Floral White */
+    #eefcf6, /* Hint of Mint */
+    #f3eefc, /* Hint of Lilac */
+    #FCF6EE  /* Back to White */
+  );
+  background-size: 400% 400%;
+  animation: aurora 15s ease infinite; /* Smooth, slow breathing effect */
 }
 
 #root {
@@ -508,6 +519,13 @@ body {
   max-width: 1000px;
   padding: 2rem;
   box-sizing: border-box;
+
+  /* THE TECH DOT OVERLAY */
+  /* Creates a subtle grid of dots that fades out at the edges */
+  background-image: radial-gradient(#AAA1C8 1px, transparent 1px);
+  background-size: 40px 40px; 
+  mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
 }
 
 /* --- TYPOGRAPHY --- */
@@ -534,12 +552,12 @@ h1 {
 input {
   width: 100%;
   padding: 1.2rem 1.5rem;
-  border: 2px solid var(--accent-lilac);
+  border: 1.5px solid var(--text-dark);
   border-radius: 50px;
   font-family: var(--font-body);
   font-size: 1.1rem;
   background: white;
-  color: var(--text-dark); /* THIS FIXES THE INVISIBLE TEXT */
+  color: var(--text-dark);
   outline: none;
   box-shadow: 0 4px 15px rgba(170, 161, 200, 0.2);
   transition: all 0.3s ease;
@@ -547,17 +565,16 @@ input {
 }
 
 input::placeholder {
-  color: #94a3b8; /* Ensures placeholder is visible but subtle */
+  color: #94a3b8;
   opacity: 1;
 }
 
 input:focus {
-  border-color: var(--accent-mint);
+  border-color: var(--accent-lilac);
   transform: scale(1.02);
   box-shadow: 0 8px 25px rgba(35, 240, 199, 0.4);
 }
 
-/* The Search Button */
 /* The Search Button */
 button {
   align-self: center;
@@ -567,17 +584,12 @@ button {
   border: none;
   border-radius: 50px;
   font-family: var(--font-title);
-  font-weight: 900;             /* Was 900. Changed to 400 to match Title */
-  letter-spacing: 0.5px;         /* Tighten it up like the Title */
+  font-weight: 400;             /* CRISP TEXT FIX */
+  letter-spacing: 0.5px;
   font-size: 1.25rem;
-  /* ------------------ */
-
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  
-  /* This is the PURPLE BLOCK shadow under the button. 
-     If you want the button flat, remove this line below: */
-  box-shadow: 4px 4px 0px var(--accent-lilac); 
+  box-shadow: 4px 4px 0px var(--text-dark); /* Your shadow choice */
 }
 
 button:hover {
@@ -673,6 +685,19 @@ button:disabled {
   }
 }
 
+/* AURORA ANIMATION KEYFRAMES */
+@keyframes aurora {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 ================================================================
 FILE: frontend/src/App.jsx
 ================================================================
@@ -715,7 +740,7 @@ function App() {
           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
         />
         <button onClick={handleSearch} disabled={loading}>
-          {loading ? "SCANNING..." : "search"}
+          {loading ? "scanning..." : "search"}
         </button>
       </div>
 
