@@ -1,89 +1,38 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 
+// Import Pages
+import Home from './pages/Home'
+import About from './pages/About'
+import Archive from './pages/Archive'
+
 function App() {
-  const [query, setQuery] = useState("")
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
-
-  const handleSearch = async () => {
-    if (!query) return;
-    setLoading(true);
-    setHasSearched(true);
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${query}`);
-      setResults(response.data.matches);
-    } catch (error) {
-      console.error("Error searching:", error);
-      alert("System Busy. Please try again in a moment.");
-    }
-    setLoading(false);
-  }
-
-  // --- NEW: Function to clear everything ---
-  const clearSearch = () => {
-    setQuery("");
-    setResults([]);
-    setHasSearched(false);
-  }
-
   return (
-    <>
-      <h1>Ventiko</h1>
-      
-      <div className="search-container">
-        
-        {/* Wrapper allows us to put the X button inside */}
-        <div className="input-wrapper">
-          <input 
-            type="text" 
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="What can we find for you today?"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          />
-          
-          {/* SHOW 'X' BUTTON IF THERE IS TEXT */}
-          {query.length > 0 && (
-            <button className="clear-btn" onClick={clearSearch}>
-              ✕
-            </button>
-          )}
-        </div>
+    <Router>
+      {/* NAVIGATION BAR 
+        Top right corner, sitting above the dots (zIndex 10)
+      */}
+      <nav style={{ 
+        position: 'absolute', 
+        top: '20px', 
+        right: '40px', 
+        display: 'flex', 
+        gap: '20px',
+        zIndex: 10 
+      }}>
+        <Link to="/" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>HOME</Link>
+        <Link to="/about" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>ABOUT</Link>
+        <Link to="/archive" style={{ textDecoration: 'none', color: '#2c3e50', fontWeight: 'bold', fontSize: '0.9rem' }}>ARCHIVE</Link>
+      </nav>
 
-        {/* Note: I added a specific class to this button in CSS to avoid conflict */}
-        <button className="main-search-btn" onClick={handleSearch} disabled={loading}>
-          {loading ? "scanning..." : "search"}
-        </button>
-      </div>
+      {/* THE PAGE SWITCHER */}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/archive" element={<Archive />} />
+      </Routes>
 
-      <div className="grid">
-        {results.map((item) => (
-          <div key={item.id} className="card">
-            <div>
-              <h3>{item.metadata.title}</h3>
-              <p>{item.metadata.description}</p>
-            </div>
-            <div className="card-footer">
-              <span className="price">
-                {item.metadata.price} {item.metadata.currency}
-              </span>
-              <span className="score">
-                Match: {(item.score * 100).toFixed(0)}%
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {hasSearched && results.length === 0 && !loading && (
-        <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
-          NO MATCHES FOUND
-        </p>
-      )}
-    </>
+    </Router>
   )
 }
 
