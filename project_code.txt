@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T09:20:05.121Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T10:07:18.554Z
 
 
 
@@ -9,6 +9,65 @@ FILE: README.md
 # Ventiko Bio-Optimization Engine
 Middleware for aggregating external affiliate feeds into health protocols.
 
+
+================================================================
+FILE: backend/generate_messy_data.py
+================================================================
+
+import csv
+import random
+
+# We simulate a "messy" feed from an affiliate network
+# Notice the column names are NOT what our engine wants. 
+# We will have to "adapt" them later.
+filename = "data/awin_export_raw.csv"
+
+products = [
+    ("Optimized Magnesium", "Health", "High absorption mag-glycinate for sleep.", "19.99"),
+    ("Deep Sleep Pillow Spray", "Home", "Lavender mist for better rest.", "12.50"),
+    ("Blue Light Blocking Glasses", "Electronics", "Reduce eye strain and improve melatonin.", "35.00"),
+    ("Organic Ashwagandha", "Supplements", "Reduces cortisol and stress levels.", "22.00"),
+    ("Weighted Blanket 15lbs", "Home", "Deep pressure stimulation for anxiety.", "89.00"),
+    ("Valerian Root Drops", "Health", "Natural herbal sleep aid.", "15.99"),
+    ("Smart Sleep Tracker Ring", "Electronics", "Monitors REM and deep sleep cycles.", "299.00"),
+    ("Tart Cherry Juice Concentrate", "Grocery", "Natural source of melatonin.", "18.50"),
+    ("Silk Sleep Mask", "Accessories", "100% blackout for total darkness.", "9.99"),
+    ("White Noise Machine", "Electronics", "Fan-based soothing sound.", "45.00"),
+    ("L-Theanine Capsules", "Supplements", "Promotes relaxation without drowsiness.", "19.00"),
+    ("Cedarwood Essential Oil", "Health", "Grounding scent for evening routines.", "8.50"),
+    ("Sunrise Alarm Clock", "Electronics", "Wake up naturally with light.", "55.00"),
+    ("Cooling Mattress Topper", "Home", "Regulate body temp for deep sleep.", "150.00"),
+    ("Chamomile Tea Bulk", "Grocery", "Loose leaf calming tea.", "14.00"),
+    ("Mouth Tape for Sleep", "Health", "Encourage nasal breathing.", "7.99"),
+    ("GABA Supplement", "Supplements", "Neurotransmitter support for calm.", "21.00"),
+    ("Sleep Headphones Headband", "Electronics", "Soft headband with speakers.", "25.00"),
+    ("Epsom Salts 5kg", "Health", "Magnesium bath soak for muscles.", "11.00"),
+    ("Meditation Cushion", "Home", "Ergonomic seat for mindfulness.", "32.00")
+]
+
+# Duplicate and vary slightly to get 50+ items
+final_data = []
+for i in range(3): 
+    for p in products:
+        # We add some "messiness" like HTML tags or extra spaces
+        messy_desc = f"<span>{p[2]}</span> <br> (Batch {i+1})"
+        final_data.append({
+            "product_id": f"awin_{random.randint(1000, 9999)}",
+            "merchant_name": "HealthStore_UK",
+            "prod_name": p[0],
+            "description_text": messy_desc, # MESSY COLUMN NAME
+            "retail_price": p[3],           # MESSY COLUMN NAME
+            "category_path": p[1],
+            "deep_link_url": f"http://awin.com/click?p={random.randint(100,999)}"
+        })
+
+# Write to CSV
+with open(filename, mode='w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=final_data[0].keys())
+    writer.writeheader()
+    writer.writerows(final_data)
+
+print(f"GENERATED MESSY DATA: {filename} with {len(final_data)} rows.")
 
 ================================================================
 FILE: backend/ingest.py
@@ -84,14 +143,109 @@ print("\nFinal Database Stats:")
 print(stats)
 
 ================================================================
+FILE: backend/ingest_awin.py
+================================================================
+
+import os
+import csv
+import re
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Load Environment
+load_dotenv()
+
+# 2. Setup Database & AI
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 3. Define the Input File
+csv_file = "data/awin_export_raw.csv"
+
+def clean_html(raw_html):
+    """Removes HTML tags like <span> or <br> from the description."""
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
+
+vectors_to_upload = []
+
+print(f"Reading messy data from: {csv_file}...")
+
+with open(csv_file, mode='r', encoding='utf-8') as file:
+    reader = csv.DictReader(file)
+    
+    for row in reader:
+        # --- THE ADAPTER LAYER ---
+        # Here we map the "Messy" AWIN columns to "Clean" Ventiko columns
+        
+        # 1. Map ID (Combine merchant + ID to be unique)
+        p_id = f"{row['merchant_name']}-{row['product_id']}"
+        
+        # 2. Map Title
+        title = row['prod_name']
+        
+        # 3. Map & Clean Description
+        # We strip out the <span> tags using our helper function
+        desc = clean_html(row['description_text'])
+        
+        # 4. Map Price
+        price = row['retail_price']
+        
+        # 5. Map Category
+        category = row['category_path']
+        
+        # 6. Map Link (We save this so the user can click it later)
+        link = row['deep_link_url']
+
+        # --- THE AI LAYER ---
+        # Create the text the AI will read
+        combined_text = f"{title}. {desc}. Category: {category}. Best for: Sleep, Relaxation, Recovery."
+        
+        # Vectorise
+        vector = model.encode(combined_text).tolist()
+        
+        # Prepare Metadata (The clean data for the Frontend)
+        metadata = {
+            "title": title,
+            "description": desc,
+            "price": price,
+            "currency": "GBP", # We assume GBP for now
+            "category": category,
+            "link": link,
+            "raw_text": combined_text
+        }
+        
+        vectors_to_upload.append((p_id, vector, metadata))
+
+# 4. Upload in Batches
+if vectors_to_upload:
+    print(f"Uploading {len(vectors_to_upload)} products to Pinecone...")
+    # Upsert to database
+    index.upsert(vectors=vectors_to_upload)
+    print("Upload Complete.")
+else:
+    print("No data found.")
+
+================================================================
 FILE: backend/main.py
 ================================================================
 
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
+
+# SECURITY TOOLS
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from secure import Secure
 
 load_dotenv()
 
@@ -103,14 +257,48 @@ index = pc.Index("ventiko-index")
 # Setup AI Brain
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
+# SETUP THE BOUNCER (Rate Limiter)
+limiter = Limiter(key_func=get_remote_address)
+
+# SETUP THE SHIELD (Security Headers) - UPDATED SYNTAX
+secure_headers = Secure.with_default_headers()
+
 app = FastAPI()
+
+# Apply the Bouncer
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# --- SECURITY CLEARANCE (CORS) ---
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ---------------------------------
+
+# --- APPLY THE SHIELD (Middleware) ---
+@app.middleware("http")
+async def set_secure_headers(request, call_next):
+    response = await call_next(request)
+    await secure_headers.set_headers_async(response)
+    return response
+# -------------------------------------
 
 @app.get("/")
 def health_check():
     return {"status": "online", "system": "Ventiko Engine"}
 
 @app.get("/search")
-def search(query: str):
+@limiter.limit("10/minute")
+def search(request: Request, query: str):
     print(f"Received query: {query}")
     
     # 1. Convert text to numbers
@@ -123,8 +311,7 @@ def search(query: str):
         include_metadata=True
     )
     
-    # 3. MANUAL PACKAGING (Safe Mode)
-    # We extract only the data we need to avoid library errors
+    # 3. MANUAL PACKAGING
     final_matches = []
     
     for match in results['matches']:
@@ -173,3 +360,334 @@ for match in results['matches']:
     print(f"Found: {match['metadata']['title']}")
     print(f"Score: {match['score']:.4f}") # Confidence score (0 to 1)
     print(f"Price: {match['metadata']['price']} {match['metadata']['currency']}")
+
+================================================================
+FILE: frontend/README.md
+================================================================
+
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+================================================================
+FILE: frontend/eslint.config.js
+================================================================
+
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+])
+
+
+================================================================
+FILE: frontend/index.html
+================================================================
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+================================================================
+FILE: frontend/package.json
+================================================================
+
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.2.4"
+  }
+}
+
+
+================================================================
+FILE: frontend/src/App.css
+================================================================
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+================================================================
+FILE: frontend/src/App.jsx
+================================================================
+
+import { useState } from 'react'
+import axios from 'axios'
+import './App.css'
+
+function App() {
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const handleSearch = async () => {
+    if (!query) return;
+    setLoading(true);
+    try {
+      // Talk to the Python Backend
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${query}`);
+      setResults(response.data.matches);
+    } catch (error) {
+      console.error("Error searching:", error);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+      <h1>Ventiko Engine</h1>
+      
+      {/* Search Bar Section */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '2rem' }}>
+        <input 
+          type="text" 
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Describe your goal (e.g., help me sleep)..."
+          style={{ flex: 1, padding: '10px', fontSize: '16px' }}
+          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <button 
+          onClick={handleSearch}
+          style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer', backgroundColor: '#000', color: '#fff', border: 'none' }}
+        >
+          {loading ? "Thinking..." : "Search"}
+        </button>
+      </div>
+
+      {/* Results Section */}
+      <div style={{ display: 'grid', gap: '20px' }}>
+        {results.map((item) => (
+          <div key={item.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', textAlign: 'left' }}>
+            <h3 style={{ margin: '0 0 10px 0', color: '#2c3e50' }}>{item.metadata.title}</h3>
+            <p style={{ margin: '0 0 10px 0', color: '#666' }}>{item.metadata.description}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 'bold', color: '#27ae60' }}>
+                {item.metadata.price} {item.metadata.currency}
+              </span>
+              <span style={{ fontSize: '12px', background: '#eee', padding: '4px 8px', borderRadius: '4px' }}>
+                Match Score: {(item.score * 100).toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default App
+
+================================================================
+FILE: frontend/src/index.css
+================================================================
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+================================================================
+FILE: frontend/src/main.jsx
+================================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+================================================================
+FILE: frontend/vite.config.js
+================================================================
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
