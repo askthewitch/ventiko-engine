@@ -8,6 +8,23 @@ const Footer = () => {
   const openModal = (type) => setModalType(type);
   const closeModal = () => setModalType(null);
 
+  // Helper style for legal text to keep it readable
+  const legalTextStyle = {
+    fontSize: '0.9rem',
+    color: '#475569',
+    marginBottom: '1rem',
+    lineHeight: '1.6'
+  };
+
+  const legalHeadingStyle = {
+    fontFamily: 'Major Mono Display',
+    color: '#2c3e50',
+    marginTop: '1.5rem',
+    marginBottom: '0.5rem',
+    fontSize: '1rem',
+    fontWeight: 'bold'
+  };
+
   return (
     <>
       <footer className="site-footer">
@@ -19,7 +36,7 @@ const Footer = () => {
           <Link to="/archive" className="footer-link">ARcHiVe</Link>
         </div>
 
-        {/* Divider for visual separation (optional, but looks cool) */}
+        {/* Divider */}
         <div className="footer-divider">|</div>
 
         {/* GROUP 2: UTILITIES (Modals) */}
@@ -31,24 +48,71 @@ const Footer = () => {
 
       </footer>
 
-      {/* --- MODALS REMAIN THE SAME --- */}
+      {/* --- PRIVACY POLICY MODAL --- */}
       <Modal isOpen={modalType === 'privacy'} onClose={closeModal} title="privacy policy">
-        <p><strong>Last Updated: December 2025</strong></p>
-        <p>At Ventiko, we value your privacy. We do not store your personal search data. Our database consists of bio-optimization protocols aggregated from public sources.</p>
-        <p>We use local storage for your preferences and standard analytics to improve the engine.</p>
+        <p style={legalTextStyle}><strong>Last Updated: December 2025</strong></p>
+        
+        <p style={legalTextStyle}>
+          At Ventiko, we respect your privacy. This policy outlines how we handle your data when you use our Product Finder.
+        </p>
+
+        <h3 style={legalHeadingStyle}>1. data collection</h3>
+        <p style={legalTextStyle}>
+          <strong>Search Data:</strong> We store search queries anonymously to improve our AI engine and aggregated trends (the "Archive").<br/>
+          <strong>Email Addresses:</strong> If you opt-in to receive results via email, we store your email address securely. We do not sell your email to third parties.
+        </p>
+
+        <h3 style={legalHeadingStyle}>2. affiliate tracking</h3>
+        <p style={legalTextStyle}>
+          When you click a link to a product, a tracking cookie may be placed on your device by the merchant (e.g., Awin, Amazon) to attribute the sale to Ventiko. This does not store personal information about you on our servers.
+        </p>
+
+        <h3 style={legalHeadingStyle}>3. your rights</h3>
+        <p style={legalTextStyle}>
+          You may request the deletion of your email data at any time by contacting support.
+        </p>
       </Modal>
 
+      {/* --- TERMS OF SERVICE MODAL --- */}
       <Modal isOpen={modalType === 'terms'} onClose={closeModal} title="terms of service">
-        <p><strong>1. Disclaimer</strong></p>
-        <p>Ventiko is a search engine for educational purposes. We are not doctors. All protocols found here should be discussed with a medical professional.</p>
-        <p><strong>2. Affiliate Links</strong></p>
-        <p>Some results may contain affiliate links. This supports our server costs at no extra cost to you.</p>
+        <p style={legalTextStyle}>
+          By using Ventiko, you agree to the following terms.
+        </p>
+
+        <h3 style={legalHeadingStyle}>1. affiliate disclosure</h3>
+        <p style={legalTextStyle}>
+          Ventiko is a product discovery engine. We participate in various affiliate marketing programs, which means we may get paid commissions on editorially chosen products purchased through our links to retailer sites. This comes at no extra cost to you.
+        </p>
+
+        <h3 style={legalHeadingStyle}>2. not medical advice</h3>
+        <p style={legalTextStyle}>
+          The content provided by Ventiko is for informational and educational purposes only. It is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+        </p>
+
+        <h3 style={legalHeadingStyle}>3. no warranties</h3>
+        <p style={legalTextStyle}>
+          Our AI engine strives for accuracy, but product prices, stock, and ingredients change rapidly. Ventiko provides results on an "as is" basis without warranties of any kind.
+        </p>
       </Modal>
 
+      {/* --- CONTACT MODAL --- */}
       <Modal isOpen={modalType === 'contact'} onClose={closeModal} title="contact us">
-        <p>Have a question or a new protocol to suggest?</p>
-        <p><strong>Email:</strong> support@ventiko.com</p>
-        <p><strong>Location:</strong> London, UK</p>
+        <p style={legalTextStyle}>
+          Have a question, a partnership proposal, or a product you want listed?
+        </p>
+        
+        <h3 style={legalHeadingStyle}>gerneal enquiries</h3>
+        <p style={legalTextStyle}>
+          <a href="mailto:support@ventiko.app" style={{ color: '#23F0C7', textDecoration: 'none', fontWeight: 'bold' }}>
+            support@ventiko.app
+          </a>
+        </p>
+
+        <h3 style={legalHeadingStyle}>location</h3>
+        <p style={legalTextStyle}>
+          Ventiko Engine HQ<br/>
+          Isle of Man, United Kingdom.
+        </p>
       </Modal>
     </>
   );
