@@ -1,12 +1,13 @@
 import os
 import datetime
 from typing import List, Optional
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+from pydantic import BaseModel # For data validation
 
 # SECURITY TOOLS
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -16,12 +17,22 @@ from secure import Secure
 
 load_dotenv()
 
-# --- DATABASE SETUP (The Ledger) ---
+# --- DATABASE SETUP ---
+# Table 1: Search History (The Archive)
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     results_summary: str 
+
+# Table 2: User Leads (The Value Engine) <--- NEW TABLE
+class UserLead(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str
+    query: str
+    results_summary: str
+    opt_in: bool = Field(default=False) # Mandatory tick box
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
 sqlite_file_name = "search_history.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -70,7 +81,7 @@ async def set_secure_headers(request, call_next):
 
 @app.get("/")
 def health_check():
-    return {"status": "online", "system": "Ventiko Engine (High Speed)"}
+    return {"status": "online", "system": "Ventiko Engine (Value V1)"}
 
 # --- SEARCH ENDPOINT ---
 @app.get("/search")
@@ -78,7 +89,6 @@ def health_check():
 def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received query: {query}")
     
-    # 1. Search Pinecone (Fast Math)
     query_vector = model.encode(query).tolist()
     results = index.query(
         vector=query_vector,
@@ -98,8 +108,7 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # 2. SAVE TO LEDGER (Fast SQL)
-    # This happens instantly, no API lag
+    # SAVE TO LEDGER (Archive)
     if final_matches:
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()
@@ -108,13 +117,11 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
             last_log.timestamp = datetime.datetime.utcnow()
             session.add(last_log)
             session.commit()
-            print(f" -> Updated timestamp: {query}")
         else:
             summary_str = " | ".join(result_titles)
             new_log = SearchLog(query=query, results_summary=summary_str)
             session.add(new_log)
             session.commit()
-            print(f" -> Logged new search: {query}")
 
     return {"matches": final_matches}
 
@@ -124,3 +131,36 @@ def get_archive(session: Session = Depends(get_session)):
     statement = select(SearchLog).order_by(SearchLog.timestamp.desc())
     results = session.exec(statement).all()
     return results
+
+# --- NEW: CAPTURE EMAIL ENDPOINT ---
+class EmailRequest(BaseModel):
+    email: str
+    query: str
+    results: List[str] # List of product titles
+    opt_in: bool
+
+@app.post("/capture-email")
+@limiter.limit("5/minute") # Prevent spamming emails
+def capture_email(request: Request, data: EmailRequest, session: Session = Depends(get_session)):
+    
+    # Validation: Must opt-in
+    if not data.opt_in:
+        raise HTTPException(status_code=400, detail="User must opt-in to receive emails.")
+
+    # 1. Save to Database (The Asset)
+    summary_str = " | ".join(data.results)
+    new_lead = UserLead(
+        email=data.email,
+        query=data.query,
+        results_summary=summary_str,
+        opt_in=data.opt_in
+    )
+    session.add(new_lead)
+    session.commit()
+    
+    print(f" -> LEAD CAPTURED: {data.email} for '{data.query}'")
+
+    # 2. SEND EMAIL (Placeholder - We will add the 'rerouter' logic next)
+    # This is where we will hook into Resend or SMTP later.
+    
+    return {"status": "success", "message": "Protocol saved."}

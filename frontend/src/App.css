@@ -77,7 +77,7 @@ h1 {
   font-family: var(--font-title);
   font-size: 3.5rem;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   color: var(--text-dark);
   letter-spacing: -2px;
 }
