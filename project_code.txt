@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T12:17:42.389Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T12:30:26.841Z
 
 
 
@@ -722,7 +722,7 @@ FILE: frontend/index.html
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <title>frontend</title>
+    <title>Ventiko Product Finder</title>
   </head>
   <body>
     <div id="root"></div>
@@ -750,6 +750,7 @@ FILE: frontend/package.json
     "axios": "^1.13.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^7.11.0"
   },
   "devDependencies": {
@@ -1478,15 +1479,17 @@ FILE: frontend/src/main.jsx
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </StrictMode>,
 )
-
 
 ================================================================
 FILE: frontend/src/pages/About.jsx
@@ -1735,6 +1738,7 @@ FILE: frontend/src/pages/Home.jsx
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
 
 function Home() {
@@ -1788,14 +1792,12 @@ function Home() {
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
-    // 1. Silent Log to Backend
     axios.post('http://127.0.0.1:8000/track-click', {
       product_title: productTitle,
-      query: query || "unknown", // Fallback if query is empty
+      query: query || "unknown",
       link: link || "unknown"
     }).catch(err => console.error("Tracking error:", err));
 
-    // 2. Open Link (Affiliate)
     if (link) {
       window.open(link, '_blank');
     } else {
@@ -1809,11 +1811,9 @@ function Home() {
     setEmailStatus("sending");
     
     try {
-      // Create a list of objects { title, link }
-      // This maps the data for the backend EmailRequest
       const productData = results.map(r => ({
         title: r.metadata.title,
-        link: r.metadata.link || "https://ventiko.app" // Fallback only if database is missing links
+        link: r.metadata.link || "https://ventiko.app"
       }));
 
       await axios.post('http://127.0.0.1:8000/capture-email', {
@@ -1829,9 +1829,26 @@ function Home() {
     }
   }
 
+ 
+// --- DYNAMIC SEO TITLES ---
+const getPageTitle = () => {
+  if (query) return `${query} | Ventiko Product Finder`;
+  return "Ventiko | Product Finder";
+}
+
+const getMetaDesc = () => {
+  if (query) return `Find the best products for ${query}. AI-curated results.`;
+  return "The AI-powered search engine for finding the right products you actually need.";
+}
+
   return (
     <>
-      <h1>VENTIKO</h1>
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDesc()} />
+      </Helmet>
+
+      <h1>Ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
@@ -1855,7 +1872,6 @@ function Home() {
       </div>
 
       <div className="grid">
-        {/* STATE 1: LOADING (Show 3 Skeletons) */}
         {loading && (
           <>
             <SkeletonCard />
@@ -1864,7 +1880,6 @@ function Home() {
           </>
         )}
 
-        {/* STATE 2: RESULTS (Show Real Cards) */}
         {!loading && results.map((item) => (
           <div 
             key={item.id} 
@@ -1888,7 +1903,6 @@ function Home() {
         ))}
       </div>
 
-      {/* --- IN-LINE EMAIL CAPTURE ZONE --- */}
       {results.length > 0 && (
         <div style={{ maxWidth: '600px', margin: '4rem auto 0 auto', textAlign: 'center', animation: 'fadeUp 1s ease'}}>
           {emailStatus === 'success' ? (

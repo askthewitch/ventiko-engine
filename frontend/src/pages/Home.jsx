@@ -92,16 +92,17 @@ function Home() {
     }
   }
 
-  // --- DYNAMIC SEO TITLES ---
-  const getPageTitle = () => {
-    if (query) return `${query} | Ventiko Finder`;
-    return "Ventiko | Bio-Optimization Product Finder";
-  }
+ 
+// --- DYNAMIC SEO TITLES ---
+const getPageTitle = () => {
+  if (query) return `${query} | Ventiko Product Finder`;
+  return "Ventiko | Product Finder";
+}
 
-  const getMetaDesc = () => {
-    if (query) return `Find the best bio-optimization products for ${query}. AI-curated results for sleep, focus, and recovery.`;
-    return "The AI-powered search engine for health, sleep, and performance tools.";
-  }
+const getMetaDesc = () => {
+  if (query) return `Find the best products for ${query}. AI-curated results.`;
+  return "The AI-powered search engine for finding the right products you actually need.";
+}
 
   return (
     <>
@@ -110,7 +111,7 @@ function Home() {
         <meta name="description" content={getMetaDesc()} />
       </Helmet>
 
-      <h1>VENTIKO</h1>
+      <h1>Ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
