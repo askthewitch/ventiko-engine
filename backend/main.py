@@ -16,7 +16,7 @@ from secure import Secure
 
 load_dotenv()
 
-# --- DATABASE SETUP ---
+# --- DATABASE SETUP (The Ledger) ---
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
@@ -34,7 +34,7 @@ def get_session():
     with Session(engine) as session:
         yield session
 
-# --- PINECONE & AI SETUP ---
+# --- PINECONE SETUP ---
 api_key = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=api_key)
 index = pc.Index("ventiko-index")
@@ -70,15 +70,15 @@ async def set_secure_headers(request, call_next):
 
 @app.get("/")
 def health_check():
-    return {"status": "online", "system": "Ventiko Engine v2"}
+    return {"status": "online", "system": "Ventiko Engine (High Speed)"}
 
-# --- SEARCH ENDPOINT (With Deduplication) ---
+# --- SEARCH ENDPOINT ---
 @app.get("/search")
 @limiter.limit("20/minute") 
 def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received query: {query}")
     
-    # 1. Search Logic
+    # 1. Search Pinecone (Fast Math)
     query_vector = model.encode(query).tolist()
     results = index.query(
         vector=query_vector,
@@ -98,27 +98,23 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # 2. SMART LOGGING
+    # 2. SAVE TO LEDGER (Fast SQL)
+    # This happens instantly, no API lag
     if final_matches:
-        # Check the MOST RECENT log entry
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()
 
-        # DEDUPLICATION LOGIC:
-        # If the last search is exactly the same as this one...
         if last_log and last_log.query.lower() == query.lower():
-            # ...Just update the timestamp (bump to top)
             last_log.timestamp = datetime.datetime.utcnow()
             session.add(last_log)
             session.commit()
-            print(f" -> Updated timestamp for existing: {query}")
+            print(f" -> Updated timestamp: {query}")
         else:
-            # ...Otherwise, create a new entry
             summary_str = " | ".join(result_titles)
             new_log = SearchLog(query=query, results_summary=summary_str)
             session.add(new_log)
             session.commit()
-            print(f" -> Saved new to Archive: {query}")
+            print(f" -> Logged new search: {query}")
 
     return {"matches": final_matches}
 

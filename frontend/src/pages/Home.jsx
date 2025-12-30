@@ -3,13 +3,12 @@ import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
 
 function Home() {
-  const [searchParams] = useSearchParams(); // Reads the URL
+  const [searchParams] = useSearchParams();
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
-  // Function to run search
   const performSearch = async (searchTerm) => {
     if (!searchTerm) return;
     setLoading(true);
@@ -24,7 +23,6 @@ function Home() {
     setLoading(false);
   }
 
-  // Effect: Check if URL has a query when page loads (e.g., from Archive click)
   useEffect(() => {
     const urlQuery = searchParams.get('query');
     if (urlQuery) {

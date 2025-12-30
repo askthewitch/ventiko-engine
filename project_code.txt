@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-29T19:29:43.820Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T09:07:47.393Z
 
 
 
@@ -235,11 +235,14 @@ FILE: backend/main.py
 ================================================================
 
 import os
-from fastapi import FastAPI, Request
+import datetime
+from typing import List, Optional
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 # SECURITY TOOLS
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -249,32 +252,44 @@ from secure import Secure
 
 load_dotenv()
 
-# Setup Database
+# --- DATABASE SETUP ---
+class SearchLog(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    query: str
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+    results_summary: str 
+
+sqlite_file_name = "search_history.db"
+sqlite_url = f"sqlite:///{sqlite_file_name}"
+engine = create_engine(sqlite_url)
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+# --- PINECONE & AI SETUP ---
 api_key = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=api_key)
 index = pc.Index("ventiko-index")
-
-# Setup AI Brain
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# SETUP THE BOUNCER (Rate Limiter)
+# --- SECURITY SETUP ---
 limiter = Limiter(key_func=get_remote_address)
-
-# SETUP THE SHIELD (Security Headers) - UPDATED SYNTAX
 secure_headers = Secure.with_default_headers()
 
 app = FastAPI()
 
-# Apply the Bouncer
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# --- SECURITY CLEARANCE (CORS) ---
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]
-
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -282,46 +297,73 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# ---------------------------------
 
-# --- APPLY THE SHIELD (Middleware) ---
 @app.middleware("http")
 async def set_secure_headers(request, call_next):
     response = await call_next(request)
     await secure_headers.set_headers_async(response)
     return response
-# -------------------------------------
 
 @app.get("/")
 def health_check():
-    return {"status": "online", "system": "Ventiko Engine"}
+    return {"status": "online", "system": "Ventiko Engine v2"}
 
+# --- SEARCH ENDPOINT (With Deduplication) ---
 @app.get("/search")
-@limiter.limit("10/minute")
-def search(request: Request, query: str):
+@limiter.limit("20/minute") 
+def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received query: {query}")
     
-    # 1. Convert text to numbers
+    # 1. Search Logic
     query_vector = model.encode(query).tolist()
-    
-    # 2. Search Pinecone
     results = index.query(
         vector=query_vector,
         top_k=3,
         include_metadata=True
     )
     
-    # 3. MANUAL PACKAGING
     final_matches = []
-    
+    result_titles = [] 
+
     for match in results['matches']:
+        m_data = match['metadata']
         final_matches.append({
             "id": match['id'],
             "score": match['score'],
-            "metadata": match['metadata']
+            "metadata": m_data
         })
-    
+        result_titles.append(m_data.get('title', 'Unknown Product'))
+
+    # 2. SMART LOGGING
+    if final_matches:
+        # Check the MOST RECENT log entry
+        statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
+        last_log = session.exec(statement).first()
+
+        # DEDUPLICATION LOGIC:
+        # If the last search is exactly the same as this one...
+        if last_log and last_log.query.lower() == query.lower():
+            # ...Just update the timestamp (bump to top)
+            last_log.timestamp = datetime.datetime.utcnow()
+            session.add(last_log)
+            session.commit()
+            print(f" -> Updated timestamp for existing: {query}")
+        else:
+            # ...Otherwise, create a new entry
+            summary_str = " | ".join(result_titles)
+            new_log = SearchLog(query=query, results_summary=summary_str)
+            session.add(new_log)
+            session.commit()
+            print(f" -> Saved new to Archive: {query}")
+
     return {"matches": final_matches}
+
+# --- ARCHIVE ENDPOINT ---
+@app.get("/archive")
+def get_archive(session: Session = Depends(get_session)):
+    statement = select(SearchLog).order_by(SearchLog.timestamp.desc())
+    results = session.exec(statement).all()
+    return results
 
 ================================================================
 FILE: backend/search.py
@@ -1256,117 +1298,105 @@ export default About
 FILE: frontend/src/pages/Archive.jsx
 ================================================================
 
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Archive() {
   const navigate = useNavigate();
+  const [archiveData, setArchiveData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Function to drive traffic back to the engine
-  const runProtocol = (term) => {
-    navigate('/'); 
+  // Fetch the history when page loads
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/archive');
+        setArchiveData(res.data);
+      } catch (error) {
+        console.error("Failed to load archive", error);
+      }
+      setLoading(false);
+    };
+    fetchHistory();
+  }, []);
+
+  // Allow clicking a past query to search it again
+  const runSearch = (term) => {
+    // Navigate to home with the search term. 
+    // We will need to update Home.jsx next to handle this "?query=" parameter.
+    navigate(`/?query=${encodeURIComponent(term)}`); 
   };
-
-  const protocols = [
-    {
-      title: "sleep architecture",
-      date: "v1.0 // 2025",
-      summary: "Optimizing REM and Deep Wave cycles requires thermal regulation and magnesium availability. This protocol targets the 90-minute ultradian rhythm.",
-      tags: ["magnesium", "circadian", "thermal"]
-    },
-    {
-      title: "cortisol management",
-      date: "v1.2 // 2025",
-      summary: "Chronic cortisol elevation degrades muscle protein and cognitive function. This stack focuses on adaptogens like Ashwagandha to blunt the stress response.",
-      tags: ["adaptogens", "adrenal", "recovery"]
-    },
-    {
-      title: "cognitive drive",
-      date: "v2.0 // 2025",
-      summary: "Sustained focus without the caffeine crash. Utilizing L-Theanine and Lion's Mane to support acetylcholine production and neuroplasticity.",
-      tags: ["nootropics", "focus", "flow"]
-    }
-  ];
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       
       <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
-        <h1>archive</h1>
+        <h1>live archive</h1>
         <p style={{ fontFamily: 'Roboto', color: '#64748b' }}>
-          previous optimization stacks & research
+          real-time optimization requests from the community
         </p>
       </section>
 
-      <div style={{ display: 'grid', gap: '2rem' }}>
-        {protocols.map((p, i) => (
-          <div key={i} style={{ 
-            background: 'white', 
-            padding: '2rem', 
-            borderRadius: '16px',
-            border: '1px solid #e2e8f0',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-            transition: 'transform 0.2s',
-            cursor: 'default'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
-              <h2 style={{ fontFamily: 'Major Mono Display', fontSize: '1.2rem', margin: 0, color: '#2c3e50' }}>
-                {p.title}
-              </h2>
-              <span style={{ fontFamily: 'Major Mono Display', fontSize: '0.7rem', color: '#AAA1C8' }}>
-                {p.date}
-              </span>
-            </div>
-            
-            <p style={{ fontFamily: 'Roboto', lineHeight: '1.6', color: '#475569', marginBottom: '1.5rem' }}>
-              {p.summary}
-            </p>
+      {loading ? (
+        <p style={{ textAlign: 'center', fontFamily: 'Major Mono Display' }}>loading feed...</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          
+          {archiveData.length === 0 && (
+            <p style={{ textAlign: 'center', color: '#AAA1C8' }}>NO DATA YET. BE THE FIRST.</p>
+          )}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              {/* TAGS */}
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {p.tags.map(tag => (
-                  <span key={tag} style={{ 
-                    fontSize: '0.75rem', 
-                    background: '#f1f5f9', 
-                    padding: '4px 8px', 
-                    borderRadius: '4px',
-                    color: '#64748b',
-                    fontFamily: 'Major Mono Display'
-                  }}>
-                    #{tag}
-                  </span>
-                ))}
+          {archiveData.map((log) => (
+            <div 
+              key={log.id} 
+              onClick={() => runSearch(log.query)}
+              style={{ 
+                background: 'white', 
+                padding: '1.5rem', 
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.borderColor = '#23F0C7'}
+              onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+            >
+              {/* THE QUERY (What they searched) */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ 
+                  fontFamily: 'Major Mono Display', 
+                  fontSize: '1.1rem', 
+                  color: '#2c3e50',
+                  fontWeight: 'bold'
+                }}>
+                  "{log.query.toLowerCase()}"
+                </span>
+                
+                <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
+                  {new Date(log.timestamp).toLocaleDateString()}
+                </span>
               </div>
 
-              {/* ACTION BUTTON */}
-              <button 
-                onClick={() => runProtocol(p.tags[0])}
-                style={{
-                  background: 'none',
-                  border: '1px solid #23F0C7',
-                  color: '#2c3e50',
-                  padding: '8px 16px',
-                  borderRadius: '50px',
-                  fontFamily: 'Major Mono Display',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.background = '#23F0C7';
-                  e.target.style.color = 'white';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.background = 'none';
-                  e.target.style.color = '#2c3e50';
-                }}
-              >
-                initiate {'->'}
-              </button>
+              {/* THE RESULTS (What we found) */}
+              <div style={{ 
+                fontSize: '0.9rem', 
+                color: '#64748b', 
+                fontFamily: 'Roboto',
+                background: '#f8fafc',
+                padding: '10px',
+                borderRadius: '8px'
+              }}>
+                <strong style={{ color: '#23F0C7' }}>results:</strong> {log.results_summary.toLowerCase()}
+              </div>
+
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
     </div>
   )
@@ -1378,27 +1408,43 @@ export default Archive
 FILE: frontend/src/pages/Home.jsx
 ================================================================
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
 
 function Home() {
+  const [searchParams] = useSearchParams(); // Reads the URL
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
-  const handleSearch = async () => {
-    if (!query) return;
+  // Function to run search
+  const performSearch = async (searchTerm) => {
+    if (!searchTerm) return;
     setLoading(true);
     setHasSearched(true);
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${query}`);
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${searchTerm}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
       alert("System Busy. Please try again in a moment.");
     }
     setLoading(false);
+  }
+
+  // Effect: Check if URL has a query when page loads (e.g., from Archive click)
+  useEffect(() => {
+    const urlQuery = searchParams.get('query');
+    if (urlQuery) {
+      setQuery(urlQuery);
+      performSearch(urlQuery);
+    }
+  }, [searchParams]);
+
+  const handleSearchClick = () => {
+    performSearch(query);
   }
 
   const clearSearch = () => {
@@ -1409,7 +1455,7 @@ function Home() {
 
   return (
     <>
-      <h1>Ventiko</h1>
+      <h1>ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
@@ -1417,8 +1463,8 @@ function Home() {
             type="text" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="What can we find for you today?"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            placeholder="We find what you need..."
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
           />
           {query.length > 0 && (
             <button className="clear-btn" onClick={clearSearch}>
@@ -1427,7 +1473,7 @@ function Home() {
           )}
         </div>
 
-        <button className="main-search-btn" onClick={handleSearch} disabled={loading}>
+        <button className="main-search-btn" onClick={handleSearchClick} disabled={loading}>
           {loading ? "scanning..." : "search"}
         </button>
       </div>
