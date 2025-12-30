@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T17:15:08.111Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T19:12:51.192Z
 
 
 
@@ -136,138 +136,6 @@ with open(OUTPUT_FILENAME, mode='w', newline='', encoding='utf-8') as f:
 print(f"SUCCESS: Created {OUTPUT_FILENAME}")
 
 ================================================================
-FILE: backend/generate_messy_data.py
-================================================================
-
-import csv
-import random
-
-# We simulate a "messy" feed from an affiliate network
-# Notice the column names are NOT what our engine wants. 
-# We will have to "adapt" them later.
-filename = "data/awin_export_raw.csv"
-
-products = [
-    ("Optimized Magnesium", "Health", "High absorption mag-glycinate for sleep.", "19.99"),
-    ("Deep Sleep Pillow Spray", "Home", "Lavender mist for better rest.", "12.50"),
-    ("Blue Light Blocking Glasses", "Electronics", "Reduce eye strain and improve melatonin.", "35.00"),
-    ("Organic Ashwagandha", "Supplements", "Reduces cortisol and stress levels.", "22.00"),
-    ("Weighted Blanket 15lbs", "Home", "Deep pressure stimulation for anxiety.", "89.00"),
-    ("Valerian Root Drops", "Health", "Natural herbal sleep aid.", "15.99"),
-    ("Smart Sleep Tracker Ring", "Electronics", "Monitors REM and deep sleep cycles.", "299.00"),
-    ("Tart Cherry Juice Concentrate", "Grocery", "Natural source of melatonin.", "18.50"),
-    ("Silk Sleep Mask", "Accessories", "100% blackout for total darkness.", "9.99"),
-    ("White Noise Machine", "Electronics", "Fan-based soothing sound.", "45.00"),
-    ("L-Theanine Capsules", "Supplements", "Promotes relaxation without drowsiness.", "19.00"),
-    ("Cedarwood Essential Oil", "Health", "Grounding scent for evening routines.", "8.50"),
-    ("Sunrise Alarm Clock", "Electronics", "Wake up naturally with light.", "55.00"),
-    ("Cooling Mattress Topper", "Home", "Regulate body temp for deep sleep.", "150.00"),
-    ("Chamomile Tea Bulk", "Grocery", "Loose leaf calming tea.", "14.00"),
-    ("Mouth Tape for Sleep", "Health", "Encourage nasal breathing.", "7.99"),
-    ("GABA Supplement", "Supplements", "Neurotransmitter support for calm.", "21.00"),
-    ("Sleep Headphones Headband", "Electronics", "Soft headband with speakers.", "25.00"),
-    ("Epsom Salts 5kg", "Health", "Magnesium bath soak for muscles.", "11.00"),
-    ("Meditation Cushion", "Home", "Ergonomic seat for mindfulness.", "32.00")
-]
-
-# Duplicate and vary slightly to get 50+ items
-final_data = []
-for i in range(3): 
-    for p in products:
-        # We add some "messiness" like HTML tags or extra spaces
-        messy_desc = f"<span>{p[2]}</span> <br> (Batch {i+1})"
-        final_data.append({
-            "product_id": f"awin_{random.randint(1000, 9999)}",
-            "merchant_name": "HealthStore_UK",
-            "prod_name": p[0],
-            "description_text": messy_desc, # MESSY COLUMN NAME
-            "retail_price": p[3],           # MESSY COLUMN NAME
-            "category_path": p[1],
-            "deep_link_url": f"http://awin.com/click?p={random.randint(100,999)}"
-        })
-
-# Write to CSV
-with open(filename, mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=final_data[0].keys())
-    writer.writeheader()
-    writer.writerows(final_data)
-
-print(f"GENERATED MESSY DATA: {filename} with {len(final_data)} rows.")
-
-================================================================
-FILE: backend/ingest.py
-================================================================
-
-import os
-import xml.etree.ElementTree as ET
-from dotenv import load_dotenv
-from pinecone import Pinecone
-from sentence_transformers import SentenceTransformer
-
-# 1. Load Environment Variables
-load_dotenv()
-
-# 2. Initialize the Database Connection
-api_key = os.getenv("PINECONE_API_KEY")
-pc = Pinecone(api_key=api_key)
-index = pc.Index("ventiko-index")
-
-# 3. Initialize the AI Model (Deterministic/Exact Mode)
-model = SentenceTransformer('all-MiniLM-L6-v2')
-
-# 4. Parse the Data File
-file_path = "data/products.xml"
-tree = ET.parse(file_path)
-root = tree.getroot()
-
-vectors_to_upload = []
-
-print("Starting ingestion process...")
-
-for product in root.findall("product"):
-    # Extract Raw Data
-    p_id = product.find("id").text
-    title = product.find("title").text
-    desc = product.find("description").text
-    price = product.find("price").text
-    currency = product.find("currency").text
-    category = product.find("category").text
-
-    # Create the "Context String"
-    # This is what the AI actually "reads" to understand the product
-    combined_text = f"{title}. {desc}. Category: {category}"
-
-    # Generate Vector (Math)
-    vector = model.encode(combined_text).tolist()
-
-    # Prepare Metadata
-    # This is the data we retrieve later to show the user
-    metadata = {
-        "title": title,
-        "description": desc,
-        "price": price,
-        "currency": currency,
-        "category": category,
-        "raw_text": combined_text
-    }
-
-    # Add to the batch list
-    vectors_to_upload.append((p_id, vector, metadata))
-    print(f" -> Processed: {title}")
-
-# 5. Upload to Pinecone
-if vectors_to_upload:
-    index.upsert(vectors=vectors_to_upload)
-    print("\nUpload Successful.")
-else:
-    print("\nNo products found to upload.")
-
-# 6. Final Verification
-stats = index.describe_index_stats()
-print("\nFinal Database Stats:")
-print(stats)
-
-================================================================
 FILE: backend/ingest_awin.py
 ================================================================
 
@@ -395,15 +263,56 @@ load_dotenv()
 # --- CONFIGURATION ---
 resend.api_key = os.getenv("RESEND_API_KEY")
 
-# --- DATABASE SETUP (POSTGRESQL SWITCH) ---
-# 1. Search History
+# INTELLIGENCE SETTINGS
+SCORE_THRESHOLD = 0.35 
+
+# --- PHASE 18: THE INTENT MAP (KEYWORD EXPANDER) ---
+# This acts as a translator between "Activity" and "Gear"
+INTENT_MAP = {
+    "hyrox": "crossfit functional fitness running shoes compression gear electrolytes energy gels grip chalk",
+    "marathon": "long distance running shoes hydration vest anti-chafe balm energy gels running socks recovery salts",
+    "half marathon": "running shoes hydration energy gels running socks recovery",
+    "5k": "running shoes lightweight trainers",
+    "10k": "running shoes lightweight trainers",
+    "skin routine": "face cleanser moisturizer toner serum SPF hyaluronic acid retinol",
+    "skincare": "face cleanser moisturizer toner serum SPF",
+    "morning routine": "face cleanser vitamin c serum moisturizer light therapy lamp",
+    "night routine": "magnesium glycinate blue light blocking glasses sleep mask lavender spray night cream",
+    "sleep": "magnesium glycinate blue light blocking glasses sleep mask lavender spray weighted blanket",
+    "recovery": "massage gun compression boots protein powder sauna blanket ice bath epsom salts",
+    "gym": "protein powder creatine pre-workout lifting straps gym bag water bottle",
+    "home gym": "dumbbells kettlebell yoga mat resistance bands adjustable bench",
+    "yoga": "yoga mat yoga blocks leggings meditation cushion essential oils",
+    "focus": "lion's mane mushroom caffeine l-theanine noise cancelling headphones standing desk",
+    "travel": "neck pillow compression socks eye mask power bank travel adapter noise cancelling headphones"
+}
+
+def expand_query_intent(user_query: str) -> str:
+    """
+    Checks if the user mentions a key activity and appends relevant gear keywords.
+    """
+    query_lower = user_query.lower()
+    additional_keywords = []
+
+    for key, values in INTENT_MAP.items():
+        # Check if the keyword (e.g., "hyrox") is in the user's search
+        if key in query_lower:
+            additional_keywords.append(values)
+    
+    if additional_keywords:
+        # Join them all together
+        expansion = " ".join(additional_keywords)
+        return f"{user_query} {expansion}"
+    
+    return user_query
+
+# --- DATABASE SETUP (POSTGRESQL) ---
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     results_summary: str 
 
-# 2. Email Leads
 class UserLead(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str
@@ -412,7 +321,6 @@ class UserLead(SQLModel, table=True):
     opt_in: bool = Field(default=False)
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
-# 3. Click Tracker
 class ClickLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     product_title: str
@@ -421,14 +329,10 @@ class ClickLog(SQLModel, table=True):
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
 # --- ENGINE CREATION ---
-# We now grab the URL from the .env file
 database_url = os.getenv("DATABASE_URL")
-
-# SAFETY FIX: SQLAlchemy needs "postgresql://" but some providers give "postgres://"
 if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-# If no URL is found (safety fallback for local dev if .env is missing), warn the user
 if not database_url:
     print("!!! WARNING: No DATABASE_URL found. Falling back to temporary SQLite.")
     sqlite_file_name = "search_history.db"
@@ -485,9 +389,22 @@ def health_check():
 @app.get("/search")
 @limiter.limit("30/minute") 
 def search(request: Request, query: str, session: Session = Depends(get_session)):
-    print(f"Received query: {query}")
+    print(f"Received Query: {query}")
     
-    query_vector = model.encode(query).tolist()
+    # 1. FILTER: Garbage Inputs
+    if len(query.strip()) < 3:
+        return {"matches": []}
+
+    # 2. INTELLIGENCE: Expand the Query
+    # This turns "Hyrox" into "Hyrox crossfit running shoes..."
+    expanded_query = expand_query_intent(query)
+    
+    if expanded_query != query:
+        print(f" -> Expanded to: {expanded_query}")
+
+    # 3. VECTOR SEARCH
+    # We search using the EXPANDED query to get better matches...
+    query_vector = model.encode(expanded_query).tolist()
     results = index.query(
         vector=query_vector,
         top_k=3,
@@ -498,6 +415,10 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
     result_titles = [] 
 
     for match in results['matches']:
+        # 4. FILTER: Confidence Threshold
+        if match['score'] < SCORE_THRESHOLD:
+            continue
+
         m_data = match['metadata']
         final_matches.append({
             "id": match['id'],
@@ -506,7 +427,8 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # SAVE TO ARCHIVE
+    # 5. ARCHIVE LOGIC
+    # ...But we log the ORIGINAL user query (so the Archive looks clean)
     if final_matches:
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()
@@ -548,11 +470,9 @@ def track_click(data: ClickRequest, session: Session = Depends(get_session)):
     print(f" -> CLICK TRACKED: {data.product_title}")
     return {"status": "logged"}
 
-# --- EMAIL CAPTURE & SEND ENDPOINT ---
+# --- EMAIL CAPTURE ENDPOINT ---
 class ProductItem(BaseModel):
     title: str
-    # We default to a fallback ONLY if the data is missing (prevents 422 error),
-    # but the frontend will send the real link if it exists.
     link: str = "https://ventiko.app" 
 
 class EmailRequest(BaseModel):
@@ -568,7 +488,6 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     if not data.opt_in:
         raise HTTPException(status_code=400, detail="User must opt-in.")
 
-    # Save Lead (Summary only)
     summary_list = [item.title for item in data.results]
     summary_str = " | ".join(summary_list)
     
@@ -582,10 +501,9 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # BUILD THE EMAIL (HTML with LINKS)
+    # EMAIL LOGIC
     product_list_html = ""
     for item in data.results:
-        # Each item is a clickable affiliate link
         product_list_html += f"""
         <li style='margin-bottom: 15px;'>
             <a href="{item.link}" style='color: #23F0C7; text-decoration: none; font-weight: bold; font-size: 16px; border-bottom: 1px dotted #23F0C7;'>
@@ -1116,7 +1034,12 @@ function App() {
       */}
 
       <Routes>
+        {/* HOMEPAGE (Typewriter mode) */}
         <Route path="/" element={<Home />} />
+        
+        {/* SEARCH RESULTS PAGE (Static URL for SEO) */}
+        <Route path="/s/:searchTerm" element={<Home />} />
+        
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
       </Routes>
@@ -1476,6 +1399,75 @@ const SkeletonCard = () => {
 export default SkeletonCard;
 
 ================================================================
+FILE: frontend/src/components/TypewriterInput.jsx
+================================================================
+
+import React, { useState, useEffect } from 'react';
+
+const TypewriterInput = ({ placeholders, value, onChange, onKeyPress }) => {
+  const [currentText, setCurrentText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(150);
+  const [isFocused, setIsFocused] = useState(false); // Track if user is clicking
+
+  useEffect(() => {
+    // The typing loop
+    const handleTyping = () => {
+      const fullText = placeholders[currentIndex];
+      
+      // Speed adjustments
+      setTypingSpeed(isDeleting ? 50 : 50);
+
+      if (!isDeleting) {
+        // Typing forward
+        setCurrentText(fullText.substring(0, currentText.length + 1));
+
+        // Pause at the end of the sentence
+        if (currentText === fullText) {
+          // First item (index 0) stays longer (3.5s), others 2.5s
+          const pauseTime = currentIndex === 0 ? 2000 : 1500;
+          setTypingSpeed(pauseTime);
+          setIsDeleting(true);
+        }
+      } else {
+        // Deleting backward
+        setCurrentText(fullText.substring(0, currentText.length - 1));
+
+        // Finished deleting, move to next
+        if (currentText === '') {
+          setIsDeleting(false);
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % placeholders.length);
+          setTypingSpeed(400);
+        }
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+
+  }, [currentText, isDeleting, currentIndex, placeholders, typingSpeed]);
+
+  return (
+    <input 
+      type="text" 
+      value={value} /* CONTROLLED: Only shows what the user types */
+      onChange={onChange}
+      onKeyPress={onKeyPress}
+      
+      /* UX MAGIC: If focused or user has typed, hide placeholder. Else show animation. */
+      placeholder={isFocused || value ? "" : currentText} 
+      
+      /* EVENTS: Detect click */
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+    />
+  );
+};
+
+export default TypewriterInput;
+
+================================================================
 FILE: frontend/src/index.css
 ================================================================
 
@@ -1726,9 +1718,8 @@ function Archive() {
 
   // Allow clicking a past query to search it again
   const runSearch = (term) => {
-    // Navigate to home with the search term. 
-    // We will need to update Home.jsx next to handle this "?query=" parameter.
-    navigate(`/?query=${encodeURIComponent(term)}`); 
+    // Navigate to the NEW Seo-Friendly URL structure
+    navigate(`/s/${encodeURIComponent(term)}`); 
   };
 
   return (
@@ -1813,58 +1804,70 @@ FILE: frontend/src/pages/Home.jsx
 
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
+import TypewriterInput from '../components/TypewriterInput'
 
 function Home() {
-  const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState("")
+  const { searchTerm } = useParams(); 
+  const navigate = useNavigate();     
+  
+  const [query, setQuery] = useState(searchTerm || "") 
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
   
   // EMAIL CAPTURE STATE
   const [email, setEmail] = useState("")
   const [optIn, setOptIn] = useState(false)
   const [emailStatus, setEmailStatus] = useState("idle")
 
-  const performSearch = async (searchTerm) => {
-    if (!searchTerm) return;
+  // --- PLACEHOLDERS ---
+  const placeholders = [
+    "We find what you need...",
+    "I need a new pair of running trainers suitable for a half marathon",
+    "What is the best protein powder for a vegan looking to get stronger",
+    "I want a natural face cleanser that will help me glow"
+  ];
+
+  // --- 1. SEARCH LOGIC ---
+  const performSearch = async (term) => {
+    if (!term) return;
     setLoading(true);
-    setHasSearched(true);
     setEmailStatus("idle");
     setEmail("");
     setOptIn(false);
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${searchTerm}`);
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
-      alert("System Busy. Please try again in a moment.");
     }
     setLoading(false);
   }
 
+  // --- 2. URL HANDLER ---
   useEffect(() => {
-    const urlQuery = searchParams.get('query');
-    if (urlQuery) {
-      setQuery(urlQuery);
-      performSearch(urlQuery);
+    if (searchTerm) {
+      setQuery(searchTerm); 
+      performSearch(searchTerm);
+    } else {
+      setResults([]);
+      setQuery("");
     }
-  }, [searchParams]);
+  }, [searchTerm]);
 
+  // --- 3. INPUT HANDLER ---
   const handleSearchClick = () => {
-    performSearch(query);
-  }
+    if (!query.trim()) return;
+    navigate(`/s/${encodeURIComponent(query)}`);
+  };
 
   const clearSearch = () => {
     setQuery("");
-    setResults([]);
-    setHasSearched(false);
-    setEmailStatus("idle");
-  }
+    navigate("/"); 
+  };
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
@@ -1904,37 +1907,74 @@ function Home() {
       setEmailStatus("error");
     }
   }
+  
+  // --- SEO HELPERS ---
+  const getPageTitle = () => {
+    if (searchTerm) {
+      const cleanTerm = searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1);
+      return `Best ${cleanTerm} Products (2025) | Ventiko Finder`;
+    }
+    return "Ventiko | The AI Product Discovery Engine";
+  }
 
- 
-// --- DYNAMIC SEO TITLES ---
-const getPageTitle = () => {
-  if (query) return `${query} | Ventiko Product Finder`;
-  return "Ventiko | Product Finder";
-}
+  const getMetaDesc = () => {
+    if (searchTerm) return `Don't just search. Find the best ${searchTerm} with Ventiko's AI analysis. Compare top-rated products, prices, and availability instantly.`;
+    return "Ventiko is the AI-powered search engine for health & performance. We curate the best products so you don't have to.";
+  }
 
-const getMetaDesc = () => {
-  if (query) return `Find the best products for ${query}. AI-curated results.`;
-  return "The AI-powered search engine for finding the right products you actually need.";
-}
+  // --- SCHEMA GENERATION ---
+  const getSchemaJSON = () => {
+    if (!searchTerm || results.length === 0) return null;
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": `Best results for ${searchTerm}`,
+      "itemListElement": results.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Product",
+          "name": item.metadata.title,
+          "description": item.metadata.description,
+          "image": item.metadata.large_image || "", 
+          "offers": {
+            "@type": "Offer",
+            "price": item.metadata.price,
+            "priceCurrency": item.metadata.currency,
+            "availability": "https://schema.org/InStock",
+            "url": item.metadata.link
+          }
+        }
+      }))
+    };
+    
+    console.log("SCHEMA GENERATED FOR GOOGLE:", schema); 
+    return JSON.stringify(schema);
+  };
+
+  const schemaString = getSchemaJSON();
 
   return (
     <>
       <Helmet>
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDesc()} />
+        <link rel="canonical" href={searchTerm ? `https://ventiko.app/s/${searchTerm}` : `https://ventiko.app`} />
+        {/* NOTE: Script tag moved out of Helmet to body below */}
       </Helmet>
 
       <h1>Ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
-          <input 
-            type="text" 
+          <TypewriterInput 
+            placeholders={placeholders}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="We find what you need..."
             onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
           />
+
           {query.length > 0 && (
             <button className="clear-btn" onClick={clearSearch}>
               ✕
@@ -2030,10 +2070,24 @@ const getMetaDesc = () => {
         </div>
       )}
 
-      {hasSearched && results.length === 0 && !loading && (
-        <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
-          no matches found
-        </p>
+      {searchTerm && results.length === 0 && !loading && (
+        <div style={{textAlign: 'center', marginTop: '3rem', animation: 'fadeUp 0.5s ease'}}>
+           <p style={{ color: '#AAA1C8', fontFamily: 'Major Mono Display', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+             no matches found
+           </p>
+           <p style={{ fontFamily: 'Roboto', color: '#64748b', fontSize: '0.9rem' }}>
+             Try a broader search (e.g. "sleep" instead of "lavender spray").
+           </p>
+        </div>
+      )}
+
+      {/* --- SEO SCRIPT INJECTION (BODY LOCATION) --- */}
+      {/* This will render at the bottom of the DOM, bypassing Helmet sanitization */}
+      {schemaString && (
+        <script 
+          type="application/ld+json" 
+          dangerouslySetInnerHTML={{ __html: schemaString }} 
+        />
       )}
     </>
   )

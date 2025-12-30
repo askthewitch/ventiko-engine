@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useSearchParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
-// IMPORT THE NEW COMPONENT
 import TypewriterInput from '../components/TypewriterInput'
 
 function Home() {
-  const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState("")
+  const { searchTerm } = useParams(); 
+  const navigate = useNavigate();     
+  
+  const [query, setQuery] = useState(searchTerm || "") 
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
   
   // EMAIL CAPTURE STATE
   const [email, setEmail] = useState("")
@@ -25,44 +25,45 @@ function Home() {
     "What is the best protein powder for a vegan looking to get stronger",
     "I want a natural face cleanser that will help me glow"
   ];
-  // (Old rotation logic is deleted from here)
 
-  const performSearch = async (searchTerm) => {
-    if (!searchTerm) return;
+  // --- 1. SEARCH LOGIC ---
+  const performSearch = async (term) => {
+    if (!term) return;
     setLoading(true);
-    setHasSearched(true);
     setEmailStatus("idle");
     setEmail("");
     setOptIn(false);
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${searchTerm}`);
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
-      alert("System Busy. Please try again in a moment.");
     }
     setLoading(false);
   }
 
+  // --- 2. URL HANDLER ---
   useEffect(() => {
-    const urlQuery = searchParams.get('query');
-    if (urlQuery) {
-      setQuery(urlQuery);
-      performSearch(urlQuery);
+    if (searchTerm) {
+      setQuery(searchTerm); 
+      performSearch(searchTerm);
+    } else {
+      setResults([]);
+      setQuery("");
     }
-  }, [searchParams]);
+  }, [searchTerm]);
 
+  // --- 3. INPUT HANDLER ---
   const handleSearchClick = () => {
-    performSearch(query);
-  }
+    if (!query.trim()) return;
+    navigate(`/s/${encodeURIComponent(query)}`);
+  };
 
   const clearSearch = () => {
     setQuery("");
-    setResults([]);
-    setHasSearched(false);
-    setEmailStatus("idle");
-  }
+    navigate("/"); 
+  };
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
@@ -102,32 +103,67 @@ function Home() {
       setEmailStatus("error");
     }
   }
-
   
-// --- DYNAMIC SEO TITLES ---
-const getPageTitle = () => {
-  if (query) return `${query} | Ventiko Product Finder`;
-  return "Ventiko | Product Finder";
-}
+  // --- SEO HELPERS ---
+  const getPageTitle = () => {
+    if (searchTerm) {
+      const cleanTerm = searchTerm.charAt(0).toUpperCase() + searchTerm.slice(1);
+      return `Best ${cleanTerm} Products (2025) | Ventiko Finder`;
+    }
+    return "Ventiko | The AI Product Discovery Engine";
+  }
 
-const getMetaDesc = () => {
-  if (query) return `Find the best products for ${query}. AI-curated results.`;
-  return "The AI-powered search engine for finding the right products you actually need.";
-}
+  const getMetaDesc = () => {
+    if (searchTerm) return `Don't just search. Find the best ${searchTerm} with Ventiko's AI analysis. Compare top-rated products, prices, and availability instantly.`;
+    return "Ventiko is the AI-powered search engine for health & performance. We curate the best products so you don't have to.";
+  }
+
+  // --- SCHEMA GENERATION ---
+  const getSchemaJSON = () => {
+    if (!searchTerm || results.length === 0) return null;
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": `Best results for ${searchTerm}`,
+      "itemListElement": results.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Product",
+          "name": item.metadata.title,
+          "description": item.metadata.description,
+          "image": item.metadata.large_image || "", 
+          "offers": {
+            "@type": "Offer",
+            "price": item.metadata.price,
+            "priceCurrency": item.metadata.currency,
+            "availability": "https://schema.org/InStock",
+            "url": item.metadata.link
+          }
+        }
+      }))
+    };
+    
+    console.log("SCHEMA GENERATED FOR GOOGLE:", schema); 
+    return JSON.stringify(schema);
+  };
+
+  const schemaString = getSchemaJSON();
 
   return (
     <>
       <Helmet>
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDesc()} />
+        <link rel="canonical" href={searchTerm ? `https://ventiko.app/s/${searchTerm}` : `https://ventiko.app`} />
+        {/* NOTE: Script tag moved out of Helmet to body below */}
       </Helmet>
 
       <h1>Ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
-          
-          {/* REPLACE THE OLD INPUT WITH THIS */}
           <TypewriterInput 
             placeholders={placeholders}
             value={query}
@@ -163,9 +199,6 @@ const getMetaDesc = () => {
             onClick={() => handleProductClick(item.metadata.title, item.metadata.link)}
             style={{ cursor: 'pointer' }}
           >
-            {/* IMAGE PLACEHOLDER (Commented out until you have real images) */}
-            {/* <img src={item.metadata.large_image} alt={item.metadata.title} style={{width: '100%', borderRadius: '10px', marginBottom: '1rem'}} /> */}
-
             <div>
               <h3>{item.metadata.title}</h3>
               <p>{item.metadata.description}</p>
@@ -233,7 +266,7 @@ const getMetaDesc = () => {
         </div>
       )}
 
-      {hasSearched && results.length === 0 && !loading && (
+      {searchTerm && results.length === 0 && !loading && (
         <div style={{textAlign: 'center', marginTop: '3rem', animation: 'fadeUp 0.5s ease'}}>
            <p style={{ color: '#AAA1C8', fontFamily: 'Major Mono Display', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
              no matches found
@@ -242,6 +275,15 @@ const getMetaDesc = () => {
              Try a broader search (e.g. "sleep" instead of "lavender spray").
            </p>
         </div>
+      )}
+
+      {/* --- SEO SCRIPT INJECTION (BODY LOCATION) --- */}
+      {/* This will render at the bottom of the DOM, bypassing Helmet sanitization */}
+      {schemaString && (
+        <script 
+          type="application/ld+json" 
+          dangerouslySetInnerHTML={{ __html: schemaString }} 
+        />
       )}
     </>
   )

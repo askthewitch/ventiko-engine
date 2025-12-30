@@ -15,7 +15,12 @@ function App() {
       */}
 
       <Routes>
+        {/* HOMEPAGE (Typewriter mode) */}
         <Route path="/" element={<Home />} />
+        
+        {/* SEARCH RESULTS PAGE (Static URL for SEO) */}
+        <Route path="/s/:searchTerm" element={<Home />} />
+        
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
       </Routes>

@@ -22,10 +22,47 @@ load_dotenv()
 resend.api_key = os.getenv("RESEND_API_KEY")
 
 # INTELLIGENCE SETTINGS
-# 0.0 = Matches everything (Garbage)
-# 1.0 = Matches only exact text
-# 0.35 is usually the "Sweet Spot" for AI vague matching.
 SCORE_THRESHOLD = 0.35 
+
+# --- PHASE 18: THE INTENT MAP (KEYWORD EXPANDER) ---
+# This acts as a translator between "Activity" and "Gear"
+INTENT_MAP = {
+    "hyrox": "crossfit functional fitness running shoes compression gear electrolytes energy gels grip chalk",
+    "marathon": "long distance running shoes hydration vest anti-chafe balm energy gels running socks recovery salts",
+    "half marathon": "running shoes hydration energy gels running socks recovery",
+    "5k": "running shoes lightweight trainers",
+    "10k": "running shoes lightweight trainers",
+    "skin routine": "face cleanser moisturizer toner serum SPF hyaluronic acid retinol",
+    "skincare": "face cleanser moisturizer toner serum SPF",
+    "morning routine": "face cleanser vitamin c serum moisturizer light therapy lamp",
+    "night routine": "magnesium glycinate blue light blocking glasses sleep mask lavender spray night cream",
+    "sleep": "magnesium glycinate blue light blocking glasses sleep mask lavender spray weighted blanket",
+    "recovery": "massage gun compression boots protein powder sauna blanket ice bath epsom salts",
+    "gym": "protein powder creatine pre-workout lifting straps gym bag water bottle",
+    "home gym": "dumbbells kettlebell yoga mat resistance bands adjustable bench",
+    "yoga": "yoga mat yoga blocks leggings meditation cushion essential oils",
+    "focus": "lion's mane mushroom caffeine l-theanine noise cancelling headphones standing desk",
+    "travel": "neck pillow compression socks eye mask power bank travel adapter noise cancelling headphones"
+}
+
+def expand_query_intent(user_query: str) -> str:
+    """
+    Checks if the user mentions a key activity and appends relevant gear keywords.
+    """
+    query_lower = user_query.lower()
+    additional_keywords = []
+
+    for key, values in INTENT_MAP.items():
+        # Check if the keyword (e.g., "hyrox") is in the user's search
+        if key in query_lower:
+            additional_keywords.append(values)
+    
+    if additional_keywords:
+        # Join them all together
+        expansion = " ".join(additional_keywords)
+        return f"{user_query} {expansion}"
+    
+    return user_query
 
 # --- DATABASE SETUP (POSTGRESQL) ---
 class SearchLog(SQLModel, table=True):
@@ -110,13 +147,22 @@ def health_check():
 @app.get("/search")
 @limiter.limit("30/minute") 
 def search(request: Request, query: str, session: Session = Depends(get_session)):
-    print(f"Received query: {query}")
+    print(f"Received Query: {query}")
     
-    # 1. FILTER: Garbage Inputs (Too short)
+    # 1. FILTER: Garbage Inputs
     if len(query.strip()) < 3:
         return {"matches": []}
 
-    query_vector = model.encode(query).tolist()
+    # 2. INTELLIGENCE: Expand the Query
+    # This turns "Hyrox" into "Hyrox crossfit running shoes..."
+    expanded_query = expand_query_intent(query)
+    
+    if expanded_query != query:
+        print(f" -> Expanded to: {expanded_query}")
+
+    # 3. VECTOR SEARCH
+    # We search using the EXPANDED query to get better matches...
+    query_vector = model.encode(expanded_query).tolist()
     results = index.query(
         vector=query_vector,
         top_k=3,
@@ -127,9 +173,7 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
     result_titles = [] 
 
     for match in results['matches']:
-        # 2. FILTER: Confidence Threshold
-        # If the AI isn't at least 35% sure, we skip it.
-        # This blocks "afg`sbs`sdg" from returning random stuff.
+        # 4. FILTER: Confidence Threshold
         if match['score'] < SCORE_THRESHOLD:
             continue
 
@@ -141,9 +185,8 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # 3. ARCHIVE LOGIC
-    # We ONLY save to the database if we actually found valid matches.
-    # This prevents your SEO page from filling up with garbage queries.
+    # 5. ARCHIVE LOGIC
+    # ...But we log the ORIGINAL user query (so the Archive looks clean)
     if final_matches:
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()

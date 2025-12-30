@@ -23,9 +23,8 @@ function Archive() {
 
   // Allow clicking a past query to search it again
   const runSearch = (term) => {
-    // Navigate to home with the search term. 
-    // We will need to update Home.jsx next to handle this "?query=" parameter.
-    navigate(`/?query=${encodeURIComponent(term)}`); 
+    // Navigate to the NEW Seo-Friendly URL structure
+    navigate(`/s/${encodeURIComponent(term)}`); 
   };
 
   return (
