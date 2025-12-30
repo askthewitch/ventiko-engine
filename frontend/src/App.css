@@ -1,10 +1,10 @@
 /* --- VENTIKO DESIGN SYSTEM --- */
 :root {
-  --bg-color: #FCF6EE;       /* Floral White */
-  --accent-mint: #23F0C7;    /* Tropical Mint */
-  --accent-lilac: #AAA1C8;   /* Lilac Ash */
-  --text-dark: #2c3e50;      /* Deep Grey */
-  --text-light: #64748b;     /* Soft Grey */
+  --bg-color: #FCF6EE;        /* Floral White */
+  --accent-mint: #23F0C7;     /* Tropical Mint */
+  --accent-lilac: #AAA1C8;    /* Lilac Ash */
+  --text-dark: #2c3e50;       /* Deep Grey */
+  --text-light: #64748b;      /* Soft Grey */
   
   --font-title: 'Major Mono Display', monospace;
   --font-body: 'Roboto', sans-serif;
@@ -20,12 +20,13 @@ body {
   color: var(--text-dark);
   font-family: var(--font-body);
   margin: 0;
-  min-height: 100vh;
+  /* Use dVH for mobile browser bar support */
+  min-height: 100dvh; 
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow-x: hidden; /* Prevents side-scroll if dots go wide */
+  overflow-x: hidden;
 
   /* LAYER 1: THE AURORA GLOW */
   background: linear-gradient(
@@ -40,7 +41,6 @@ body {
 }
 
 /* LAYER 2: THE TECH DOTS */
-/* We moved z-index from -1 to 0 so it sits ON TOP of the background */
 body::before {
   content: "";
   position: fixed;
@@ -49,33 +49,33 @@ body::before {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0; /* Sits on top of the Aurora */
+  z-index: 0;
   
-  /* The Dots - Made slightly darker/richer for visibility */
   background-image: radial-gradient(#aaa1c87c 1.5px, transparent 1px);
   background-size: 25px 25px;
   
-  /* The Fade Mask */
   mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
   -webkit-mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
   opacity: 0.7; 
 }
 
 /* LAYER 3: THE CONTENT */
-/* We explicitly lift the content up so it floats ABOVE the dots */
 #root {
   width: 100%;
   max-width: 1000px;
-  padding: 2rem;
+  padding: 1.5rem; /* Reduced slightly for mobile */
   box-sizing: border-box;
   position: relative;
   z-index: 1; 
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ensures footer pushes down */
 }
 
 /* --- TYPOGRAPHY --- */
 h1 {
   font-family: var(--font-title);
-  font-size: 3.5rem;
+  font-size: 3rem; /* slightly smaller base */
   text-align: center;
   margin-bottom: 2rem;
   color: var(--text-dark);
@@ -86,9 +86,10 @@ h1 {
 .search-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   max-width: 600px;
-  margin: 0 auto 4rem auto;
+  width: 100%;
+  margin: 0 auto 3rem auto;
   transition: all 0.5s ease;
 }
 
@@ -100,11 +101,11 @@ h1 {
 /* The Input Field */
 input {
   width: 100%;
-  padding: 1.2rem 3rem 1.2rem 1.5rem;
+  padding: 1rem 3rem 1rem 1.5rem;
   border: 1.5px solid var(--text-dark);
   border-radius: 50px;
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 16px; /* Prevents iOS Zoom on focus */
   background: white;
   color: var(--text-dark);
   outline: none;
@@ -120,11 +121,10 @@ input::placeholder {
 
 input:focus {
   border-color: var(--accent-lilac);
-  transform: scale(1.02);
+  transform: scale(1.01);
   box-shadow: 0 8px 25px rgba(35, 240, 199, 0.4);
 }
 
-/* The 'X' Clear Button */
 .clear-btn {
   position: absolute;
   right: 15px;
@@ -136,17 +136,11 @@ input:focus {
   color: #94a3b8;
   cursor: pointer;
   padding: 5px;
-  transition: color 0.2s;
 }
 
-.clear-btn:hover {
-  color: var(--text-dark);
-}
-
-/* The Search Button */
 button.main-search-btn {
   align-self: center;
-  padding: 1rem 3rem;
+  padding: 0.8rem 2.5rem;
   background-color: var(--accent-mint);
   color: var(--text-dark);
   border: none;
@@ -154,44 +148,31 @@ button.main-search-btn {
   font-family: var(--font-title);
   font-weight: 400;
   letter-spacing: 0.5px;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s;
   box-shadow: 4px 4px 0px var(--text-dark);
 }
 
-button.main-search-btn:hover {
-  transform: translateY(-4px) translateX(-2px);
-  box-shadow: 8px 8px 0px var(--accent-lilac);
-}
-
 button.main-search-btn:active {
-  transform: translateY(0);
+  transform: translateY(2px);
   box-shadow: 2px 2px 0px var(--accent-lilac);
-}
-
-button.main-search-btn:disabled {
-  background-color: #e2e8f0;
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
 }
 
 /* --- RESULTS GRID --- */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: 1.5rem;
   width: 100%;
 }
 
-/* --- CARD DESIGN --- */
 .card {
   background: white;
   border-radius: 20px;
   padding: 1.5rem;
   border: 1px solid #eee;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
   transition: all 0.4s ease;
   animation: fadeUp 0.6s ease-out forwards;
   opacity: 0;
@@ -202,23 +183,18 @@ button.main-search-btn:disabled {
 .card:nth-child(2) { animation-delay: 0.2s; }
 .card:nth-child(3) { animation-delay: 0.3s; }
 
-.card:hover {
-  transform: translateY(-8px);
-  border-color: var(--accent-mint);
-  box-shadow: 0 20px 40px rgba(35, 240, 199, 0.2);
-}
-
 .card h3 {
   font-family: var(--font-body);
   font-weight: 700;
   margin: 0 0 0.5rem 0;
   color: var(--text-dark);
+  font-size: 1.1rem;
 }
 
 .card p {
   color: var(--text-light);
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.5;
   margin-bottom: 1.5rem;
 }
 
@@ -235,22 +211,20 @@ button.main-search-btn:disabled {
   font-weight: bold;
   color: var(--text-dark);
   background: var(--accent-mint);
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .score {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--accent-lilac);
   font-weight: bold;
 }
 
 /* --- ANIMATIONS --- */
 @keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes aurora {
@@ -258,10 +232,11 @@ button.main-search-btn:disabled {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
 /* --- FOOTER STYLES --- */
 .site-footer {
   width: 100%;
-  padding: 2rem;
+  padding: 3rem 0;
   margin-top: auto;
   display: flex;
   justify-content: center;
@@ -270,70 +245,67 @@ button.main-search-btn:disabled {
   z-index: 10;
   position: relative;
   flex-wrap: wrap;
-  box-sizing: border-box; /* Crucial for centering */
 }
 
 .footer-group {
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  justify-content: center; /* Ensures items inside group are centered */
 }
 
 .footer-divider {
   color: #AAA1C8;
   font-weight: 300;
-  display: block;
 }
 
-/* Links (<a>) */
-.footer-link {
+.footer-link, .footer-link-btn {
   text-decoration: none;
-  color: #2c3e50dd;
-  font-family: 'Major Mono Display', monospace;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.footer-link:hover {
-  color: var(--text-dark);
-}
-
-/* Buttons (<button>) */
-.footer-link-btn {
   background: none;
   border: none;
   color: #2c3e50dd;
   cursor: pointer;
   font-family: 'Major Mono Display', monospace;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   padding: 0;
-  transition: color 0.2s;
 }
 
-.footer-link-btn:hover {
-  color: var(--text-dark);
-}
-
-/* MOBILE ADJUSTMENTS */
+/* --- MOBILE SPECIFIC OVERRIDES --- */
 @media (max-width: 600px) {
+  #root {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-container {
+    margin-bottom: 2rem;
+  }
+
+  input {
+    padding: 0.8rem 1rem;
+    font-size: 16px; /* Crucial for iOS */
+  }
+
+  button.main-search-btn {
+    width: 100%; /* Full width button on mobile */
+    padding: 1rem;
+  }
+
   .site-footer {
-    flex-direction: column; /* Stack rows */
+    flex-direction: column;
     gap: 1.5rem;
-    padding: 2rem 1rem 4rem 1rem; /* Extra bottom padding for mobile scroll */
-    text-align: center;
+    padding-bottom: 4rem; /* Space for scroll */
   }
   
-  .footer-divider {
-    display: none;
-  }
+  .footer-divider { display: none; }
   
   .footer-group {
-    width: 100%; /* Force full width so centering works */
-    justify-content: center; /* Force items to middle */
-    flex-wrap: wrap; /* Allow wrapping if screen is tiny */
-    gap: 1.5rem;
+    width: 100%;
+    justify-content: center;
+    gap: 1.2rem;
   }
 }
