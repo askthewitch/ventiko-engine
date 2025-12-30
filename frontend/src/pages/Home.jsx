@@ -3,6 +3,8 @@ import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
+// IMPORT THE NEW COMPONENT
+import TypewriterInput from '../components/TypewriterInput'
 
 function Home() {
   const [searchParams] = useSearchParams();
@@ -15,6 +17,15 @@ function Home() {
   const [email, setEmail] = useState("")
   const [optIn, setOptIn] = useState(false)
   const [emailStatus, setEmailStatus] = useState("idle")
+
+  // --- PLACEHOLDERS ---
+  const placeholders = [
+    "We find what you need...",
+    "I need a new pair of running trainers suitable for a half marathon",
+    "What is the best protein powder for a vegan looking to get stronger",
+    "I want a natural face cleanser that will help me glow"
+  ];
+  // (Old rotation logic is deleted from here)
 
   const performSearch = async (searchTerm) => {
     if (!searchTerm) return;
@@ -92,7 +103,7 @@ function Home() {
     }
   }
 
- 
+  
 // --- DYNAMIC SEO TITLES ---
 const getPageTitle = () => {
   if (query) return `${query} | Ventiko Product Finder`;
@@ -115,13 +126,15 @@ const getMetaDesc = () => {
       
       <div className="search-container">
         <div className="input-wrapper">
-          <input 
-            type="text" 
+          
+          {/* REPLACE THE OLD INPUT WITH THIS */}
+          <TypewriterInput 
+            placeholders={placeholders}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="We find what you need..."
             onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
           />
+
           {query.length > 0 && (
             <button className="clear-btn" onClick={clearSearch}>
               ✕
@@ -150,6 +163,9 @@ const getMetaDesc = () => {
             onClick={() => handleProductClick(item.metadata.title, item.metadata.link)}
             style={{ cursor: 'pointer' }}
           >
+            {/* IMAGE PLACEHOLDER (Commented out until you have real images) */}
+            {/* <img src={item.metadata.large_image} alt={item.metadata.title} style={{width: '100%', borderRadius: '10px', marginBottom: '1rem'}} /> */}
+
             <div>
               <h3>{item.metadata.title}</h3>
               <p>{item.metadata.description}</p>
@@ -218,9 +234,14 @@ const getMetaDesc = () => {
       )}
 
       {hasSearched && results.length === 0 && !loading && (
-        <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
-          no matches found
-        </p>
+        <div style={{textAlign: 'center', marginTop: '3rem', animation: 'fadeUp 0.5s ease'}}>
+           <p style={{ color: '#AAA1C8', fontFamily: 'Major Mono Display', fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+             no matches found
+           </p>
+           <p style={{ fontFamily: 'Roboto', color: '#64748b', fontSize: '0.9rem' }}>
+             Try a broader search (e.g. "sleep" instead of "lavender spray").
+           </p>
+        </div>
       )}
     </>
   )

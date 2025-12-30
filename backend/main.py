@@ -21,15 +21,19 @@ load_dotenv()
 # --- CONFIGURATION ---
 resend.api_key = os.getenv("RESEND_API_KEY")
 
-# --- DATABASE SETUP ---
-# 1. Search History
+# INTELLIGENCE SETTINGS
+# 0.0 = Matches everything (Garbage)
+# 1.0 = Matches only exact text
+# 0.35 is usually the "Sweet Spot" for AI vague matching.
+SCORE_THRESHOLD = 0.35 
+
+# --- DATABASE SETUP (POSTGRESQL) ---
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     results_summary: str 
 
-# 2. Email Leads
 class UserLead(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str
@@ -38,7 +42,6 @@ class UserLead(SQLModel, table=True):
     opt_in: bool = Field(default=False)
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
-# 3. Click Tracker
 class ClickLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     product_title: str
@@ -46,9 +49,17 @@ class ClickLog(SQLModel, table=True):
     link_clicked: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
-sqlite_file_name = "search_history.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-engine = create_engine(sqlite_url)
+# --- ENGINE CREATION ---
+database_url = os.getenv("DATABASE_URL")
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+if not database_url:
+    print("!!! WARNING: No DATABASE_URL found. Falling back to temporary SQLite.")
+    sqlite_file_name = "search_history.db"
+    database_url = f"sqlite:///{sqlite_file_name}"
+
+engine = create_engine(database_url)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
@@ -101,6 +112,10 @@ def health_check():
 def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received query: {query}")
     
+    # 1. FILTER: Garbage Inputs (Too short)
+    if len(query.strip()) < 3:
+        return {"matches": []}
+
     query_vector = model.encode(query).tolist()
     results = index.query(
         vector=query_vector,
@@ -112,6 +127,12 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
     result_titles = [] 
 
     for match in results['matches']:
+        # 2. FILTER: Confidence Threshold
+        # If the AI isn't at least 35% sure, we skip it.
+        # This blocks "afg`sbs`sdg" from returning random stuff.
+        if match['score'] < SCORE_THRESHOLD:
+            continue
+
         m_data = match['metadata']
         final_matches.append({
             "id": match['id'],
@@ -120,7 +141,9 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # SAVE TO ARCHIVE
+    # 3. ARCHIVE LOGIC
+    # We ONLY save to the database if we actually found valid matches.
+    # This prevents your SEO page from filling up with garbage queries.
     if final_matches:
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()
@@ -162,11 +185,9 @@ def track_click(data: ClickRequest, session: Session = Depends(get_session)):
     print(f" -> CLICK TRACKED: {data.product_title}")
     return {"status": "logged"}
 
-# --- EMAIL CAPTURE & SEND ENDPOINT ---
+# --- EMAIL CAPTURE ENDPOINT ---
 class ProductItem(BaseModel):
     title: str
-    # We default to a fallback ONLY if the data is missing (prevents 422 error),
-    # but the frontend will send the real link if it exists.
     link: str = "https://ventiko.app" 
 
 class EmailRequest(BaseModel):
@@ -182,7 +203,6 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     if not data.opt_in:
         raise HTTPException(status_code=400, detail="User must opt-in.")
 
-    # Save Lead (Summary only)
     summary_list = [item.title for item in data.results]
     summary_str = " | ".join(summary_list)
     
@@ -196,10 +216,9 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # BUILD THE EMAIL (HTML with LINKS)
+    # EMAIL LOGIC
     product_list_html = ""
     for item in data.results:
-        # Each item is a clickable affiliate link
         product_list_html += f"""
         <li style='margin-bottom: 15px;'>
             <a href="{item.link}" style='color: #23F0C7; text-decoration: none; font-weight: bold; font-size: 16px; border-bottom: 1px dotted #23F0C7;'>

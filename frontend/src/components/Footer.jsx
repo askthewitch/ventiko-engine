@@ -101,7 +101,7 @@ const Footer = () => {
           Have a question, a partnership proposal, or a product you want listed?
         </p>
         
-        <h3 style={legalHeadingStyle}>gerneal enquiries</h3>
+        <h3 style={legalHeadingStyle}>general enquiries</h3>
         <p style={legalTextStyle}>
           <a href="mailto:support@ventiko.app" style={{ color: '#23F0C7', textDecoration: 'none', fontWeight: 'bold' }}>
             support@ventiko.app

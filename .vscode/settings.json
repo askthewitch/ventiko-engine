@@ -1,0 +1,12 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "Ventiko Cloud",
+            "connectString": "postgresql://neondb_owner:npg_7lmgMenTvd3r@ep-still-pine-adzohg6t-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        }
+    ]
+}

@@ -1,0 +1,2054 @@
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-30T17:15:08.111Z
+
+
+
+================================================================
+FILE: README.md
+================================================================
+
+# Ventiko Bio-Optimization Engine
+Middleware for aggregating external affiliate feeds into health protocols.
+
+
+================================================================
+FILE: backend/generate_awin_mock.py
+================================================================
+
+import csv
+import random
+
+# --- CONFIGURATION ---
+OUTPUT_FILENAME = "data/awin_large_export.csv"
+ROW_COUNT = 1200 # We will generate 1,200 products
+
+# --- AWIN STANDARD COLUMNS ---
+# Real AWIN feeds usually look like this
+HEADERS = [
+    "merchant_id", "merchant_name", "merchant_category", 
+    "aw_product_id", "product_name", "description", 
+    "search_price", "currency", "aw_deep_link", "large_image"
+]
+
+# --- DATA POOLS (Bio-Optimization Themed) ---
+brands = [
+    "NeuroPeak", "VitalSleep", "OptiMize Labs", "EarthGrown", "RedLight Rising", 
+    "Zenith Gear", "Halo Tracker", "PureFlow", "Nordic Recovery", "BioStack"
+]
+
+categories = [
+    "Supplements > Sleep", "Supplements > Focus", "Supplements > Gut Health",
+    "Electronics > Wearables", "Electronics > Recovery",
+    "Home > Bedroom", "Home > Lighting", "Apparel > Compression"
+]
+
+adjectives = ["Advanced", "Organic", "Clinical Strength", "Deep", "Rapid", "Premium", "Ultra", "Smart"]
+
+# Templates to generate varied product titles
+product_templates = {
+    "Supplements > Sleep": [
+        "Magnesium Glycinate Complex", "L-Theanine Calm Drops", "Valerian Root Extract", 
+        "Tart Cherry Concentrate", "GABA Night Formula", "Deep Sleep Stack"
+    ],
+    "Supplements > Focus": [
+        "Lion's Mane Mushroom Extract", "Caffeine + L-Theanine", "Omega-3 Fish Oil (High DHA)", 
+        "Rhodiola Rosea Adaptogen", "Alpha-GPC Nootropic", "Yerba Mate Extract"
+    ],
+    "Supplements > Gut Health": [
+        "Probiotic 50 Billion CFU", "L-Glutamine Powder", "Digestive Enzyme Complex", 
+        "Prebiotic Fiber Blend", "Bone Broth Protein"
+    ],
+    "Electronics > Wearables": [
+        "Biometric Ring Gen 3", "HRV Chest Strap", "Sleep Tracking Headband", 
+        "Continuous Glucose Monitor (CGM)", "Smart Watch Pro"
+    ],
+    "Electronics > Recovery": [
+        "Red Light Therapy Panel (Half Body)", "Percussion Massage Gun", "PEMF Mat", 
+        "Infrared Sauna Blanket", "NormaTec Compression Boots"
+    ],
+    "Home > Bedroom": [
+        "Weighted Blanket (15lbs)", "Cooling Mattress Pad", "Blackout Curtains 100%", 
+        "Silk Sleep Mask", "Ergonomic Pillow"
+    ],
+    "Home > Lighting": [
+        "Blue Light Blocking Bulbs (Amber)", "Red Night Light", "Sunrise Alarm Clock", 
+        "Full Spectrum Desk Lamp"
+    ],
+    "Apparel > Compression": [
+        "Recovery Socks", "Compression Leggings", "Post-Workout Hoodie", "Copper Infused Sleeve"
+    ]
+}
+
+def generate_description(title, category):
+    # Simulate "Dirty" HTML often found in feeds
+    benefits = [
+        "Optimizes circadian rhythm.", "Reduces cortisol levels.", "Enhances deep sleep cycles.",
+        "Improves cognitive function.", "Supports metabolic flexibility.", "Accelerates muscle recovery."
+    ]
+    benefit = random.choice(benefits)
+    return f"<strong>{title}</strong><br> {benefit} <br> <ul><li>Batch Tested</li><li>Clinical Dose</li></ul> <span>Category: {category}</span>"
+
+# --- GENERATOR LOGIC ---
+print(f"Generating {ROW_COUNT} realistic products...")
+
+rows = []
+
+for i in range(ROW_COUNT):
+    # 1. Pick a Random Category
+    cat = random.choice(categories)
+    
+    # 2. Pick a Brand
+    brand = random.choice(brands)
+    
+    # 3. Construct Title
+    # Use a specific item from that category + an adjective
+    base_item = random.choice(product_templates[cat])
+    title = f"{brand} {random.choice(adjectives)} {base_item}"
+    
+    # 4. Generate Price (Randomized reasonable range)
+    if "Electronics" in cat:
+        price = round(random.uniform(99.00, 499.00), 2)
+    elif "Home" in cat:
+        price = round(random.uniform(40.00, 150.00), 2)
+    else:
+        price = round(random.uniform(15.00, 60.00), 2)
+
+    # 5. Build Row
+    row = {
+        "merchant_id": "1001",
+        "merchant_name": brand,
+        "merchant_category": cat,
+        "aw_product_id": f"p_{random.randint(100000, 999999)}",
+        "product_name": title,
+        "description": generate_description(title, cat),
+        "search_price": f"{price}",
+        "currency": "GBP",
+        "aw_deep_link": f"https://www.awin1.com/cread.php?awinmid=1001&p={random.randint(1,9999)}",
+        "large_image": f"https://via.placeholder.com/300x300?text={base_item.replace(' ', '+')}"
+    }
+    rows.append(row)
+
+# --- WRITE TO CSV ---
+with open(OUTPUT_FILENAME, mode='w', newline='', encoding='utf-8') as f:
+    writer = csv.DictWriter(f, fieldnames=HEADERS)
+    writer.writeheader()
+    writer.writerows(rows)
+
+print(f"SUCCESS: Created {OUTPUT_FILENAME}")
+
+================================================================
+FILE: backend/generate_messy_data.py
+================================================================
+
+import csv
+import random
+
+# We simulate a "messy" feed from an affiliate network
+# Notice the column names are NOT what our engine wants. 
+# We will have to "adapt" them later.
+filename = "data/awin_export_raw.csv"
+
+products = [
+    ("Optimized Magnesium", "Health", "High absorption mag-glycinate for sleep.", "19.99"),
+    ("Deep Sleep Pillow Spray", "Home", "Lavender mist for better rest.", "12.50"),
+    ("Blue Light Blocking Glasses", "Electronics", "Reduce eye strain and improve melatonin.", "35.00"),
+    ("Organic Ashwagandha", "Supplements", "Reduces cortisol and stress levels.", "22.00"),
+    ("Weighted Blanket 15lbs", "Home", "Deep pressure stimulation for anxiety.", "89.00"),
+    ("Valerian Root Drops", "Health", "Natural herbal sleep aid.", "15.99"),
+    ("Smart Sleep Tracker Ring", "Electronics", "Monitors REM and deep sleep cycles.", "299.00"),
+    ("Tart Cherry Juice Concentrate", "Grocery", "Natural source of melatonin.", "18.50"),
+    ("Silk Sleep Mask", "Accessories", "100% blackout for total darkness.", "9.99"),
+    ("White Noise Machine", "Electronics", "Fan-based soothing sound.", "45.00"),
+    ("L-Theanine Capsules", "Supplements", "Promotes relaxation without drowsiness.", "19.00"),
+    ("Cedarwood Essential Oil", "Health", "Grounding scent for evening routines.", "8.50"),
+    ("Sunrise Alarm Clock", "Electronics", "Wake up naturally with light.", "55.00"),
+    ("Cooling Mattress Topper", "Home", "Regulate body temp for deep sleep.", "150.00"),
+    ("Chamomile Tea Bulk", "Grocery", "Loose leaf calming tea.", "14.00"),
+    ("Mouth Tape for Sleep", "Health", "Encourage nasal breathing.", "7.99"),
+    ("GABA Supplement", "Supplements", "Neurotransmitter support for calm.", "21.00"),
+    ("Sleep Headphones Headband", "Electronics", "Soft headband with speakers.", "25.00"),
+    ("Epsom Salts 5kg", "Health", "Magnesium bath soak for muscles.", "11.00"),
+    ("Meditation Cushion", "Home", "Ergonomic seat for mindfulness.", "32.00")
+]
+
+# Duplicate and vary slightly to get 50+ items
+final_data = []
+for i in range(3): 
+    for p in products:
+        # We add some "messiness" like HTML tags or extra spaces
+        messy_desc = f"<span>{p[2]}</span> <br> (Batch {i+1})"
+        final_data.append({
+            "product_id": f"awin_{random.randint(1000, 9999)}",
+            "merchant_name": "HealthStore_UK",
+            "prod_name": p[0],
+            "description_text": messy_desc, # MESSY COLUMN NAME
+            "retail_price": p[3],           # MESSY COLUMN NAME
+            "category_path": p[1],
+            "deep_link_url": f"http://awin.com/click?p={random.randint(100,999)}"
+        })
+
+# Write to CSV
+with open(filename, mode='w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=final_data[0].keys())
+    writer.writeheader()
+    writer.writerows(final_data)
+
+print(f"GENERATED MESSY DATA: {filename} with {len(final_data)} rows.")
+
+================================================================
+FILE: backend/ingest.py
+================================================================
+
+import os
+import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Load Environment Variables
+load_dotenv()
+
+# 2. Initialize the Database Connection
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+
+# 3. Initialize the AI Model (Deterministic/Exact Mode)
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 4. Parse the Data File
+file_path = "data/products.xml"
+tree = ET.parse(file_path)
+root = tree.getroot()
+
+vectors_to_upload = []
+
+print("Starting ingestion process...")
+
+for product in root.findall("product"):
+    # Extract Raw Data
+    p_id = product.find("id").text
+    title = product.find("title").text
+    desc = product.find("description").text
+    price = product.find("price").text
+    currency = product.find("currency").text
+    category = product.find("category").text
+
+    # Create the "Context String"
+    # This is what the AI actually "reads" to understand the product
+    combined_text = f"{title}. {desc}. Category: {category}"
+
+    # Generate Vector (Math)
+    vector = model.encode(combined_text).tolist()
+
+    # Prepare Metadata
+    # This is the data we retrieve later to show the user
+    metadata = {
+        "title": title,
+        "description": desc,
+        "price": price,
+        "currency": currency,
+        "category": category,
+        "raw_text": combined_text
+    }
+
+    # Add to the batch list
+    vectors_to_upload.append((p_id, vector, metadata))
+    print(f" -> Processed: {title}")
+
+# 5. Upload to Pinecone
+if vectors_to_upload:
+    index.upsert(vectors=vectors_to_upload)
+    print("\nUpload Successful.")
+else:
+    print("\nNo products found to upload.")
+
+# 6. Final Verification
+stats = index.describe_index_stats()
+print("\nFinal Database Stats:")
+print(stats)
+
+================================================================
+FILE: backend/ingest_awin.py
+================================================================
+
+import os
+import csv
+import re
+import time
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Load Environment
+load_dotenv()
+
+# 2. Setup Database & AI
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 3. Define the Input File (The Big One)
+csv_file = "data/awin_large_export.csv"
+
+def clean_html(raw_html):
+    """Removes HTML tags to help the AI read better."""
+    if not raw_html: return ""
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, ' ', raw_html) # Replace tags with space
+    return cleantext.strip()
+
+vectors_to_upload = []
+BATCH_SIZE = 100 # Upload in chunks to prevent crashing
+
+print(f"--- STARTING INGESTION: {csv_file} ---")
+
+with open(csv_file, mode='r', encoding='utf-8') as file:
+    reader = csv.DictReader(file)
+    rows = list(reader)
+    total_rows = len(rows)
+    print(f"Found {total_rows} products. Processing...")
+
+    for i, row in enumerate(rows):
+        
+        # --- MAPPING AWIN COLUMNS TO VENTIKO ---
+        try:
+            # 1. Unique ID
+            p_id = f"{row['merchant_name']}-{row['aw_product_id']}".replace(" ", "_")
+            
+            # 2. Title & Description
+            title = row['product_name']
+            desc_clean = clean_html(row['description'])
+            
+            # 3. Category & Price
+            category = row['merchant_category']
+            price = row['search_price']
+            currency = row['currency']
+            
+            # 4. Link
+            link = row['aw_deep_link']
+
+            # --- AI PROCESSING ---
+            # We combine fields so the AI understands the "Whole Picture"
+            combined_text = f"{title}. {desc_clean}. Category: {category}."
+            
+            # Generate Vector
+            vector = model.encode(combined_text).tolist()
+
+            # Prepare Metadata (What shows on the frontend)
+            metadata = {
+                "title": title,
+                "description": desc_clean[:200] + "...", # Truncate for UI
+                "price": price,
+                "currency": currency,
+                "category": category,
+                "link": link,
+                "merchant": row['merchant_name']
+            }
+
+            vectors_to_upload.append((p_id, vector, metadata))
+
+        except Exception as e:
+            print(f"Skipping row {i}: {e}")
+            continue
+
+        # --- BATCH UPLOAD ---
+        # Every 100 items, we send to Pinecone
+        if len(vectors_to_upload) >= BATCH_SIZE:
+            index.upsert(vectors=vectors_to_upload)
+            vectors_to_upload = [] # Clear list
+            print(f" -> Uploaded batch... ({i+1}/{total_rows})")
+
+    # Upload remaining
+    if vectors_to_upload:
+        index.upsert(vectors=vectors_to_upload)
+        print(f" -> Uploaded final batch.")
+
+print("--- INGESTION COMPLETE ---")
+stats = index.describe_index_stats()
+print(f"Total Vectors in Database: {stats['total_vector_count']}")
+
+================================================================
+FILE: backend/main.py
+================================================================
+
+import os
+import datetime
+from typing import List, Optional
+from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from pydantic import BaseModel
+import resend
+
+# SECURITY TOOLS
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from secure import Secure
+
+load_dotenv()
+
+# --- CONFIGURATION ---
+resend.api_key = os.getenv("RESEND_API_KEY")
+
+# --- DATABASE SETUP (POSTGRESQL SWITCH) ---
+# 1. Search History
+class SearchLog(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    query: str
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+    results_summary: str 
+
+# 2. Email Leads
+class UserLead(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str
+    query: str
+    results_summary: str
+    opt_in: bool = Field(default=False)
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+
+# 3. Click Tracker
+class ClickLog(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    product_title: str
+    query: str
+    link_clicked: str
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+
+# --- ENGINE CREATION ---
+# We now grab the URL from the .env file
+database_url = os.getenv("DATABASE_URL")
+
+# SAFETY FIX: SQLAlchemy needs "postgresql://" but some providers give "postgres://"
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+# If no URL is found (safety fallback for local dev if .env is missing), warn the user
+if not database_url:
+    print("!!! WARNING: No DATABASE_URL found. Falling back to temporary SQLite.")
+    sqlite_file_name = "search_history.db"
+    database_url = f"sqlite:///{sqlite_file_name}"
+
+engine = create_engine(database_url)
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+# --- PINECONE SETUP ---
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# --- SECURITY SETUP ---
+limiter = Limiter(key_func=get_remote_address)
+secure_headers = Secure.with_default_headers()
+
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.middleware("http")
+async def set_secure_headers(request, call_next):
+    response = await call_next(request)
+    await secure_headers.set_headers_async(response)
+    return response
+
+@app.get("/")
+def health_check():
+    return {"status": "online", "system": "Ventiko Product Finder"}
+
+# --- SEARCH ENDPOINT ---
+@app.get("/search")
+@limiter.limit("30/minute") 
+def search(request: Request, query: str, session: Session = Depends(get_session)):
+    print(f"Received query: {query}")
+    
+    query_vector = model.encode(query).tolist()
+    results = index.query(
+        vector=query_vector,
+        top_k=3,
+        include_metadata=True
+    )
+    
+    final_matches = []
+    result_titles = [] 
+
+    for match in results['matches']:
+        m_data = match['metadata']
+        final_matches.append({
+            "id": match['id'],
+            "score": match['score'],
+            "metadata": m_data
+        })
+        result_titles.append(m_data.get('title', 'Unknown Product'))
+
+    # SAVE TO ARCHIVE
+    if final_matches:
+        statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
+        last_log = session.exec(statement).first()
+
+        if last_log and last_log.query.lower() == query.lower():
+            last_log.timestamp = datetime.datetime.utcnow()
+            session.add(last_log)
+            session.commit()
+        else:
+            summary_str = " | ".join(result_titles)
+            new_log = SearchLog(query=query, results_summary=summary_str)
+            session.add(new_log)
+            session.commit()
+
+    return {"matches": final_matches}
+
+# --- ARCHIVE ENDPOINT ---
+@app.get("/archive")
+def get_archive(session: Session = Depends(get_session)):
+    statement = select(SearchLog).order_by(SearchLog.timestamp.desc())
+    results = session.exec(statement).all()
+    return results
+
+# --- CLICK TRACKING ENDPOINT ---
+class ClickRequest(BaseModel):
+    product_title: str
+    query: str
+    link: str
+
+@app.post("/track-click")
+def track_click(data: ClickRequest, session: Session = Depends(get_session)):
+    new_click = ClickLog(
+        product_title=data.product_title, 
+        query=data.query,
+        link_clicked=data.link
+    )
+    session.add(new_click)
+    session.commit()
+    print(f" -> CLICK TRACKED: {data.product_title}")
+    return {"status": "logged"}
+
+# --- EMAIL CAPTURE & SEND ENDPOINT ---
+class ProductItem(BaseModel):
+    title: str
+    # We default to a fallback ONLY if the data is missing (prevents 422 error),
+    # but the frontend will send the real link if it exists.
+    link: str = "https://ventiko.app" 
+
+class EmailRequest(BaseModel):
+    email: str
+    query: str
+    results: List[ProductItem]
+    opt_in: bool
+
+@app.post("/capture-email")
+@limiter.limit("5/minute")
+def capture_email(request: Request, data: EmailRequest, session: Session = Depends(get_session)):
+    
+    if not data.opt_in:
+        raise HTTPException(status_code=400, detail="User must opt-in.")
+
+    # Save Lead (Summary only)
+    summary_list = [item.title for item in data.results]
+    summary_str = " | ".join(summary_list)
+    
+    new_lead = UserLead(
+        email=data.email,
+        query=data.query,
+        results_summary=summary_str,
+        opt_in=data.opt_in
+    )
+    session.add(new_lead)
+    session.commit()
+    print(f" -> LEAD CAPTURED: {data.email}")
+
+    # BUILD THE EMAIL (HTML with LINKS)
+    product_list_html = ""
+    for item in data.results:
+        # Each item is a clickable affiliate link
+        product_list_html += f"""
+        <li style='margin-bottom: 15px;'>
+            <a href="{item.link}" style='color: #23F0C7; text-decoration: none; font-weight: bold; font-size: 16px; border-bottom: 1px dotted #23F0C7;'>
+                {item.title} &#8594;
+            </a>
+        </li>
+        """
+
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
+        <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px; margin-top: 0;">Ventiko Finder</h2>
+        <p style="color: #64748b; font-size: 16px;">We found these products for: <strong style="color: #2c3e50;">"{data.query}"</strong></p>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        
+        <ul style="list-style-type: none; padding: 0;">
+            {product_list_html}
+        </ul>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        
+        <p style="font-size: 12px; color: #94a3b8; text-align: center;">
+            Ventiko | London, UK <br>
+            <a href="https://ventiko.app" style="color: #94a3b8; text-decoration: none;">ventiko.app</a>
+        </p>
+    </div>
+    """
+
+    try:
+        resend.Emails.send({
+            "from": "noreply@results.ventiko.app",
+            "to": data.email,
+            "subject": f"Ventiko Search Results 🔎",
+            "html": html_content
+        })
+        return {"status": "success", "message": "Sent."}
+    except Exception as e:
+        print(f"!!! EMAIL ERROR: {e}")
+        return {"status": "partial_success", "message": "Saved, but email failed."}
+
+================================================================
+FILE: backend/search.py
+================================================================
+
+import os
+from dotenv import load_dotenv
+from pinecone import Pinecone
+from sentence_transformers import SentenceTransformer
+
+# 1. Setup
+load_dotenv()
+api_key = os.getenv("PINECONE_API_KEY")
+pc = Pinecone(api_key=api_key)
+index = pc.Index("ventiko-index")
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# 2. Define the User's Query
+query = "something to help me sleep"
+
+# 3. Convert Query to Vector (Math)
+query_vector = model.encode(query).tolist()
+
+# 4. Search the Database
+# We ask for the "top_k=1" (The single best match)
+results = index.query(
+    vector=query_vector,
+    top_k=1,
+    include_metadata=True
+)
+
+# 5. Print the Result
+print(f"Query: {query}")
+print("-" * 30)
+for match in results['matches']:
+    print(f"Found: {match['metadata']['title']}")
+    print(f"Score: {match['score']:.4f}") # Confidence score (0 to 1)
+    print(f"Price: {match['metadata']['price']} {match['metadata']['currency']}")
+
+================================================================
+FILE: frontend/README.md
+================================================================
+
+# React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+================================================================
+FILE: frontend/eslint.config.js
+================================================================
+
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+])
+
+
+================================================================
+FILE: frontend/index.html
+================================================================
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Ventiko Product Finder</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+================================================================
+FILE: frontend/package.json
+================================================================
+
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^7.11.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.2.4"
+  }
+}
+
+
+================================================================
+FILE: frontend/src/App.css
+================================================================
+
+/* --- VENTIKO DESIGN SYSTEM --- */
+:root {
+  --bg-color: #FCF6EE;        /* Floral White */
+  --accent-mint: #23F0C7;     /* Tropical Mint */
+  --accent-lilac: #AAA1C8;    /* Lilac Ash */
+  --text-dark: #2c3e50;       /* Deep Grey */
+  --text-light: #64748b;      /* Soft Grey */
+  
+  --font-title: 'Major Mono Display', monospace;
+  --font-body: 'Roboto', sans-serif;
+}
+
+/* LAYER 0: THE CANVAS */
+html {
+  background-color: var(--bg-color);
+  height: 100%;
+}
+
+body {
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  margin: 0;
+  /* Use dVH for mobile browser bar support */
+  min-height: 100dvh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+
+  /* LAYER 1: THE AURORA GLOW */
+  background: linear-gradient(
+    -45deg, 
+    #FCF6EE, 
+    #eefcf6, 
+    #f3eefc, 
+    #FCF6EE
+  );
+  background-size: 400% 400%;
+  animation: aurora 15s ease infinite;
+}
+
+/* LAYER 2: THE TECH DOTS */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  
+  background-image: radial-gradient(#aaa1c87c 1.5px, transparent 1px);
+  background-size: 25px 25px;
+  
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  opacity: 0.7; 
+}
+
+/* LAYER 3: THE CONTENT */
+#root {
+  width: 100%;
+  max-width: 1000px;
+  padding: 1.5rem; /* Reduced slightly for mobile */
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1; 
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ensures footer pushes down */
+}
+
+/* --- TYPOGRAPHY --- */
+h1 {
+  font-family: var(--font-title);
+  font-size: 3rem; /* slightly smaller base */
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-dark);
+  letter-spacing: -2px;
+}
+
+/* --- SEARCH CONTAINER --- */
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto 3rem auto;
+  transition: all 0.5s ease;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* The Input Field */
+input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1.5rem;
+  border: 1.5px solid var(--text-dark);
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 16px; /* Prevents iOS Zoom on focus */
+  background: white;
+  color: var(--text-dark);
+  outline: none;
+  box-shadow: 0 4px 15px rgba(170, 161, 200, 0.2);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+input:focus {
+  border-color: var(--accent-lilac);
+  transform: scale(1.01);
+  box-shadow: 0 8px 25px rgba(35, 240, 199, 0.4);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 5px;
+}
+
+button.main-search-btn {
+  align-self: center;
+  padding: 0.8rem 2.5rem;
+  background-color: var(--accent-mint);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-title);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 4px 4px 0px var(--text-dark);
+}
+
+button.main-search-btn:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px 0px var(--accent-lilac);
+}
+
+/* --- RESULTS GRID --- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid #eee;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+  transition: all 0.4s ease;
+  animation: fadeUp 0.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+
+.card h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-dark);
+  font-size: 1.1rem;
+}
+
+.card p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 2px dashed #f1f5f9;
+}
+
+.price {
+  font-family: var(--font-title);
+  font-weight: bold;
+  color: var(--text-dark);
+  background: var(--accent-mint);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.score {
+  font-size: 0.75rem;
+  color: var(--accent-lilac);
+  font-weight: bold;
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aurora {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* --- FOOTER STYLES --- */
+.site-footer {
+  width: 100%;
+  padding: 3rem 0;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 10;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.footer-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.footer-divider {
+  color: #AAA1C8;
+  font-weight: 300;
+}
+
+.footer-link, .footer-link-btn {
+  text-decoration: none;
+  background: none;
+  border: none;
+  color: #2c3e50dd;
+  cursor: pointer;
+  font-family: 'Major Mono Display', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0;
+}
+
+/* --- MOBILE SPECIFIC OVERRIDES --- */
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-container {
+    margin-bottom: 2rem;
+  }
+
+  input {
+    padding: 0.8rem 1rem;
+    font-size: 16px; /* Crucial for iOS */
+  }
+
+  button.main-search-btn {
+    width: 100%; /* Full width button on mobile */
+    padding: 1rem;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 4rem; /* Space for scroll */
+  }
+  
+  .footer-divider { display: none; }
+  
+  .footer-group {
+    width: 100%;
+    justify-content: center;
+    gap: 1.2rem;
+  }
+}
+
+================================================================
+FILE: frontend/src/App.jsx
+================================================================
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './App.css'
+
+// Import Pages
+import Home from './pages/Home'
+import About from './pages/About'
+import Archive from './pages/Archive'
+import Footer from './components/Footer'
+
+function App() {
+  return (
+    <Router>
+      {/* NO TOP NAV! 
+         It is cleaner this way. Focus is 100% on the Search.
+      */}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/archive" element={<Archive />} />
+      </Routes>
+
+      <Footer /> 
+
+    </Router>
+  )
+}
+
+export default App
+
+================================================================
+FILE: frontend/src/components/Footer.jsx
+================================================================
+
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Modal from './Modal';
+
+const Footer = () => {
+  const [modalType, setModalType] = useState(null);
+
+  const openModal = (type) => setModalType(type);
+  const closeModal = () => setModalType(null);
+
+  // Helper style for legal text to keep it readable
+  const legalTextStyle = {
+    fontSize: '0.9rem',
+    color: '#475569',
+    marginBottom: '1rem',
+    lineHeight: '1.6'
+  };
+
+  const legalHeadingStyle = {
+    fontFamily: 'Major Mono Display',
+    color: '#2c3e50',
+    marginTop: '1.5rem',
+    marginBottom: '0.5rem',
+    fontSize: '1rem',
+    fontWeight: 'bold'
+  };
+
+  return (
+    <>
+      <footer className="site-footer">
+        
+        {/* GROUP 1: MAIN NAVIGATION (Real Pages) */}
+        <div className="footer-group">
+          <Link to="/" className="footer-link">HoMe</Link>
+          <Link to="/about" className="footer-link">About</Link>
+          <Link to="/archive" className="footer-link">ARcHiVe</Link>
+        </div>
+
+        {/* Divider */}
+        <div className="footer-divider">|</div>
+
+        {/* GROUP 2: UTILITIES (Modals) */}
+        <div className="footer-group">
+          <button onClick={() => openModal('privacy')} className="footer-link-btn">pRiVAcy</button>
+          <button onClick={() => openModal('terms')} className="footer-link-btn">teRMs</button>
+          <button onClick={() => openModal('contact')} className="footer-link-btn">contAct</button>
+        </div>
+
+      </footer>
+
+      {/* --- PRIVACY POLICY MODAL --- */}
+      <Modal isOpen={modalType === 'privacy'} onClose={closeModal} title="privacy policy">
+        <p style={legalTextStyle}><strong>Last Updated: December 2025</strong></p>
+        
+        <p style={legalTextStyle}>
+          At Ventiko, we respect your privacy. This policy outlines how we handle your data when you use our Product Finder.
+        </p>
+
+        <h3 style={legalHeadingStyle}>1. data collection</h3>
+        <p style={legalTextStyle}>
+          <strong>Search Data:</strong> We store search queries anonymously to improve our AI engine and aggregated trends (the "Archive").<br/>
+          <strong>Email Addresses:</strong> If you opt-in to receive results via email, we store your email address securely. We do not sell your email to third parties.
+        </p>
+
+        <h3 style={legalHeadingStyle}>2. affiliate tracking</h3>
+        <p style={legalTextStyle}>
+          When you click a link to a product, a tracking cookie may be placed on your device by the merchant (e.g., Awin, Amazon) to attribute the sale to Ventiko. This does not store personal information about you on our servers.
+        </p>
+
+        <h3 style={legalHeadingStyle}>3. your rights</h3>
+        <p style={legalTextStyle}>
+          You may request the deletion of your email data at any time by contacting support.
+        </p>
+      </Modal>
+
+      {/* --- TERMS OF SERVICE MODAL --- */}
+      <Modal isOpen={modalType === 'terms'} onClose={closeModal} title="terms of service">
+        <p style={legalTextStyle}>
+          By using Ventiko, you agree to the following terms.
+        </p>
+
+        <h3 style={legalHeadingStyle}>1. affiliate disclosure</h3>
+        <p style={legalTextStyle}>
+          Ventiko is a product discovery engine. We participate in various affiliate marketing programs, which means we may get paid commissions on editorially chosen products purchased through our links to retailer sites. This comes at no extra cost to you.
+        </p>
+
+        <h3 style={legalHeadingStyle}>2. not medical advice</h3>
+        <p style={legalTextStyle}>
+          The content provided by Ventiko is for informational and educational purposes only. It is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+        </p>
+
+        <h3 style={legalHeadingStyle}>3. no warranties</h3>
+        <p style={legalTextStyle}>
+          Our AI engine strives for accuracy, but product prices, stock, and ingredients change rapidly. Ventiko provides results on an "as is" basis without warranties of any kind.
+        </p>
+      </Modal>
+
+      {/* --- CONTACT MODAL --- */}
+      <Modal isOpen={modalType === 'contact'} onClose={closeModal} title="contact us">
+        <p style={legalTextStyle}>
+          Have a question, a partnership proposal, or a product you want listed?
+        </p>
+        
+        <h3 style={legalHeadingStyle}>general enquiries</h3>
+        <p style={legalTextStyle}>
+          <a href="mailto:support@ventiko.app" style={{ color: '#23F0C7', textDecoration: 'none', fontWeight: 'bold' }}>
+            support@ventiko.app
+          </a>
+        </p>
+
+        <h3 style={legalHeadingStyle}>location</h3>
+        <p style={legalTextStyle}>
+          Ventiko Engine HQ<br/>
+          Isle of Man, United Kingdom.
+        </p>
+      </Modal>
+    </>
+  );
+};
+
+export default Footer;
+
+================================================================
+FILE: frontend/src/components/Modal.css
+================================================================
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.6); /* Dark tint */
+    backdrop-filter: blur(8px); /* The "Frosted Glass" effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Sit on top of EVERYTHING */
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh; /* Allow scrolling inside if text is long */
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px dashed #f1f5f9;
+    padding-bottom: 1rem;
+  }
+  
+  .modal-header h2 {
+    font-family: 'Major Mono Display', monospace;
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    letter-spacing: -1px;
+  }
+  
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .modal-close:hover {
+    color: #23F0C7; /* Mint hover */
+  }
+  
+  .modal-body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #475569;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+================================================================
+FILE: frontend/src/components/Modal.jsx
+================================================================
+
+import React, { useEffect } from 'react';
+import './Modal.css'; // We will create this next
+
+const Modal = ({ isOpen, onClose, title, children }) => {
+  if (!isOpen) return null;
+
+  // Close if user clicks Escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Modal;
+
+================================================================
+FILE: frontend/src/components/SkeletonCard.css
+================================================================
+
+/* THE CONTAINER */
+.skeleton-card {
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.6); /* Slightly see-through */
+    position: relative;
+    overflow: hidden; /* Keeps the shine inside */
+  }
+  
+  /* THE SHIMMER ANIMATION */
+  .skeleton-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* The "Aurora" Wave Gradient */
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(35, 240, 199, 0.1), /* Mint Hint */
+      rgba(170, 161, 200, 0.1), /* Lilac Hint */
+      transparent
+    );
+    
+    transform: translateX(-100%);
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  
+  /* THE BARS (Grey Placeholders) */
+  .skeleton-bar {
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+  }
+  
+  .title-bar {
+    height: 1.4rem;
+    width: 70%;
+    background-color: #cbd5e1; /* Darker grey for title */
+  }
+  
+  .text-bar {
+    height: 0.9rem;
+    width: 100%;
+  }
+  
+  .text-bar.short {
+    width: 60%;
+  }
+  
+  .price-bar {
+    height: 1.5rem;
+    width: 80px;
+    border-radius: 4px;
+  }
+  
+  .score-bar {
+    height: 1rem;
+    width: 60px;
+  }
+
+================================================================
+FILE: frontend/src/components/SkeletonCard.jsx
+================================================================
+
+import React from 'react';
+import './SkeletonCard.css';
+
+const SkeletonCard = () => {
+  return (
+    <div className="card skeleton-card">
+      <div className="skeleton-content">
+        {/* Title Bar */}
+        <div className="skeleton-bar title-bar"></div>
+        {/* Description Bars */}
+        <div className="skeleton-bar text-bar"></div>
+        <div className="skeleton-bar text-bar short"></div>
+      </div>
+      
+      <div className="card-footer">
+        {/* Price Box */}
+        <div className="skeleton-bar price-bar"></div>
+        {/* View Deal Text */}
+        <div className="skeleton-bar score-bar"></div>
+      </div>
+    </div>
+  );
+};
+
+export default SkeletonCard;
+
+================================================================
+FILE: frontend/src/index.css
+================================================================
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+================================================================
+FILE: frontend/src/main.jsx
+================================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
+  </StrictMode>,
+)
+
+================================================================
+FILE: frontend/src/pages/About.jsx
+================================================================
+
+import { useState } from 'react'
+
+function About() {
+  // FAQ Data Structure
+  const faqs = [
+    {
+      question: "How are you different to Amazon or any other website?", // LOWERCASE for readability
+      answer: "We are changing the game, we all like a little browse sometimes, but we know what we want and we want it now. We found shoppers were getting fed up with browsing, so we founded our deeply trained AI based product finder, to listen to you, and give you what you want. We do not own any products, we are an affiliate marketplace who will guide you to the best products. We basically, do the hard work for you, then we cheer and shout for you when you cross that finish line, we tell you how radiant your new skin routine looks and at Team Ventiko, we are always wanting more, so we expect you to be the same."
+    },
+    {
+      question: "Why should i use Ventiko?", // LOWERCASE for readability
+      answer: "Ventiko is basically your personal shopper, gone are the days searching and scrolling, we want you winning now. Ventiko partners with trusted global partners, and is trained to deliver the best products for you, right now. We don't want you to search 'running trainers' or 'electrolytes' or 'best protein for gains?' No, we want you to tell us why you are here and what you actually want 'I am training for my first half marathon in June, what trainers would be best for me?' and 'I am hitting the gym hard this year, what supplements should I take to keep me going and get stronger day after day?' You can also mix it up 'I am training for my next hyrox, I need a matching outfit, energy tablets for just before I start, and a nice moisteriser for when I finish to feel amazing!' All will work with Ventiko. We are the new way to shop."
+    },
+    {
+      question: "what is bio-optimization?", // LOWERCASE for readability
+      answer: "Bio-optimization is the systematic application of science, technology, and nature to improve human performance. Unlike 'bio-hacking' which often implies shortcuts, bio-optimization focuses on sustainable, long-term physiological improvements through protocols, supplements, and tools."
+    },
+    {
+      question: "how does ventiko work?",
+      answer: "We aggregate thousands of health products from trusted global suppliers. Our engine uses Vector Search (AI) to understand the 'context' of what you need (e.g., 'sleep recovery') rather than just matching keywords. We curate, you optimize."
+    },
+    {
+      question: "are these products verified?",
+      answer: "Ventiko indexes products from reputable affiliate networks. While we filter for quality brands, we always recommend consulting with a medical professional before starting any new supplement or health protocol."
+    },
+    {
+      question: "do you offer medical advice?",
+      answer: "No. Ventiko is a search engine and information aggregator. The content found here is for educational and informational purposes only."
+    }
+  ];
+
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+      
+      {/* SECTION 1: THE MISSION */}
+      <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
+        {/* LOWERCASE TITLE */}
+        <h1>about Ventiko</h1>
+        <p style={{ 
+          fontFamily: 'Roboto, sans-serif', 
+          fontSize: '1.1rem', 
+          lineHeight: '1.8', 
+          color: '#475569',
+          marginBottom: '2rem'
+        }}>
+          Ventiko is not a store. It is a product finder, that <strong>actually works for you</strong>.
+          <br /><br />
+          In an era of information overload, finding the specific tools for performance, sleep, 
+          focus, skin care, recovery and more, is too overwhelming. We cut through the noise using 
+          high-dimensional vector analysis to bring you the exact tools 
+          required for you to win. (And yes we are free to use, forever).
+        </p>
+      </section>
+
+      {/* SECTION 2: THE FAQ ACCORDION */}
+      <section>
+        <h2 style={{ 
+          fontFamily: 'Major Mono Display, monospace', 
+          textAlign: 'center', 
+          marginBottom: '2rem',
+          color: '#2c3e50'
+        }}>
+          Ventiko f.a.q.
+        </h2>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {faqs.map((faq, index) => (
+            <div 
+              key={index} 
+              onClick={() => toggleFAQ(index)}
+              style={{
+                background: 'white',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                boxShadow: openIndex === index ? '0 10px 30px rgba(35, 240, 199, 0.15)' : 'none',
+                borderColor: openIndex === index ? '#23F0C7' : '#e2e8f0'
+              }}
+            >
+              {/* Question Header */}
+              <div style={{ 
+                padding: '1.5rem', 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                fontFamily: 'Major Mono Display, monospace',
+                fontWeight: 'bold',
+                color: '#2c3e50'
+              }}>
+                {faq.question}
+                <span style={{ color: '#23F0C7', fontSize: '1.5rem' }}>
+                  {openIndex === index ? '-' : '+'}
+                </span>
+              </div>
+
+              {/* Answer Body */}
+              {openIndex === index && (
+                <div style={{ 
+                  padding: '0 1.5rem 1.5rem 1.5rem',
+                  fontFamily: 'Roboto, sans-serif',
+                  color: '#64748b',
+                  lineHeight: '1.6',
+                  animation: 'fadeIn 0.3s ease'
+                }}>
+                  {faq.answer}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+    </div>
+  )
+}
+
+export default About
+
+================================================================
+FILE: frontend/src/pages/Archive.jsx
+================================================================
+
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+function Archive() {
+  const navigate = useNavigate();
+  const [archiveData, setArchiveData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch the history when page loads
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get('http://127.0.0.1:8000/archive');
+        setArchiveData(res.data);
+      } catch (error) {
+        console.error("Failed to load archive", error);
+      }
+      setLoading(false);
+    };
+    fetchHistory();
+  }, []);
+
+  // Allow clicking a past query to search it again
+  const runSearch = (term) => {
+    // Navigate to home with the search term. 
+    // We will need to update Home.jsx next to handle this "?query=" parameter.
+    navigate(`/?query=${encodeURIComponent(term)}`); 
+  };
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+      
+      <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
+        <h1>live archive</h1>
+        <p style={{ fontFamily: 'Roboto', color: '#64748b' }}>
+          real-time optimization requests from the community
+        </p>
+      </section>
+
+      {loading ? (
+        <p style={{ textAlign: 'center', fontFamily: 'Major Mono Display' }}>loading feed...</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          
+          {archiveData.length === 0 && (
+            <p style={{ textAlign: 'center', color: '#AAA1C8' }}>NO DATA YET. BE THE FIRST.</p>
+          )}
+
+          {archiveData.map((log) => (
+            <div 
+              key={log.id} 
+              onClick={() => runSearch(log.query)}
+              style={{ 
+                background: 'white', 
+                padding: '1.5rem', 
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                transition: 'all 0.2s',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.borderColor = '#23F0C7'}
+              onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+            >
+              {/* THE QUERY (What they searched) */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ 
+                  fontFamily: 'Major Mono Display', 
+                  fontSize: '1.1rem', 
+                  color: '#2c3e50',
+                  fontWeight: 'bold'
+                }}>
+                  "{log.query.toLowerCase()}"
+                </span>
+                
+                <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>
+                  {new Date(log.timestamp).toLocaleDateString()}
+                </span>
+              </div>
+
+              {/* THE RESULTS (What we found) */}
+              <div style={{ 
+                fontSize: '0.9rem', 
+                color: '#64748b', 
+                fontFamily: 'Roboto',
+                background: '#f8fafc',
+                padding: '10px',
+                borderRadius: '8px'
+              }}>
+                <strong style={{ color: '#23F0C7' }}>results:</strong> {log.results_summary.toLowerCase()}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+export default Archive
+
+================================================================
+FILE: frontend/src/pages/Home.jsx
+================================================================
+
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
+import SkeletonCard from '../components/SkeletonCard'
+
+function Home() {
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
+  
+  // EMAIL CAPTURE STATE
+  const [email, setEmail] = useState("")
+  const [optIn, setOptIn] = useState(false)
+  const [emailStatus, setEmailStatus] = useState("idle")
+
+  const performSearch = async (searchTerm) => {
+    if (!searchTerm) return;
+    setLoading(true);
+    setHasSearched(true);
+    setEmailStatus("idle");
+    setEmail("");
+    setOptIn(false);
+
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${searchTerm}`);
+      setResults(response.data.matches);
+    } catch (error) {
+      console.error("Error searching:", error);
+      alert("System Busy. Please try again in a moment.");
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    const urlQuery = searchParams.get('query');
+    if (urlQuery) {
+      setQuery(urlQuery);
+      performSearch(urlQuery);
+    }
+  }, [searchParams]);
+
+  const handleSearchClick = () => {
+    performSearch(query);
+  }
+
+  const clearSearch = () => {
+    setQuery("");
+    setResults([]);
+    setHasSearched(false);
+    setEmailStatus("idle");
+  }
+
+  // --- CLICK TRACKER ---
+  const handleProductClick = (productTitle, link) => {
+    axios.post('http://127.0.0.1:8000/track-click', {
+      product_title: productTitle,
+      query: query || "unknown",
+      link: link || "unknown"
+    }).catch(err => console.error("Tracking error:", err));
+
+    if (link) {
+      window.open(link, '_blank');
+    } else {
+      console.warn("No link found for product");
+    }
+  }
+
+  // --- EMAIL LOGIC ---
+  const handleSaveProtocol = async () => {
+    if (!email || !optIn) return;
+    setEmailStatus("sending");
+    
+    try {
+      const productData = results.map(r => ({
+        title: r.metadata.title,
+        link: r.metadata.link || "https://ventiko.app"
+      }));
+
+      await axios.post('http://127.0.0.1:8000/capture-email', {
+        email: email,
+        query: query,
+        results: productData,
+        opt_in: optIn
+      });
+      setEmailStatus("success");
+    } catch (error) {
+      console.error("Email Capture Failed:", error);
+      setEmailStatus("error");
+    }
+  }
+
+ 
+// --- DYNAMIC SEO TITLES ---
+const getPageTitle = () => {
+  if (query) return `${query} | Ventiko Product Finder`;
+  return "Ventiko | Product Finder";
+}
+
+const getMetaDesc = () => {
+  if (query) return `Find the best products for ${query}. AI-curated results.`;
+  return "The AI-powered search engine for finding the right products you actually need.";
+}
+
+  return (
+    <>
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDesc()} />
+      </Helmet>
+
+      <h1>Ventiko</h1>
+      
+      <div className="search-container">
+        <div className="input-wrapper">
+          <input 
+            type="text" 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="We find what you need..."
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
+          />
+          {query.length > 0 && (
+            <button className="clear-btn" onClick={clearSearch}>
+              ✕
+            </button>
+          )}
+        </div>
+
+        <button className="main-search-btn" onClick={handleSearchClick} disabled={loading}>
+          {loading ? "scanning..." : "search"}
+        </button>
+      </div>
+
+      <div className="grid">
+        {loading && (
+          <>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </>
+        )}
+
+        {!loading && results.map((item) => (
+          <div 
+            key={item.id} 
+            className="card" 
+            onClick={() => handleProductClick(item.metadata.title, item.metadata.link)}
+            style={{ cursor: 'pointer' }}
+          >
+            <div>
+              <h3>{item.metadata.title}</h3>
+              <p>{item.metadata.description}</p>
+            </div>
+            <div className="card-footer">
+              <span className="price">
+                {item.metadata.price} {item.metadata.currency}
+              </span>
+              <span className="score" style={{ textTransform: 'uppercase', letterSpacing: '1px' }}>
+                View Deal →
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {results.length > 0 && (
+        <div style={{ maxWidth: '600px', margin: '4rem auto 0 auto', textAlign: 'center', animation: 'fadeUp 1s ease'}}>
+          {emailStatus === 'success' ? (
+             <div style={{
+               padding: '2rem', background: '#ecfdf5', borderRadius: '16px', border: '1px solid #23F0C7', color: '#065f46'
+             }}>
+               <h3 style={{ fontFamily: 'Major Mono Display', margin: '0 0 0.5rem 0' }}>results sent</h3>
+               <p style={{ margin: 0, fontFamily: 'Roboto' }}>check your inbox shortly.</p>
+             </div>
+          ) : (
+             <div style={{
+               padding: '2rem', background: 'white', borderRadius: '20px', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.03)'
+             }}>
+               <h3 style={{ fontFamily: 'Major Mono Display', color: '#2c3e50', marginTop: 0, fontSize: '1.1rem' }}>
+                 save these results
+               </h3>
+               
+               <div style={{ display: 'flex', gap: '10px', marginBottom: '1rem', flexDirection: 'column' }}>
+                 <input 
+                   type="email" 
+                   placeholder="enter your email..."
+                   value={email}
+                   onChange={(e) => setEmail(e.target.value)}
+                   style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', boxSizing: 'border-box' }}
+                 />
+                 
+                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
+                    <input type="checkbox" id="optIn" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} style={{ width: '18px', height: '18px', cursor: 'pointer', boxShadow: 'none' }} />
+                    <label htmlFor="optIn" style={{ fontSize: '0.8rem', color: '#64748b', cursor: 'pointer' }}>
+                      I agree to the Terms of Service and consent to receive updates.
+                    </label>
+                 </div>
+               </div>
+
+               <button 
+                 onClick={handleSaveProtocol}
+                 disabled={!email || !optIn || emailStatus === 'sending'}
+                 style={{
+                    width: '100%', padding: '1rem',
+                    background: emailStatus === 'sending' ? '#94a3b8' : '#2c3e50',
+                    color: 'white', border: 'none', borderRadius: '50px', fontWeight: 'bold', fontFamily: 'Major Mono Display',
+                    cursor: (!email || !optIn) ? 'not-allowed' : 'pointer', opacity: (!email || !optIn) ? 0.7 : 1, transition: 'all 0.2s'
+                 }}
+               >
+                 {emailStatus === 'sending' ? 'sending...' : 'send'}
+               </button>
+             </div>
+          )}
+        </div>
+      )}
+
+      {hasSearched && results.length === 0 && !loading && (
+        <p style={{textAlign: 'center', color: '#AAA1C8', fontFamily: 'Major Mono Display'}}>
+          no matches found
+        </p>
+      )}
+    </>
+  )
+}
+
+export default Home
+
+================================================================
+FILE: frontend/vite.config.js
+================================================================
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
