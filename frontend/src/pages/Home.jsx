@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
 
 function Home() {
@@ -54,14 +55,12 @@ function Home() {
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
-    // 1. Silent Log to Backend
     axios.post('http://127.0.0.1:8000/track-click', {
       product_title: productTitle,
-      query: query || "unknown", // Fallback if query is empty
+      query: query || "unknown",
       link: link || "unknown"
     }).catch(err => console.error("Tracking error:", err));
 
-    // 2. Open Link (Affiliate)
     if (link) {
       window.open(link, '_blank');
     } else {
@@ -75,11 +74,9 @@ function Home() {
     setEmailStatus("sending");
     
     try {
-      // Create a list of objects { title, link }
-      // This maps the data for the backend EmailRequest
       const productData = results.map(r => ({
         title: r.metadata.title,
-        link: r.metadata.link || "https://ventiko.app" // Fallback only if database is missing links
+        link: r.metadata.link || "https://ventiko.app"
       }));
 
       await axios.post('http://127.0.0.1:8000/capture-email', {
@@ -95,8 +92,24 @@ function Home() {
     }
   }
 
+  // --- DYNAMIC SEO TITLES ---
+  const getPageTitle = () => {
+    if (query) return `${query} | Ventiko Finder`;
+    return "Ventiko | Bio-Optimization Product Finder";
+  }
+
+  const getMetaDesc = () => {
+    if (query) return `Find the best bio-optimization products for ${query}. AI-curated results for sleep, focus, and recovery.`;
+    return "The AI-powered search engine for health, sleep, and performance tools.";
+  }
+
   return (
     <>
+      <Helmet>
+        <title>{getPageTitle()}</title>
+        <meta name="description" content={getMetaDesc()} />
+      </Helmet>
+
       <h1>VENTIKO</h1>
       
       <div className="search-container">
@@ -121,7 +134,6 @@ function Home() {
       </div>
 
       <div className="grid">
-        {/* STATE 1: LOADING (Show 3 Skeletons) */}
         {loading && (
           <>
             <SkeletonCard />
@@ -130,7 +142,6 @@ function Home() {
           </>
         )}
 
-        {/* STATE 2: RESULTS (Show Real Cards) */}
         {!loading && results.map((item) => (
           <div 
             key={item.id} 
@@ -154,7 +165,6 @@ function Home() {
         ))}
       </div>
 
-      {/* --- IN-LINE EMAIL CAPTURE ZONE --- */}
       {results.length > 0 && (
         <div style={{ maxWidth: '600px', margin: '4rem auto 0 auto', textAlign: 'center', animation: 'fadeUp 1s ease'}}>
           {emailStatus === 'success' ? (

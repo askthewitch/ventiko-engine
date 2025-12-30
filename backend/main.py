@@ -8,7 +8,7 @@ from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from pydantic import BaseModel
-import resend # <--- NEW IMPORT
+import resend
 
 # SECURITY TOOLS
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -19,21 +19,31 @@ from secure import Secure
 load_dotenv()
 
 # --- CONFIGURATION ---
-resend.api_key = os.getenv("RESEND_API_KEY") # <--- ACTIVATE RESEND
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 # --- DATABASE SETUP ---
+# 1. Search History
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
     results_summary: str 
 
+# 2. Email Leads
 class UserLead(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str
     query: str
     results_summary: str
     opt_in: bool = Field(default=False)
+    timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
+
+# 3. Click Tracker
+class ClickLog(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    product_title: str
+    query: str
+    link_clicked: str
     timestamp: datetime.datetime = Field(default_factory=datetime.datetime.utcnow)
 
 sqlite_file_name = "search_history.db"
@@ -83,11 +93,11 @@ async def set_secure_headers(request, call_next):
 
 @app.get("/")
 def health_check():
-    return {"status": "online", "system": "Ventiko Engine + Resend Mailer"}
+    return {"status": "online", "system": "Ventiko Product Finder"}
 
 # --- SEARCH ENDPOINT ---
 @app.get("/search")
-@limiter.limit("20/minute") 
+@limiter.limit("30/minute") 
 def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received query: {query}")
     
@@ -134,23 +144,48 @@ def get_archive(session: Session = Depends(get_session)):
     results = session.exec(statement).all()
     return results
 
+# --- CLICK TRACKING ENDPOINT ---
+class ClickRequest(BaseModel):
+    product_title: str
+    query: str
+    link: str
+
+@app.post("/track-click")
+def track_click(data: ClickRequest, session: Session = Depends(get_session)):
+    new_click = ClickLog(
+        product_title=data.product_title, 
+        query=data.query,
+        link_clicked=data.link
+    )
+    session.add(new_click)
+    session.commit()
+    print(f" -> CLICK TRACKED: {data.product_title}")
+    return {"status": "logged"}
+
 # --- EMAIL CAPTURE & SEND ENDPOINT ---
+class ProductItem(BaseModel):
+    title: str
+    # We default to a fallback ONLY if the data is missing (prevents 422 error),
+    # but the frontend will send the real link if it exists.
+    link: str = "https://ventiko.app" 
+
 class EmailRequest(BaseModel):
     email: str
     query: str
-    results: List[str] # Currently just titles
+    results: List[ProductItem]
     opt_in: bool
 
 @app.post("/capture-email")
 @limiter.limit("5/minute")
 def capture_email(request: Request, data: EmailRequest, session: Session = Depends(get_session)):
     
-    # 1. Validation
     if not data.opt_in:
         raise HTTPException(status_code=400, detail="User must opt-in.")
 
-    # 2. Save Lead to DB
-    summary_str = " | ".join(data.results)
+    # Save Lead (Summary only)
+    summary_list = [item.title for item in data.results]
+    summary_str = " | ".join(summary_list)
+    
     new_lead = UserLead(
         email=data.email,
         query=data.query,
@@ -159,18 +194,24 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     )
     session.add(new_lead)
     session.commit()
-    print(f" -> DB LOGGED: {data.email}")
+    print(f" -> LEAD CAPTURED: {data.email}")
 
-    # 3. BUILD THE EMAIL (HTML)
-    # We create a nice looking list of the products
+    # BUILD THE EMAIL (HTML with LINKS)
     product_list_html = ""
     for item in data.results:
-        product_list_html += f"<li style='margin-bottom: 10px; color: #2c3e50;'><strong>{item}</strong></li>"
+        # Each item is a clickable affiliate link
+        product_list_html += f"""
+        <li style='margin-bottom: 15px;'>
+            <a href="{item.link}" style='color: #23F0C7; text-decoration: none; font-weight: bold; font-size: 16px; border-bottom: 1px dotted #23F0C7;'>
+                {item.title} &#8594;
+            </a>
+        </li>
+        """
 
     html_content = f"""
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px;">Ventiko results</h2>
-        <p style="color: #64748b;">Here are your products for: <strong>"{data.query}"</strong></p>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
+        <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px; margin-top: 0;">Ventiko Finder</h2>
+        <p style="color: #64748b; font-size: 16px;">We found these products for: <strong style="color: #2c3e50;">"{data.query}"</strong></p>
         
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         
@@ -181,25 +222,20 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         
         <p style="font-size: 12px; color: #94a3b8; text-align: center;">
-            Ventiko Engine | London, UK <br>
-            <a href="https://ventiko.app" style="color: #94a3b8;">ventiko.app</a>
+            Ventiko | London, UK <br>
+            <a href="https://ventiko.app" style="color: #94a3b8; text-decoration: none;">ventiko.app</a>
         </p>
     </div>
     """
 
-    # 4. SEND VIA RESEND
     try:
-        r = resend.Emails.send({
-            "from": "noreply@results.ventiko.app", # <--- THE SENDER
+        resend.Emails.send({
+            "from": "noreply@results.ventiko.app",
             "to": data.email,
-            "subject": f"Your Ventiko Results 🥳",
+            "subject": f"Ventiko Search Results 🔎",
             "html": html_content
         })
-        print(f" -> EMAIL SENT: ID {r.get('id')}")
-        return {"status": "success", "message": "Results sent."}
-        
+        return {"status": "success", "message": "Sent."}
     except Exception as e:
         print(f"!!! EMAIL ERROR: {e}")
-        # We still return success to the frontend because the DB save worked, 
-        # but we log the error for you.
         return {"status": "partial_success", "message": "Saved, but email failed."}
