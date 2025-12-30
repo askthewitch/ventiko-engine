@@ -1,24 +1,40 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
 
 function Home() {
+  const [searchParams] = useSearchParams(); // Reads the URL
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
-  const handleSearch = async () => {
-    if (!query) return;
+  // Function to run search
+  const performSearch = async (searchTerm) => {
+    if (!searchTerm) return;
     setLoading(true);
     setHasSearched(true);
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${query}`);
+      const response = await axios.get(`http://127.0.0.1:8000/search?query=${searchTerm}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
       alert("System Busy. Please try again in a moment.");
     }
     setLoading(false);
+  }
+
+  // Effect: Check if URL has a query when page loads (e.g., from Archive click)
+  useEffect(() => {
+    const urlQuery = searchParams.get('query');
+    if (urlQuery) {
+      setQuery(urlQuery);
+      performSearch(urlQuery);
+    }
+  }, [searchParams]);
+
+  const handleSearchClick = () => {
+    performSearch(query);
   }
 
   const clearSearch = () => {
@@ -29,7 +45,7 @@ function Home() {
 
   return (
     <>
-      <h1>Ventiko</h1>
+      <h1>ventiko</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
@@ -37,8 +53,8 @@ function Home() {
             type="text" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="What can we find for you today?"
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            placeholder="We find what you need..."
+            onKeyPress={(e) => e.key === 'Enter' && handleSearchClick()}
           />
           {query.length > 0 && (
             <button className="clear-btn" onClick={clearSearch}>
@@ -47,7 +63,7 @@ function Home() {
           )}
         </div>
 
-        <button className="main-search-btn" onClick={handleSearch} disabled={loading}>
+        <button className="main-search-btn" onClick={handleSearchClick} disabled={loading}>
           {loading ? "scanning..." : "search"}
         </button>
       </div>
