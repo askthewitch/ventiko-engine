@@ -1,18 +1,21 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // CHANGED: Added hook
 
 function About() {
+  const navigate = useNavigate(); // CHANGED: Initialize hook
+
   // FAQ Data Structure
   const faqs = [
     {
-      question: "How are you different to Amazon or any other website?", // LOWERCASE for readability
+      question: "How are you different to Amazon or any other website?", 
       answer: "We are changing the game, we all like a little browse sometimes, but we know what we want and we want it now. We found shoppers were getting fed up with browsing, so we founded our deeply trained AI based product finder, to listen to you, and give you what you want. We do not own any products, we are an affiliate marketplace who will guide you to the best products. We basically, do the hard work for you, then we cheer and shout for you when you cross that finish line, we tell you how radiant your new skin routine looks and at Team Ventiko, we are always wanting more, so we expect you to be the same."
     },
     {
-      question: "Why should i use Ventiko?", // LOWERCASE for readability
+      question: "Why should i use Ventiko?", 
       answer: "Ventiko is basically your personal shopper, gone are the days searching and scrolling, we want you winning now. Ventiko partners with trusted global partners, and is trained to deliver the best products for you, right now. We don't want you to search 'running trainers' or 'electrolytes' or 'best protein for gains?' No, we want you to tell us why you are here and what you actually want 'I am training for my first half marathon in June, what trainers would be best for me?' and 'I am hitting the gym hard this year, what supplements should I take to keep me going and get stronger day after day?' You can also mix it up 'I am training for my next hyrox, I need a matching outfit, energy tablets for just before I start, and a nice moisteriser for when I finish to feel amazing!' All will work with Ventiko. We are the new way to shop."
     },
     {
-      question: "what is bio-optimization?", // LOWERCASE for readability
+      question: "what is bio-optimization?", 
       answer: "Bio-optimization is the systematic application of science, technology, and nature to improve human performance. Unlike 'bio-hacking' which often implies shortcuts, bio-optimization focuses on sustainable, long-term physiological improvements through protocols, supplements, and tools."
     },
     {
@@ -40,8 +43,17 @@ function About() {
       
       {/* SECTION 1: THE MISSION */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
-        {/* LOWERCASE TITLE */}
         <h1>about Ventiko</h1>
+        
+        {/* CHANGED: ADDED NAVIGATION BUTTON */}
+        <button 
+          onClick={() => navigate('/')}
+          className="main-search-btn"
+          style={{ marginBottom: '2rem', fontSize: '0.9rem', padding: '0.6rem 2rem' }}
+        >
+          ← start a new search
+        </button>
+
         <p style={{ 
           fontFamily: 'Roboto, sans-serif', 
           fontSize: '1.1rem', 

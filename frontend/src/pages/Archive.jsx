@@ -32,6 +32,16 @@ function Archive() {
       
       <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
         <h1>live archive</h1>
+        
+        {/* CHANGED: ADDED NAVIGATION BUTTON */}
+        <button 
+          onClick={() => navigate('/')}
+          className="main-search-btn"
+          style={{ marginBottom: '2rem', fontSize: '0.9rem', padding: '0.6rem 2rem' }}
+        >
+          ← start a new search
+        </button>
+
         <p style={{ fontFamily: 'Roboto', color: '#64748b' }}>
           real-time optimization requests from the community
         </p>
