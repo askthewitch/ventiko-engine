@@ -182,6 +182,17 @@ function Home() {
           {loading ? "scanning..." : "search"}
         </button>
       </div>
+{/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
+{!loading && searchTerm && results.length > 0 && (
+        <div style={{ 
+          maxWidth: '800px', margin: '0 auto 2rem auto', 
+          fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
+          borderLeft: '3px solid #23F0C7', paddingLeft: '1rem'
+        }}>
+          Protocol generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
+          Analyzing {results.length} bio-optimized matches based on clinical efficacy and user reviews.
+        </div>
+      )}
 
       <div className="grid">
         {loading && (

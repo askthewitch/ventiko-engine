@@ -33,6 +33,7 @@ const Footer = () => {
         <div className="footer-group">
           <Link to="/" className="footer-link">HoMe</Link>
           <Link to="/about" className="footer-link">About</Link>
+          <Link to="/blog" className="footer-link">bloG</Link> {/* CHANGED: Added Blog */}
           <Link to="/archive" className="footer-link">ARcHiVe</Link>
         </div>
 

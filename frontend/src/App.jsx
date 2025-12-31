@@ -5,6 +5,7 @@ import './App.css'
 import Home from './pages/Home'
 import About from './pages/About'
 import Archive from './pages/Archive'
+import Blog from './pages/Blog' // CHANGED: Import Blog
 import Footer from './components/Footer'
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
+        <Route path="/blog" element={<Blog />} /> {/* CHANGED: Add Route */}
       </Routes>
 
       <Footer /> 

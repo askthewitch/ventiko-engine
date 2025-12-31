@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // CHANGED: Added Link
 
 function Archive() {
   const navigate = useNavigate();
   const [archiveData, setArchiveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch the history when page loads
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -21,19 +20,12 @@ function Archive() {
     fetchHistory();
   }, []);
 
-  // Allow clicking a past query to search it again
-  const runSearch = (term) => {
-    // Navigate to the NEW Seo-Friendly URL structure
-    navigate(`/s/${encodeURIComponent(term)}`); 
-  };
-
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       
       <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
         <h1>live archive</h1>
         
-        {/* CHANGED: ADDED NAVIGATION BUTTON */}
         <button 
           onClick={() => navigate('/')}
           className="main-search-btn"
@@ -57,10 +49,13 @@ function Archive() {
           )}
 
           {archiveData.map((log) => (
-            <div 
+            /* SEO FIX: Use <Link> instead of <div> onClick. 
+               This allows Googlebot to follow the path. */
+            <Link 
               key={log.id} 
-              onClick={() => runSearch(log.query)}
+              to={`/s/${encodeURIComponent(log.query)}`}
               style={{ 
+                textDecoration: 'none', // Remove underline
                 background: 'white', 
                 padding: '1.5rem', 
                 borderRadius: '12px',
@@ -74,7 +69,7 @@ function Archive() {
               onMouseOver={(e) => e.currentTarget.style.borderColor = '#23F0C7'}
               onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
             >
-              {/* THE QUERY (What they searched) */}
+              {/* THE QUERY */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ 
                   fontFamily: 'Major Mono Display', 
@@ -90,7 +85,7 @@ function Archive() {
                 </span>
               </div>
 
-              {/* THE RESULTS (What we found) */}
+              {/* THE RESULTS */}
               <div style={{ 
                 fontSize: '0.9rem', 
                 color: '#64748b', 
@@ -102,7 +97,7 @@ function Archive() {
                 <strong style={{ color: '#23F0C7' }}>results:</strong> {log.results_summary.toLowerCase()}
               </div>
 
-            </div>
+            </Link>
           ))}
         </div>
       )}
