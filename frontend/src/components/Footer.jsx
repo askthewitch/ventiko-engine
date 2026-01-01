@@ -112,7 +112,7 @@ const Footer = () => {
         <h3 style={legalHeadingStyle}>location</h3>
         <p style={legalTextStyle}>
           Ventiko Engine HQ<br/>
-          Isle of Man, United Kingdom.
+          United Kingdom.
         </p>
       </Modal>
     </>

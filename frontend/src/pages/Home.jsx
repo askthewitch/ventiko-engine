@@ -179,7 +179,7 @@ function Home() {
         </div>
 
         <button className="main-search-btn" onClick={handleSearchClick} disabled={loading}>
-          {loading ? "scanning..." : "search"}
+          {loading ? "Scanning..." : "Search"}
         </button>
       </div>
 {/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
