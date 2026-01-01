@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-31T14:10:03.118Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2025-12-31T15:06:16.790Z
 
 
 
@@ -1024,6 +1024,7 @@ import './App.css'
 import Home from './pages/Home'
 import About from './pages/About'
 import Archive from './pages/Archive'
+import Blog from './pages/Blog' // CHANGED: Import Blog
 import Footer from './components/Footer'
 
 function App() {
@@ -1042,6 +1043,7 @@ function App() {
         
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
+        <Route path="/blog" element={<Blog />} /> {/* CHANGED: Add Route */}
       </Routes>
 
       <Footer /> 
@@ -1091,6 +1093,7 @@ const Footer = () => {
         <div className="footer-group">
           <Link to="/" className="footer-link">HoMe</Link>
           <Link to="/about" className="footer-link">About</Link>
+          <Link to="/blog" className="footer-link">bloG</Link> {/* CHANGED: Added Blog */}
           <Link to="/archive" className="footer-link">ARcHiVe</Link>
         </div>
 
@@ -1564,20 +1567,23 @@ FILE: frontend/src/pages/About.jsx
 ================================================================
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // CHANGED: Added hook
 
 function About() {
+  const navigate = useNavigate(); // CHANGED: Initialize hook
+
   // FAQ Data Structure
   const faqs = [
     {
-      question: "How are you different to Amazon or any other website?", // LOWERCASE for readability
+      question: "How are you different to Amazon or any other website?", 
       answer: "We are changing the game, we all like a little browse sometimes, but we know what we want and we want it now. We found shoppers were getting fed up with browsing, so we founded our deeply trained AI based product finder, to listen to you, and give you what you want. We do not own any products, we are an affiliate marketplace who will guide you to the best products. We basically, do the hard work for you, then we cheer and shout for you when you cross that finish line, we tell you how radiant your new skin routine looks and at Team Ventiko, we are always wanting more, so we expect you to be the same."
     },
     {
-      question: "Why should i use Ventiko?", // LOWERCASE for readability
+      question: "Why should i use Ventiko?", 
       answer: "Ventiko is basically your personal shopper, gone are the days searching and scrolling, we want you winning now. Ventiko partners with trusted global partners, and is trained to deliver the best products for you, right now. We don't want you to search 'running trainers' or 'electrolytes' or 'best protein for gains?' No, we want you to tell us why you are here and what you actually want 'I am training for my first half marathon in June, what trainers would be best for me?' and 'I am hitting the gym hard this year, what supplements should I take to keep me going and get stronger day after day?' You can also mix it up 'I am training for my next hyrox, I need a matching outfit, energy tablets for just before I start, and a nice moisteriser for when I finish to feel amazing!' All will work with Ventiko. We are the new way to shop."
     },
     {
-      question: "what is bio-optimization?", // LOWERCASE for readability
+      question: "what is bio-optimization?", 
       answer: "Bio-optimization is the systematic application of science, technology, and nature to improve human performance. Unlike 'bio-hacking' which often implies shortcuts, bio-optimization focuses on sustainable, long-term physiological improvements through protocols, supplements, and tools."
     },
     {
@@ -1605,8 +1611,17 @@ function About() {
       
       {/* SECTION 1: THE MISSION */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
-        {/* LOWERCASE TITLE */}
         <h1>about Ventiko</h1>
+        
+        {/* CHANGED: ADDED NAVIGATION BUTTON */}
+        <button 
+          onClick={() => navigate('/')}
+          className="main-search-btn"
+          style={{ marginBottom: '2rem', fontSize: '0.9rem', padding: '0.6rem 2rem' }}
+        >
+          ← start a new search
+        </button>
+
         <p style={{ 
           fontFamily: 'Roboto, sans-serif', 
           fontSize: '1.1rem', 
@@ -1695,14 +1710,13 @@ FILE: frontend/src/pages/Archive.jsx
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // CHANGED: Added Link
 
 function Archive() {
   const navigate = useNavigate();
   const [archiveData, setArchiveData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch the history when page loads
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -1716,17 +1730,20 @@ function Archive() {
     fetchHistory();
   }, []);
 
-  // Allow clicking a past query to search it again
-  const runSearch = (term) => {
-    // Navigate to the NEW Seo-Friendly URL structure
-    navigate(`/s/${encodeURIComponent(term)}`); 
-  };
-
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       
       <section style={{ marginBottom: '3rem', textAlign: 'center' }}>
         <h1>live archive</h1>
+        
+        <button 
+          onClick={() => navigate('/')}
+          className="main-search-btn"
+          style={{ marginBottom: '2rem', fontSize: '0.9rem', padding: '0.6rem 2rem' }}
+        >
+          ← start a new search
+        </button>
+
         <p style={{ fontFamily: 'Roboto', color: '#64748b' }}>
           real-time optimization requests from the community
         </p>
@@ -1742,10 +1759,13 @@ function Archive() {
           )}
 
           {archiveData.map((log) => (
-            <div 
+            /* SEO FIX: Use <Link> instead of <div> onClick. 
+               This allows Googlebot to follow the path. */
+            <Link 
               key={log.id} 
-              onClick={() => runSearch(log.query)}
+              to={`/s/${encodeURIComponent(log.query)}`}
               style={{ 
+                textDecoration: 'none', // Remove underline
                 background: 'white', 
                 padding: '1.5rem', 
                 borderRadius: '12px',
@@ -1759,7 +1779,7 @@ function Archive() {
               onMouseOver={(e) => e.currentTarget.style.borderColor = '#23F0C7'}
               onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
             >
-              {/* THE QUERY (What they searched) */}
+              {/* THE QUERY */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ 
                   fontFamily: 'Major Mono Display', 
@@ -1775,7 +1795,7 @@ function Archive() {
                 </span>
               </div>
 
-              {/* THE RESULTS (What we found) */}
+              {/* THE RESULTS */}
               <div style={{ 
                 fontSize: '0.9rem', 
                 color: '#64748b', 
@@ -1787,7 +1807,7 @@ function Archive() {
                 <strong style={{ color: '#23F0C7' }}>results:</strong> {log.results_summary.toLowerCase()}
               </div>
 
-            </div>
+            </Link>
           ))}
         </div>
       )}
@@ -1797,6 +1817,129 @@ function Archive() {
 }
 
 export default Archive
+
+================================================================
+FILE: frontend/src/pages/Blog.jsx
+================================================================
+
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+function Blog() {
+  const navigate = useNavigate();
+
+  // MOCK DATA: This is where your daily AI-generated articles will live
+  // Later, we can pull this from a database or a simple JSON file.
+  const articles = [
+    {
+      id: 1,
+      slug: "hyrox-beginners-guide",
+      title: "The Complete Hyrox Protocol: Gear, Fuel & Recovery",
+      excerpt: "Competing in your first Hyrox? Here is the exact bio-optimization strategy used by elite athletes to crush the Roxzone.",
+      date: "Dec 30, 2025",
+      readTime: "5 min read",
+      category: "Performance"
+    },
+    {
+      id: 2,
+      slug: "sleep-stack-science",
+      title: "Why Magnesium Glycinate is Not Enough",
+      excerpt: "The truth about sleep stacks. We analyze the synergy between L-Theanine, Apigenin, and Magnesium for deep REM cycles.",
+      date: "Dec 29, 2025",
+      readTime: "4 min read",
+      category: "Sleep"
+    },
+    {
+      id: 3,
+      slug: "morning-routine-cortisol",
+      title: "Optimizing Your Morning Cortisol Awakening Response",
+      excerpt: "Stop drinking coffee immediately. Here is the science-backed protocol for morning light exposure and hydration.",
+      date: "Dec 28, 2025",
+      readTime: "6 min read",
+      category: "Focus"
+    }
+  ];
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
+      
+      {/* HEADER */}
+      <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
+        <h1>tHe pRotocol</h1>
+        
+        <button 
+          onClick={() => navigate('/')}
+          className="main-search-btn"
+          style={{ marginBottom: '2rem', fontSize: '0.9rem', padding: '0.6rem 2rem' }}
+        >
+          ← start new search
+        </button>
+
+        <p style={{ 
+          fontFamily: 'Roboto, sans-serif', 
+          fontSize: '1.1rem', 
+          color: '#475569'
+        }}>
+          Optimization strategies, clinical research, and gear analysis.
+        </p>
+      </section>
+
+      {/* ARTICLE GRID */}
+      <div className="grid">
+        {articles.map((article) => (
+          <div 
+            key={article.id}
+            className="card"
+            style={{ 
+              cursor: 'pointer', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'space-between' 
+            }}
+            onClick={() => alert("Article Reader Coming in Phase 20!")} // Placeholder for next step
+          >
+            <div>
+              <div style={{ 
+                fontSize: '0.75rem', 
+                color: '#23F0C7', 
+                fontWeight: 'bold', 
+                textTransform: 'uppercase', 
+                letterSpacing: '1px',
+                marginBottom: '0.5rem'
+              }}>
+                {article.category}
+              </div>
+              
+              <h3 style={{ fontSize: '1.2rem', lineHeight: '1.4', marginBottom: '1rem' }}>
+                {article.title}
+              </h3>
+              
+              <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>
+                {article.excerpt}
+              </p>
+            </div>
+
+            <div style={{ 
+              borderTop: '1px solid #f1f5f9', 
+              paddingTop: '1rem', 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              fontSize: '0.8rem',
+              color: '#94a3b8'
+            }}>
+              <span>{article.date}</span>
+              <span>{article.readTime}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  )
+}
+
+export default Blog
 
 ================================================================
 FILE: frontend/src/pages/Home.jsx
@@ -1986,6 +2129,17 @@ function Home() {
           {loading ? "scanning..." : "search"}
         </button>
       </div>
+{/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
+{!loading && searchTerm && results.length > 0 && (
+        <div style={{ 
+          maxWidth: '800px', margin: '0 auto 2rem auto', 
+          fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
+          borderLeft: '3px solid #23F0C7', paddingLeft: '1rem'
+        }}>
+          Protocol generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
+          Analyzing {results.length} bio-optimized matches based on clinical efficacy and user reviews.
+        </div>
+      )}
 
       <div className="grid">
         {loading && (

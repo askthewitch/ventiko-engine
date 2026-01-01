@@ -1,0 +1,501 @@
+merchant_id,merchant_name,merchant_category,aw_product_id,product_name,description,search_price,currency,aw_deep_link,large_image
+1001,VitalSleep,Unknown,p_37343,Product 0 - Lite,,GBP 25.00,GBP,https://awin.com/p=0,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_83547,Product 1 - Lite,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=1,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_84656,Product 2 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=2,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_43642,Product 3 - Lite,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=3,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_20173,Product 4 - Max,,£30.00,GBP,https://awin.com/p=4,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_96151,Product 5 - Max,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=5,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_98079,Product 6 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=6,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_63992,Product 7 - Lite,,19.99,GBP,https://awin.com/p=7,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_88281,Product 8 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=8,https://via.placeholder.com/150
+1001,,Uncategorized,p_80049,Product 9 - Max,,19.99,GBP,https://awin.com/p=9,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,DUPLICATE_TEST_ID,Product 10 - Pro,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=10,https://via.placeholder.com/150
+1001,NullCorp,Focus,DUPLICATE_TEST_ID,Product 11 - Max,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=11,https://via.placeholder.com/150
+1001,,Focus,p_57910,Product 12 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=12,https://via.placeholder.com/150
+1001,,Uncategorized,p_67439,Product 13 - Max,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=13,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_58755,Product 14 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=14,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_62648,Product 15 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=15,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_64786,Product 16 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=16,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_67027,Product 17 - Pro,,0.00,GBP,https://awin.com/p=17,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_65828,Product 18 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=18,https://via.placeholder.com/150
+1001,,Recovery,p_79298,Product 19 - Max,,CALL FOR PRICE,GBP,https://awin.com/p=19,https://via.placeholder.com/150
+1001,,Uncategorized,p_55592,Product 20 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=20,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_67206,Product 21 - Pro,,15.00,GBP,https://awin.com/p=21,https://via.placeholder.com/150
+1001,NullCorp,Focus,,,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=22,https://via.placeholder.com/150
+1001,,Uncategorized,p_76139,Product 23 - Max,,15.00,GBP,https://awin.com/p=23,https://via.placeholder.com/150
+1001,,Focus,p_30248,Product 24 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=24,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_83365,Product 25 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=25,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_62843,Product 26 - Pro,,£30.00,GBP,https://awin.com/p=26,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_46518,Product 27 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=27,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_25320,Product 28 - Lite,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=28,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_42752,Product 29 - Pro,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=29,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_85947,Product 30 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=30,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_13603,Product 31 - Lite,,GBP 25.00,GBP,https://awin.com/p=31,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_54850,Product 32 - Max,Just a normal description.,£30.00,GBP,https://awin.com/p=32,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_35785,Product 33 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=33,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_86775,Product 34 - Max,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=34,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_99484,Product 35 - Pro,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=35,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_70965,Product 36 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=36,https://via.placeholder.com/150
+1001,NullCorp,Recovery,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=37,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_33757,Product 38 - Pro,Just a normal description.,,GBP,https://awin.com/p=38,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_92260,Product 39 - Max,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=39,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,,,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=40,https://via.placeholder.com/150
+1001,,Uncategorized,p_59391,Product 41 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=41,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_66608,Product 42 - Pro,,15.00,GBP,https://awin.com/p=42,https://via.placeholder.com/150
+1001,,Focus,p_74241,Product 43 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=43,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_56504,Product 44 - Lite,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=44,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_61154,Product 45 - Max,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=45,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_63935,Product 46 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=46,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_78452,Product 47 - Pro,Just a normal description.,19.99,GBP,https://awin.com/p=47,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_50811,Product 48 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=48,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_54225,Product 49 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=49,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_14228,Product 50 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=50,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_84856,Product 51 - Max,Just a normal description.,£30.00,GBP,https://awin.com/p=51,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_20447,Product 52 - Lite,,0.00,GBP,https://awin.com/p=52,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_37252,Product 53 - Max,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=53,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_99994,Product 54 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=54,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_88520,Product 55 - Lite,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=55,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_94584,Product 56 - Pro,Just a normal description.,,GBP,https://awin.com/p=56,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_66647,Product 57 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=57,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_87382,Product 58 - Max,,,GBP,https://awin.com/p=58,https://via.placeholder.com/150
+1001,,Recovery,p_28832,Product 59 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=59,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_91511,Product 60 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=60,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_60728,Product 61 - Pro,,0.00,GBP,https://awin.com/p=61,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_86333,Product 62 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=62,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_68349,Product 63 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=63,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=64,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_96674,Product 65 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=65,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_13134,Product 66 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=66,https://via.placeholder.com/150
+1001,,Focus,p_55760,Product 67 - Pro,Just a normal description.,0.00,GBP,https://awin.com/p=67,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_18278,Product 68 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=68,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_19888,Product 69 - Lite,,£30.00,GBP,https://awin.com/p=69,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_48956,Product 70 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=70,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_92003,Product 71 - Lite,Just a normal description.,,GBP,https://awin.com/p=71,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_74289,Product 72 - Max,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=72,https://via.placeholder.com/150
+1001,,Unknown,p_50227,Product 73 - Max,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=73,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_94322,Product 74 - Lite,Just a normal description.,15.00,GBP,https://awin.com/p=74,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_85381,Product 75 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=75,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_91809,Product 76 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=76,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_69636,Product 77 - Lite,Just a normal description.,,GBP,https://awin.com/p=77,https://via.placeholder.com/150
+1001,,Recovery,p_37407,Product 78 - Max,Just a normal description.,,GBP,https://awin.com/p=78,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,,,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=79,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_35215,Product 80 - Lite,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=80,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_56001,Product 81 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=81,https://via.placeholder.com/150
+1001,,Uncategorized,p_16419,Product 82 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=82,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_38917,Product 83 - Lite,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=83,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_83943,Product 84 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=84,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_31482,Product 85 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=85,https://via.placeholder.com/150
+1001,NullCorp,Unknown,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=86,https://via.placeholder.com/150
+1001,,Focus,p_79046,Product 87 - Lite,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=87,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_95612,Product 88 - Lite,,£30.00,GBP,https://awin.com/p=88,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_64200,Product 89 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=89,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_75312,Product 90 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=90,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_17331,Product 91 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=91,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_66169,Product 92 - Pro,,CALL FOR PRICE,GBP,https://awin.com/p=92,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_49151,Product 93 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=93,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_48817,Product 94 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=94,https://via.placeholder.com/150
+1001,,Sleep,p_91418,Product 95 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=95,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_94607,Product 96 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=96,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_42319,Product 97 - Pro,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=97,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_46801,Product 98 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=98,https://via.placeholder.com/150
+1001,,Recovery,p_36748,Product 99 - Max,,GBP 25.00,GBP,https://awin.com/p=99,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_86359,Product 100 - Lite,,£30.00,GBP,https://awin.com/p=100,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_23809,Product 101 - Lite,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=101,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_14262,Product 102 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=102,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_36410,Product 103 - Max,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=103,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_18686,Product 104 - Max,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=104,https://via.placeholder.com/150
+1001,,Uncategorized,p_81500,Product 105 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=105,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_63431,Product 106 - Lite,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=106,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_21745,Product 107 - Lite,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=107,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_40209,Product 108 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=108,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_13872,Product 109 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=109,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_74342,Product 110 - Lite,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=110,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_81842,Product 111 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=111,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_63851,Product 112 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=112,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_84096,Product 113 - Pro,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=113,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_29763,Product 114 - Max,,£30.00,GBP,https://awin.com/p=114,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_22499,Product 115 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=115,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_64232,Product 116 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=116,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_37894,Product 117 - Pro,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=117,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_52551,Product 118 - Lite,,19.99,GBP,https://awin.com/p=118,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_42368,Product 119 - Lite,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=119,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_85469,Product 120 - Max,,£30.00,GBP,https://awin.com/p=120,https://via.placeholder.com/150
+1001,,Recovery,,,Just a normal description.,0.00,GBP,https://awin.com/p=121,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_87639,Product 122 - Lite,,19.99,GBP,https://awin.com/p=122,https://via.placeholder.com/150
+1001,,Unknown,p_15016,Product 123 - Max,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=123,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_63479,Product 124 - Max,,CALL FOR PRICE,GBP,https://awin.com/p=124,https://via.placeholder.com/150
+1001,,Sleep,p_97370,Product 125 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=125,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_39576,Product 126 - Max,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=126,https://via.placeholder.com/150
+1001,,Unknown,p_71566,Product 127 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=127,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_99240,Product 128 - Max,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=128,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_91409,Product 129 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=129,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_88860,Product 130 - Pro,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=130,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_37866,Product 131 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=131,https://via.placeholder.com/150
+1001,,Unknown,,,,CALL FOR PRICE,GBP,https://awin.com/p=132,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_87253,Product 133 - Lite,,£30.00,GBP,https://awin.com/p=133,https://via.placeholder.com/150
+1001,,Uncategorized,p_71603,Product 134 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=134,https://via.placeholder.com/150
+1001,,Unknown,p_49845,Product 135 - Lite,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=135,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_35228,Product 136 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=136,https://via.placeholder.com/150
+1001,,Focus,p_56019,Product 137 - Pro,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=137,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_72513,Product 138 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=138,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_13463,Product 139 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=139,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_76740,Product 140 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=140,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_59565,Product 141 - Lite,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=141,https://via.placeholder.com/150
+1001,,Focus,p_74522,Product 142 - Pro,,19.99,GBP,https://awin.com/p=142,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_37378,Product 143 - Max,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=143,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_43254,Product 144 - Max,Just a normal description.,£30.00,GBP,https://awin.com/p=144,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_61007,Product 145 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=145,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_72774,Product 146 - Max,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=146,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_83605,Product 147 - Max,Just a normal description.,£30.00,GBP,https://awin.com/p=147,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_40669,Product 148 - Lite,,,GBP,https://awin.com/p=148,https://via.placeholder.com/150
+1001,,Uncategorized,p_36925,Product 149 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=149,https://via.placeholder.com/150
+1001,,Unknown,p_33878,Product 150 - Lite,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=150,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_64251,Product 151 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=151,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_19159,Product 152 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=152,https://via.placeholder.com/150
+1001,,Unknown,p_89428,Product 153 - Lite,,CALL FOR PRICE,GBP,https://awin.com/p=153,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_46608,Product 154 - Pro,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=154,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_99937,Product 155 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=155,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_16414,Product 156 - Pro,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=156,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_38361,Product 157 - Lite,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=157,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_20793,Product 158 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=158,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_97195,Product 159 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=159,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_88334,Product 160 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=160,https://via.placeholder.com/150
+1001,,Sleep,p_18176,Product 161 - Pro,,£30.00,GBP,https://awin.com/p=161,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_25324,Product 162 - Pro,,GBP 25.00,GBP,https://awin.com/p=162,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_46247,Product 163 - Pro,Just a normal description.,0.00,GBP,https://awin.com/p=163,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_21306,Product 164 - Lite,,£30.00,GBP,https://awin.com/p=164,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_35557,Product 165 - Max,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=165,https://via.placeholder.com/150
+1001,,Recovery,p_77571,Product 166 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=166,https://via.placeholder.com/150
+1001,,Focus,p_45155,Product 167 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=167,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_81424,Product 168 - Lite,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=168,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_17610,Product 169 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=169,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_57390,Product 170 - Lite,,15.00,GBP,https://awin.com/p=170,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_74341,Product 171 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=171,https://via.placeholder.com/150
+1001,,Uncategorized,p_37301,Product 172 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=172,https://via.placeholder.com/150
+1001,,Sleep,p_72039,Product 173 - Lite,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=173,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_51067,Product 174 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=174,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_91218,Product 175 - Lite,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=175,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_92945,Product 176 - Lite,,19.99,GBP,https://awin.com/p=176,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_95379,Product 177 - Lite,Just a normal description.,15.00,GBP,https://awin.com/p=177,https://via.placeholder.com/150
+1001,,Sleep,p_39863,Product 178 - Lite,,19.99,GBP,https://awin.com/p=178,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_59425,Product 179 - Pro,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=179,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_98572,Product 180 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=180,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_61213,Product 181 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=181,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_77905,Product 182 - Lite,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=182,https://via.placeholder.com/150
+1001,,Recovery,p_32996,Product 183 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=183,https://via.placeholder.com/150
+1001,,Sleep,p_35559,Product 184 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=184,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_96475,Product 185 - Max,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=185,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_85176,Product 186 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=186,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_60778,Product 187 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=187,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_93259,Product 188 - Lite,,15.00,GBP,https://awin.com/p=188,https://via.placeholder.com/150
+1001,,Focus,p_32732,Product 189 - Pro,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=189,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_75400,Product 190 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=190,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_21682,Product 191 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=191,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_75018,Product 192 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=192,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_44611,Product 193 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=193,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_58533,Product 194 - Max,<strong>Great product!</strong>,,GBP,https://awin.com/p=194,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_72402,Product 195 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=195,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_83408,Product 196 - Pro,,19.99,GBP,https://awin.com/p=196,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_18754,Product 197 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=197,https://via.placeholder.com/150
+1001,,Focus,p_56893,Product 198 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=198,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_44069,Product 199 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=199,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_61795,Product 200 - Max,Just a normal description.,,GBP,https://awin.com/p=200,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_54225,Product 201 - Max,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=201,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_36449,Product 202 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=202,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_19786,Product 203 - Pro,Just a normal description.,15.00,GBP,https://awin.com/p=203,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_90737,Product 204 - Pro,,19.99,GBP,https://awin.com/p=204,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_46688,Product 205 - Lite,,£30.00,GBP,https://awin.com/p=205,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_88683,Product 206 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=206,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_39375,Product 207 - Pro,,GBP 25.00,GBP,https://awin.com/p=207,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_18938,Product 208 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=208,https://via.placeholder.com/150
+1001,,Recovery,p_42112,Product 209 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=209,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_92544,Product 210 - Pro,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=210,https://via.placeholder.com/150
+1001,,Unknown,p_55568,Product 211 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=211,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_77763,Product 212 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=212,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_78085,Product 213 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=213,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_63324,Product 214 - Pro,,,GBP,https://awin.com/p=214,https://via.placeholder.com/150
+1001,,Focus,p_97399,Product 215 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=215,https://via.placeholder.com/150
+1001,,Focus,p_19608,Product 216 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=216,https://via.placeholder.com/150
+1001,,Recovery,p_75060,Product 217 - Lite,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=217,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_76203,Product 218 - Pro,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=218,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_90394,Product 219 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=219,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_74216,Product 220 - Max,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=220,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_87574,Product 221 - Lite,,0.00,GBP,https://awin.com/p=221,https://via.placeholder.com/150
+1001,,Unknown,p_53576,Product 222 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=222,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_80934,Product 223 - Pro,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=223,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_53870,Product 224 - Max,Just a normal description.,,GBP,https://awin.com/p=224,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_15256,Product 225 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=225,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_96089,Product 226 - Max,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=226,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_61983,Product 227 - Pro,,,GBP,https://awin.com/p=227,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_48902,Product 228 - Max,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=228,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_55015,Product 229 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=229,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_74600,Product 230 - Max,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=230,https://via.placeholder.com/150
+1001,,Focus,p_21073,Product 231 - Max,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=231,https://via.placeholder.com/150
+1001,,Focus,p_20888,Product 232 - Pro,,,GBP,https://awin.com/p=232,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_86133,Product 233 - Lite,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=233,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_91386,Product 234 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=234,https://via.placeholder.com/150
+1001,,Uncategorized,p_47847,Product 235 - Lite,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=235,https://via.placeholder.com/150
+1001,,Focus,p_34608,Product 236 - Max,,0.00,GBP,https://awin.com/p=236,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_60699,Product 237 - Lite,,19.99,GBP,https://awin.com/p=237,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_81509,Product 238 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=238,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_15655,Product 239 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=239,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_23005,Product 240 - Max,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=240,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_13300,Product 241 - Pro,,CALL FOR PRICE,GBP,https://awin.com/p=241,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_47392,Product 242 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=242,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_88091,Product 243 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=243,https://via.placeholder.com/150
+1001,,Focus,p_81606,Product 244 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=244,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_55668,Product 245 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=245,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_99739,Product 246 - Max,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=246,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_26104,Product 247 - Pro,Just a normal description.,,GBP,https://awin.com/p=247,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_61320,Product 248 - Pro,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=248,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_57409,Product 249 - Max,,,GBP,https://awin.com/p=249,https://via.placeholder.com/150
+1001,,Focus,p_24815,Product 250 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=250,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_72700,Product 251 - Pro,Just a normal description.,15.00,GBP,https://awin.com/p=251,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_77569,Product 252 - Max,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=252,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,,,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=253,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_76817,Product 254 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=254,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_86283,Product 255 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=255,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_10448,Product 256 - Lite,Just a normal description.,0.00,GBP,https://awin.com/p=256,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_32176,Product 257 - Pro,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=257,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_86704,Product 258 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=258,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,,,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=259,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_30092,Product 260 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=260,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_78367,Product 261 - Max,,19.99,GBP,https://awin.com/p=261,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,,,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=262,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_65672,Product 263 - Pro,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=263,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_83596,Product 264 - Pro,,,GBP,https://awin.com/p=264,https://via.placeholder.com/150
+1001,,Uncategorized,p_35286,Product 265 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=265,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_83531,Product 266 - Lite,,19.99,GBP,https://awin.com/p=266,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_26257,Product 267 - Lite,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=267,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_21235,Product 268 - Pro,,19.99,GBP,https://awin.com/p=268,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_48515,Product 269 - Max,,CALL FOR PRICE,GBP,https://awin.com/p=269,https://via.placeholder.com/150
+1001,,Unknown,p_13348,Product 270 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=270,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_24612,Product 271 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=271,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_36100,Product 272 - Lite,Just a normal description.,,GBP,https://awin.com/p=272,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_23210,Product 273 - Pro,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=273,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_12867,Product 274 - Lite,,£30.00,GBP,https://awin.com/p=274,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_14916,Product 275 - Max,,GBP 25.00,GBP,https://awin.com/p=275,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_39900,Product 276 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=276,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_55561,Product 277 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=277,https://via.placeholder.com/150
+1001,,Focus,p_20318,Product 278 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=278,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_21900,Product 279 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=279,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_19447,Product 280 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=280,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_98490,Product 281 - Lite,,,GBP,https://awin.com/p=281,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_57072,Product 282 - Lite,Just a normal description.,,GBP,https://awin.com/p=282,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_82455,Product 283 - Max,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=283,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_73795,Product 284 - Max,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=284,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_45891,Product 285 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=285,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_16440,Product 286 - Max,,15.00,GBP,https://awin.com/p=286,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_38193,Product 287 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=287,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_23820,Product 288 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=288,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_67086,Product 289 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=289,https://via.placeholder.com/150
+1001,,Focus,p_29748,Product 290 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=290,https://via.placeholder.com/150
+1001,,Recovery,p_50652,Product 291 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=291,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_22464,Product 292 - Pro,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=292,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_22021,Product 293 - Max,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=293,https://via.placeholder.com/150
+1001,,Focus,p_71142,Product 294 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=294,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_89438,Product 295 - Max,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=295,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_99608,Product 296 - Lite,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=296,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_95703,Product 297 - Lite,,15.00,GBP,https://awin.com/p=297,https://via.placeholder.com/150
+1001,NullCorp,Recovery,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=298,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,,,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=299,https://via.placeholder.com/150
+1001,NullCorp,Sleep,,,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=300,https://via.placeholder.com/150
+1001,,Unknown,p_35937,Product 301 - Max,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=301,https://via.placeholder.com/150
+1001,,Unknown,p_38294,Product 302 - Lite,,£30.00,GBP,https://awin.com/p=302,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_49582,Product 303 - Max,,15.00,GBP,https://awin.com/p=303,https://via.placeholder.com/150
+1001,,Sleep,p_83605,Product 304 - Pro,Just a normal description.,19.99,GBP,https://awin.com/p=304,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_31734,Product 305 - Lite,,GBP 25.00,GBP,https://awin.com/p=305,https://via.placeholder.com/150
+1001,,Uncategorized,,,,£30.00,GBP,https://awin.com/p=306,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_47302,Product 307 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=307,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_87465,Product 308 - Max,,0.00,GBP,https://awin.com/p=308,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_78213,Product 309 - Max,,0.00,GBP,https://awin.com/p=309,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_89064,Product 310 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=310,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_96392,Product 311 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=311,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_75496,Product 312 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=312,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_46775,Product 313 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=313,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_11257,Product 314 - Lite,,CALL FOR PRICE,GBP,https://awin.com/p=314,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_87860,Product 315 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=315,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_28497,Product 316 - Lite,,19.99,GBP,https://awin.com/p=316,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_80022,Product 317 - Lite,,15.00,GBP,https://awin.com/p=317,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_47969,Product 318 - Lite,,,GBP,https://awin.com/p=318,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_52977,Product 319 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=319,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_52362,Product 320 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=320,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_19398,Product 321 - Lite,Just a normal description.,,GBP,https://awin.com/p=321,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_13981,Product 322 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=322,https://via.placeholder.com/150
+1001,,Focus,,,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=323,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_23168,Product 324 - Lite,,19.99,GBP,https://awin.com/p=324,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_64916,Product 325 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=325,https://via.placeholder.com/150
+1001,,Uncategorized,p_65156,Product 326 - Lite,,15.00,GBP,https://awin.com/p=326,https://via.placeholder.com/150
+1001,,Uncategorized,p_19792,Product 327 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=327,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_14679,Product 328 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=328,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_90062,Product 329 - Lite,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=329,https://via.placeholder.com/150
+1001,,Unknown,p_81130,Product 330 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=330,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_29872,Product 331 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=331,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_66518,Product 332 - Lite,Just a normal description.,£30.00,GBP,https://awin.com/p=332,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_64561,Product 333 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=333,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_19399,Product 334 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=334,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_81883,Product 335 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=335,https://via.placeholder.com/150
+1001,,Unknown,p_47318,Product 336 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=336,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_66345,Product 337 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=337,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_58103,Product 338 - Pro,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=338,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_21898,Product 339 - Max,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=339,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_62466,Product 340 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=340,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_29270,Product 341 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=341,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_45905,Product 342 - Pro,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=342,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_46296,Product 343 - Lite,Just a normal description.,0.00,GBP,https://awin.com/p=343,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_27021,Product 344 - Lite,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=344,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_83589,Product 345 - Pro,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=345,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_40894,Product 346 - Max,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=346,https://via.placeholder.com/150
+1001,,Uncategorized,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=347,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_24789,Product 348 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=348,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_84575,Product 349 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=349,https://via.placeholder.com/150
+1001,,Recovery,p_85152,Product 350 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=350,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_70760,Product 351 - Lite,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=351,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_57372,Product 352 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=352,https://via.placeholder.com/150
+1001,,Recovery,p_78827,Product 353 - Pro,,0.00,GBP,https://awin.com/p=353,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,,,Just a normal description.,15.00,GBP,https://awin.com/p=354,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_79491,Product 355 - Pro,Just a normal description.,,GBP,https://awin.com/p=355,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_39673,Product 356 - Lite,Just a normal description.,,GBP,https://awin.com/p=356,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_18871,Product 357 - Pro,,,GBP,https://awin.com/p=357,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_16464,Product 358 - Max,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=358,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_53287,Product 359 - Lite,,CALL FOR PRICE,GBP,https://awin.com/p=359,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_60111,Product 360 - Lite,Just a normal description.,,GBP,https://awin.com/p=360,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_65028,Product 361 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=361,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_54394,Product 362 - Pro,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=362,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_99974,Product 363 - Pro,,0.00,GBP,https://awin.com/p=363,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,,,Just a normal description.,£30.00,GBP,https://awin.com/p=364,https://via.placeholder.com/150
+1001,,Recovery,p_45140,Product 365 - Lite,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=365,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_25540,Product 366 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=366,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_39080,Product 367 - Pro,,19.99,GBP,https://awin.com/p=367,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_50163,Product 368 - Max,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=368,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_39515,Product 369 - Max,,0.00,GBP,https://awin.com/p=369,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_10744,Product 370 - Lite,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=370,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_58569,Product 371 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=371,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_15985,Product 372 - Lite,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=372,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_44318,Product 373 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=373,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_95259,Product 374 - Pro,Just a normal description.,19.99,GBP,https://awin.com/p=374,https://via.placeholder.com/150
+1001,,Recovery,p_66325,Product 375 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=375,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_17054,Product 376 - Lite,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=376,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_35390,Product 377 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=377,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_57261,Product 378 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=378,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_34017,Product 379 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=379,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_89141,Product 380 - Lite,,£30.00,GBP,https://awin.com/p=380,https://via.placeholder.com/150
+1001,,Recovery,p_70347,Product 381 - Lite,Just a normal description.,£30.00,GBP,https://awin.com/p=381,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_66646,Product 382 - Lite,,GBP 25.00,GBP,https://awin.com/p=382,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_46745,Product 383 - Max,,0.00,GBP,https://awin.com/p=383,https://via.placeholder.com/150
+1001,,Sleep,p_90589,Product 384 - Max,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=384,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_61420,Product 385 - Pro,,£30.00,GBP,https://awin.com/p=385,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_64832,Product 386 - Lite,Just a normal description.,19.99,GBP,https://awin.com/p=386,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_49920,Product 387 - Lite,,£30.00,GBP,https://awin.com/p=387,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_38717,Product 388 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=388,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_49819,Product 389 - Pro,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=389,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_49000,Product 390 - Max,,19.99,GBP,https://awin.com/p=390,https://via.placeholder.com/150
+1001,,Unknown,p_65327,Product 391 - Pro,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=391,https://via.placeholder.com/150
+1001,,Focus,p_88421,Product 392 - Max,,0.00,GBP,https://awin.com/p=392,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_66510,Product 393 - Pro,,0.00,GBP,https://awin.com/p=393,https://via.placeholder.com/150
+1001,,Focus,p_11175,Product 394 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=394,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_73592,Product 395 - Max,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=395,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_82321,Product 396 - Pro,,GBP 25.00,GBP,https://awin.com/p=396,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_18005,Product 397 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=397,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_82576,Product 398 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=398,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_49887,Product 399 - Max,Just a normal description.,19.99,GBP,https://awin.com/p=399,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_62342,Product 400 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=400,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_53577,Product 401 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=401,https://via.placeholder.com/150
+1001,,Unknown,p_28387,Product 402 - Lite,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=402,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_94650,Product 403 - Lite,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=403,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_30303,Product 404 - Pro,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=404,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_19985,Product 405 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=405,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_34904,Product 406 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=406,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_55372,Product 407 - Max,,19.99,GBP,https://awin.com/p=407,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_39054,Product 408 - Lite,<strong>Great product!</strong>,,GBP,https://awin.com/p=408,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_82200,Product 409 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=409,https://via.placeholder.com/150
+1001,,Uncategorized,p_31650,Product 410 - Lite,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=410,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_46672,Product 411 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=411,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_23395,Product 412 - Max,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=412,https://via.placeholder.com/150
+1001,,Sleep,p_91064,Product 413 - Pro,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=413,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_27863,Product 414 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=414,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_68878,Product 415 - Max,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=415,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_45652,Product 416 - Max,,£30.00,GBP,https://awin.com/p=416,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_83023,Product 417 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=417,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_84856,Product 418 - Lite,Just a normal description.,0.00,GBP,https://awin.com/p=418,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_94835,Product 419 - Max,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=419,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_73877,Product 420 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=420,https://via.placeholder.com/150
+1001,,Unknown,p_58710,Product 421 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=421,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_89394,Product 422 - Pro,,15.00,GBP,https://awin.com/p=422,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_58368,Product 423 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=423,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_36927,Product 424 - Pro,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=424,https://via.placeholder.com/150
+1001,,Unknown,p_19984,Product 425 - Lite,,CALL FOR PRICE,GBP,https://awin.com/p=425,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_97521,Product 426 - Pro,Just a normal description.,,GBP,https://awin.com/p=426,https://via.placeholder.com/150
+1001,BrokenBrand,Recovery,p_24747,Product 427 - Lite,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=427,https://via.placeholder.com/150
+1001,,Unknown,p_10244,Product 428 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=428,https://via.placeholder.com/150
+1001,,Unknown,p_15000,Product 429 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=429,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_41986,Product 430 - Pro,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=430,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_88942,Product 431 - Lite,Just a normal description.,,GBP,https://awin.com/p=431,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_43479,Product 432 - Pro,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=432,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_65416,Product 433 - Max,Just a normal description.,0.00,GBP,https://awin.com/p=433,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_77853,Product 434 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,GBP 25.00,GBP,https://awin.com/p=434,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_33580,Product 435 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=435,https://via.placeholder.com/150
+1001,,Uncategorized,p_62497,Product 436 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=436,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_13353,Product 437 - Lite,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=437,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_85140,Product 438 - Max,,,GBP,https://awin.com/p=438,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_69286,Product 439 - Lite,&pound;15 value! <br> Click here.,0.00,GBP,https://awin.com/p=439,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_19280,Product 440 - Max,,CALL FOR PRICE,GBP,https://awin.com/p=440,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_47225,Product 441 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=441,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_39081,Product 442 - Lite,,GBP 25.00,GBP,https://awin.com/p=442,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_48576,Product 443 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=443,https://via.placeholder.com/150
+1001,,Unknown,p_90442,Product 444 - Max,,CALL FOR PRICE,GBP,https://awin.com/p=444,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_91718,Product 445 - Max,,£30.00,GBP,https://awin.com/p=445,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_80481,Product 446 - Max,,,GBP,https://awin.com/p=446,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_18342,Product 447 - Max,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=447,https://via.placeholder.com/150
+1001,,Sleep,p_21872,Product 448 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=448,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_87244,Product 449 - Max,Just a normal description.,£30.00,GBP,https://awin.com/p=449,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_55755,Product 450 - Pro,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=450,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_43220,Product 451 - Max,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=451,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_22749,Product 452 - Lite,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=452,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_94222,Product 453 - Lite,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=453,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_62695,Product 454 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,0.00,GBP,https://awin.com/p=454,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_37295,Product 455 - Pro,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=455,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_49343,Product 456 - Pro,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=456,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_33171,Product 457 - Max,&pound;15 value! <br> Click here.,CALL FOR PRICE,GBP,https://awin.com/p=457,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_96779,Product 458 - Max,Just a normal description.,CALL FOR PRICE,GBP,https://awin.com/p=458,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_54771,Product 459 - Max,,,GBP,https://awin.com/p=459,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_42183,Product 460 - Lite,<strong>Great product!</strong>,£30.00,GBP,https://awin.com/p=460,https://via.placeholder.com/150
+1001,NullCorp,Recovery,p_87352,Product 461 - Pro,,15.00,GBP,https://awin.com/p=461,https://via.placeholder.com/150
+1001,BrokenBrand,Unknown,p_78349,Product 462 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=462,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_44973,Product 463 - Lite,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=463,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_93930,Product 464 - Pro,<strong>Great product!</strong>,,GBP,https://awin.com/p=464,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_76518,Product 465 - Pro,<strong>Great product!</strong>,GBP 25.00,GBP,https://awin.com/p=465,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_97496,Product 466 - Pro,,19.99,GBP,https://awin.com/p=466,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,,,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=467,https://via.placeholder.com/150
+1001,BrokenBrand,Focus,p_85049,Product 468 - Lite,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=468,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_63046,Product 469 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,19.99,GBP,https://awin.com/p=469,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_52841,Product 470 - Pro,&pound;15 value! <br> Click here.,£30.00,GBP,https://awin.com/p=470,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_50102,Product 471 - Pro,Just a normal description.,19.99,GBP,https://awin.com/p=471,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_57171,Product 472 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,,GBP,https://awin.com/p=472,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_10989,Product 473 - Pro,Just a normal description.,,GBP,https://awin.com/p=473,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_19779,Product 474 - Max,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=474,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_70851,Product 475 - Pro,Just a normal description.,£30.00,GBP,https://awin.com/p=475,https://via.placeholder.com/150
+1001,NullCorp,Sleep,p_48947,Product 476 - Lite,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=476,https://via.placeholder.com/150
+1001,NeuroPeak,Focus,p_60208,Product 477 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,15.00,GBP,https://awin.com/p=477,https://via.placeholder.com/150
+1001,,Recovery,p_67900,Product 478 - Lite,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=478,https://via.placeholder.com/150
+1001,NeuroPeak,Recovery,p_29806,Product 479 - Lite,&pound;15 value! <br> Click here.,GBP 25.00,GBP,https://awin.com/p=479,https://via.placeholder.com/150
+1001,NeuroPeak,Sleep,p_55090,Product 480 - Max,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=480,https://via.placeholder.com/150
+1001,,Focus,p_84692,Product 481 - Lite,Just a normal description.,0.00,GBP,https://awin.com/p=481,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_76394,Product 482 - Max,<strong>Great product!</strong>,19.99,GBP,https://awin.com/p=482,https://via.placeholder.com/150
+1001,NeuroPeak,Uncategorized,p_62114,Product 483 - Max,Just a normal description.,15.00,GBP,https://awin.com/p=483,https://via.placeholder.com/150
+1001,NullCorp,Unknown,p_35440,Product 484 - Max,&pound;15 value! <br> Click here.,19.99,GBP,https://awin.com/p=484,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_20585,Product 485 - Max,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=485,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,,,,£30.00,GBP,https://awin.com/p=486,https://via.placeholder.com/150
+1001,NullCorp,Uncategorized,p_32319,Product 487 - Lite,<strong>Great product!</strong>,CALL FOR PRICE,GBP,https://awin.com/p=487,https://via.placeholder.com/150
+1001,NullCorp,Focus,p_63489,Product 488 - Max,<strong>Great product!</strong>,15.00,GBP,https://awin.com/p=488,https://via.placeholder.com/150
+1001,VitalSleep,Sleep,p_42599,Product 489 - Max,&pound;15 value! <br> Click here.,15.00,GBP,https://awin.com/p=489,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_91430,Product 490 - Pro,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=490,https://via.placeholder.com/150
+1001,BrokenBrand,Uncategorized,p_99552,Product 491 - Pro,,,GBP,https://awin.com/p=491,https://via.placeholder.com/150
+1001,VitalSleep,Recovery,p_49692,Product 492 - Pro,,CALL FOR PRICE,GBP,https://awin.com/p=492,https://via.placeholder.com/150
+1001,VitalSleep,Uncategorized,p_67195,Product 493 - Lite,<strong>Great product!</strong>,0.00,GBP,https://awin.com/p=493,https://via.placeholder.com/150
+1001,BrokenBrand,Sleep,p_96428,Product 494 - Pro,&pound;15 value! <br> Click here.,,GBP,https://awin.com/p=494,https://via.placeholder.com/150
+1001,VitalSleep,Focus,p_29861,Product 495 - Pro,Just a normal description.,GBP 25.00,GBP,https://awin.com/p=495,https://via.placeholder.com/150
+1001,VitalSleep,Focus,,,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,CALL FOR PRICE,GBP,https://awin.com/p=496,https://via.placeholder.com/150
+1001,,Recovery,,,,GBP 25.00,GBP,https://awin.com/p=497,https://via.placeholder.com/150
+1001,NeuroPeak,Unknown,p_24304,Product 498 - Lite,,0.00,GBP,https://awin.com/p=498,https://via.placeholder.com/150
+1001,VitalSleep,Unknown,p_28219,Product 499 - Pro,Contains <span style='color:red'>Bad Tags</span> and unclosed divs...,£30.00,GBP,https://awin.com/p=499,https://via.placeholder.com/150
