@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2026-01-01T16:42:11.894Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2026-01-01T17:43:27.876Z
 
 
 
@@ -342,7 +342,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, create_engine, select, delete
 from pydantic import BaseModel
 import resend
 
@@ -460,7 +460,8 @@ def on_startup():
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+# Added Render and Vercel URLs to CORS
+origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://ventiko.vercel.app"] 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -564,6 +565,27 @@ def track_click(data: ClickRequest, session: Session = Depends(get_session)):
     print(f" -> CLICK TRACKED: {data.product_title}")
     return {"status": "logged"}
 
+# --- UNSUBSCRIBE ENDPOINT (New) ---
+@app.get("/unsubscribe")
+def unsubscribe(email: str, session: Session = Depends(get_session)):
+    """
+    Deletes all records of this email from the UserLead table.
+    """
+    print(f"--- UNSUBSCRIBE REQUEST: {email} ---")
+    statement = select(UserLead).where(UserLead.email == email)
+    results = session.exec(statement).all()
+    
+    if not results:
+        return {"status": "not_found", "message": "Email not found."}
+    
+    # Delete all instances (in case they signed up multiple times)
+    for record in results:
+        session.delete(record)
+    
+    session.commit()
+    print(f" -> DELETED {len(results)} records for {email}")
+    return {"status": "success", "message": f"Successfully removed {email}."}
+
 # --- EMAIL CAPTURE ENDPOINT ---
 class ProductItem(BaseModel):
     title: str
@@ -606,6 +628,10 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         </li>
         """
 
+    # LINK TO FRONTEND MODAL
+    # This URL triggers the modal on your frontend
+    unsubscribe_link = f"https://ventiko.vercel.app/?modal=unsubscribe"
+
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
         <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px; margin-top: 0;">Ventiko Finder</h2>
@@ -620,8 +646,10 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         
         <p style="font-size: 12px; color: #94a3b8; text-align: center;">
-            Ventiko | London, UK <br>
+            Ventiko | Isle of Man, United Kingdom <br>
             <a href="https://ventiko.app" style="color: #94a3b8; text-decoration: none;">ventiko.app</a>
+            <br><br>
+            <a href="{unsubscribe_link}" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
         </p>
     </div>
     """
@@ -2100,14 +2128,16 @@ FILE: frontend/src/pages/Home.jsx
 
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
 import TypewriterInput from '../components/TypewriterInput'
+import Modal from '../components/Modal' // Import the Modal Component
 
 function Home() {
   const { searchTerm } = useParams(); 
-  const navigate = useNavigate();     
+  const navigate = useNavigate();
+  const location = useLocation(); // To read query params (e.g. ?modal=unsubscribe)
   
   const [query, setQuery] = useState(searchTerm || "") 
   const [results, setResults] = useState([])
@@ -2118,6 +2148,11 @@ function Home() {
   const [optIn, setOptIn] = useState(false)
   const [emailStatus, setEmailStatus] = useState("idle")
 
+  // UNSUBSCRIBE MODAL STATE
+  const [isUnsubModalOpen, setIsUnsubModalOpen] = useState(false);
+  const [unsubEmail, setUnsubEmail] = useState("");
+  const [unsubStatus, setUnsubStatus] = useState("idle"); // idle, sending, success, error
+
   // --- PLACEHOLDERS ---
   const placeholders = [
     "We find what you need...",
@@ -2125,6 +2160,14 @@ function Home() {
     "What is the best protein powder for a vegan looking to get stronger",
     "I want a natural face cleanser that will help me glow"
   ];
+
+  // --- 0. CHECK FOR UNSUBSCRIBE URL PARAM ---
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('modal') === 'unsubscribe') {
+      setIsUnsubModalOpen(true);
+    }
+  }, [location]);
 
   // --- 1. SEARCH LOGIC ---
   const performSearch = async (term) => {
@@ -2135,6 +2178,7 @@ function Home() {
     setOptIn(false);
 
     try {
+      // NOTE: This points to LOCALHOST. Change this to the Render URL before Vercel Deployment.
       const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
@@ -2201,6 +2245,33 @@ function Home() {
     } catch (error) {
       console.error("Email Capture Failed:", error);
       setEmailStatus("error");
+    }
+  }
+
+  // --- UNSUBSCRIBE LOGIC ---
+  const handleUnsubscribe = async () => {
+    if (!unsubEmail) return;
+    setUnsubStatus("sending");
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/unsubscribe?email=${unsubEmail}`);
+      if (res.data.status === 'success') {
+        setUnsubStatus("success");
+        // Clear param from URL so refresh doesn't reopen modal
+        navigate("/", { replace: true });
+        setTimeout(() => {
+            alert("You have been successfully unsubscribed.");
+            setIsUnsubModalOpen(false);
+            setUnsubStatus("idle");
+            setUnsubEmail("");
+        }, 500);
+      } else {
+        alert("Email not found.");
+        setUnsubStatus("idle");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error unsubscribing. Please try again.");
+      setUnsubStatus("idle");
     }
   }
   
@@ -2282,8 +2353,9 @@ function Home() {
           {loading ? "Scanning..." : "Search"}
         </button>
       </div>
-{/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
-{!loading && searchTerm && results.length > 0 && (
+
+      {/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
+      {!loading && searchTerm && results.length > 0 && (
         <div style={{ 
           maxWidth: '800px', margin: '0 auto 2rem auto', 
           fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
@@ -2387,6 +2459,36 @@ function Home() {
            </p>
         </div>
       )}
+
+      {/* --- UNSUBSCRIBE MODAL --- */}
+      <Modal 
+        isOpen={isUnsubModalOpen} 
+        onClose={() => setIsUnsubModalOpen(false)} 
+        title="unsubscribe"
+      >
+        <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>
+          We are sorry to see you go. Enter your email below to unsubscribe from all updates.
+        </p>
+        <input 
+           type="email" 
+           placeholder="Confirm your email..."
+           value={unsubEmail}
+           onChange={(e) => setUnsubEmail(e.target.value)}
+           style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', boxSizing: 'border-box', marginBottom: '1rem' }}
+        />
+        <button 
+           onClick={handleUnsubscribe}
+           disabled={!unsubEmail || unsubStatus === 'sending'}
+           style={{
+              width: '100%', padding: '1rem',
+              background: '#ef4444', /* Red for delete action */
+              color: 'white', border: 'none', borderRadius: '50px', fontWeight: 'bold', fontFamily: 'Major Mono Display',
+              cursor: (!unsubEmail) ? 'not-allowed' : 'pointer'
+           }}
+        >
+           {unsubStatus === 'sending' ? 'processing...' : 'confirm unsubscribe'}
+        </button>
+      </Modal>
 
       {/* --- SEO SCRIPT INJECTION (BODY LOCATION) --- */}
       {/* This will render at the bottom of the DOM, bypassing Helmet sanitization */}

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import SkeletonCard from '../components/SkeletonCard'
 import TypewriterInput from '../components/TypewriterInput'
+import Modal from '../components/Modal' // Import the Modal Component
 
 function Home() {
   const { searchTerm } = useParams(); 
-  const navigate = useNavigate();     
+  const navigate = useNavigate();
+  const location = useLocation(); // To read query params (e.g. ?modal=unsubscribe)
   
   const [query, setQuery] = useState(searchTerm || "") 
   const [results, setResults] = useState([])
@@ -18,6 +20,11 @@ function Home() {
   const [optIn, setOptIn] = useState(false)
   const [emailStatus, setEmailStatus] = useState("idle")
 
+  // UNSUBSCRIBE MODAL STATE
+  const [isUnsubModalOpen, setIsUnsubModalOpen] = useState(false);
+  const [unsubEmail, setUnsubEmail] = useState("");
+  const [unsubStatus, setUnsubStatus] = useState("idle"); // idle, sending, success, error
+
   // --- PLACEHOLDERS ---
   const placeholders = [
     "We find what you need...",
@@ -25,6 +32,14 @@ function Home() {
     "What is the best protein powder for a vegan looking to get stronger",
     "I want a natural face cleanser that will help me glow"
   ];
+
+  // --- 0. CHECK FOR UNSUBSCRIBE URL PARAM ---
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('modal') === 'unsubscribe') {
+      setIsUnsubModalOpen(true);
+    }
+  }, [location]);
 
   // --- 1. SEARCH LOGIC ---
   const performSearch = async (term) => {
@@ -35,6 +50,7 @@ function Home() {
     setOptIn(false);
 
     try {
+      // NOTE: This points to LOCALHOST. Change this to the Render URL before Vercel Deployment.
       const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
@@ -101,6 +117,33 @@ function Home() {
     } catch (error) {
       console.error("Email Capture Failed:", error);
       setEmailStatus("error");
+    }
+  }
+
+  // --- UNSUBSCRIBE LOGIC ---
+  const handleUnsubscribe = async () => {
+    if (!unsubEmail) return;
+    setUnsubStatus("sending");
+    try {
+      const res = await axios.get(`http://127.0.0.1:8000/unsubscribe?email=${unsubEmail}`);
+      if (res.data.status === 'success') {
+        setUnsubStatus("success");
+        // Clear param from URL so refresh doesn't reopen modal
+        navigate("/", { replace: true });
+        setTimeout(() => {
+            alert("You have been successfully unsubscribed.");
+            setIsUnsubModalOpen(false);
+            setUnsubStatus("idle");
+            setUnsubEmail("");
+        }, 500);
+      } else {
+        alert("Email not found.");
+        setUnsubStatus("idle");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error unsubscribing. Please try again.");
+      setUnsubStatus("idle");
     }
   }
   
@@ -182,8 +225,9 @@ function Home() {
           {loading ? "Scanning..." : "Search"}
         </button>
       </div>
-{/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
-{!loading && searchTerm && results.length > 0 && (
+
+      {/* GEO CONTEXT WRAPPER: Helps AI understand the intent of the list */}
+      {!loading && searchTerm && results.length > 0 && (
         <div style={{ 
           maxWidth: '800px', margin: '0 auto 2rem auto', 
           fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
@@ -287,6 +331,36 @@ function Home() {
            </p>
         </div>
       )}
+
+      {/* --- UNSUBSCRIBE MODAL --- */}
+      <Modal 
+        isOpen={isUnsubModalOpen} 
+        onClose={() => setIsUnsubModalOpen(false)} 
+        title="unsubscribe"
+      >
+        <p style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem' }}>
+          We are sorry to see you go. Enter your email below to unsubscribe from all updates.
+        </p>
+        <input 
+           type="email" 
+           placeholder="Confirm your email..."
+           value={unsubEmail}
+           onChange={(e) => setUnsubEmail(e.target.value)}
+           style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem', boxSizing: 'border-box', marginBottom: '1rem' }}
+        />
+        <button 
+           onClick={handleUnsubscribe}
+           disabled={!unsubEmail || unsubStatus === 'sending'}
+           style={{
+              width: '100%', padding: '1rem',
+              background: '#ef4444', /* Red for delete action */
+              color: 'white', border: 'none', borderRadius: '50px', fontWeight: 'bold', fontFamily: 'Major Mono Display',
+              cursor: (!unsubEmail) ? 'not-allowed' : 'pointer'
+           }}
+        >
+           {unsubStatus === 'sending' ? 'processing...' : 'confirm unsubscribe'}
+        </button>
+      </Modal>
 
       {/* --- SEO SCRIPT INJECTION (BODY LOCATION) --- */}
       {/* This will render at the bottom of the DOM, bypassing Helmet sanitization */}

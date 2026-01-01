@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, create_engine, select, delete
 from pydantic import BaseModel
 import resend
 
@@ -124,7 +124,8 @@ def on_startup():
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+# Added Render and Vercel URLs to CORS
+origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://ventiko.vercel.app"] 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -228,6 +229,27 @@ def track_click(data: ClickRequest, session: Session = Depends(get_session)):
     print(f" -> CLICK TRACKED: {data.product_title}")
     return {"status": "logged"}
 
+# --- UNSUBSCRIBE ENDPOINT (New) ---
+@app.get("/unsubscribe")
+def unsubscribe(email: str, session: Session = Depends(get_session)):
+    """
+    Deletes all records of this email from the UserLead table.
+    """
+    print(f"--- UNSUBSCRIBE REQUEST: {email} ---")
+    statement = select(UserLead).where(UserLead.email == email)
+    results = session.exec(statement).all()
+    
+    if not results:
+        return {"status": "not_found", "message": "Email not found."}
+    
+    # Delete all instances (in case they signed up multiple times)
+    for record in results:
+        session.delete(record)
+    
+    session.commit()
+    print(f" -> DELETED {len(results)} records for {email}")
+    return {"status": "success", "message": f"Successfully removed {email}."}
+
 # --- EMAIL CAPTURE ENDPOINT ---
 class ProductItem(BaseModel):
     title: str
@@ -270,6 +292,10 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         </li>
         """
 
+    # LINK TO FRONTEND MODAL
+    # This URL triggers the modal on your frontend
+    unsubscribe_link = f"https://ventiko.vercel.app/?modal=unsubscribe"
+
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
         <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px; margin-top: 0;">Ventiko Finder</h2>
@@ -284,8 +310,10 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         
         <p style="font-size: 12px; color: #94a3b8; text-align: center;">
-            Ventiko | London, UK <br>
+            Ventiko | Isle of Man, United Kingdom <br>
             <a href="https://ventiko.app" style="color: #94a3b8; text-decoration: none;">ventiko.app</a>
+            <br><br>
+            <a href="{unsubscribe_link}" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
         </p>
     </div>
     """
