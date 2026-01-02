@@ -10,7 +10,7 @@ function Archive() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:8000/archive');
+        const res = await axios.get('https://ventiko-engine-backend.onrender.com/archive/archive');
         setArchiveData(res.data);
       } catch (error) {
         console.error("Failed to load archive", error);

@@ -51,7 +51,7 @@ function Home() {
 
     try {
       // NOTE: This points to LOCALHOST. Change this to the Render URL before Vercel Deployment.
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
+      const response = await axios.get(`https://ventiko-engine-backend.onrender.com/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
@@ -83,7 +83,7 @@ function Home() {
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
-    axios.post('http://127.0.0.1:8000/track-click', {
+    axios.post('https://ventiko-engine-backend.onrender.com/track-click', {
       product_title: productTitle,
       query: query || "unknown",
       link: link || "unknown"
@@ -107,7 +107,7 @@ function Home() {
         link: r.metadata.link || "https://ventiko.app"
       }));
 
-      await axios.post('http://127.0.0.1:8000/capture-email', {
+      await axios.post('https://ventiko-engine-backend.onrender.com/capture-email', {
         email: email,
         query: query,
         results: productData,
@@ -125,7 +125,7 @@ function Home() {
     if (!unsubEmail) return;
     setUnsubStatus("sending");
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/unsubscribe?email=${unsubEmail}`);
+      const res = await axios.get(`https://ventiko-engine-backend.onrender.com/unsubscribe?email=${unsubEmail}`);
       if (res.data.status === 'success') {
         setUnsubStatus("success");
         // Clear param from URL so refresh doesn't reopen modal

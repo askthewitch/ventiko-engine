@@ -125,7 +125,13 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Added Render and Vercel URLs to CORS
-origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://ventiko.vercel.app"] 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ventiko.vercel.app",
+    "https://ventiko.app",
+    "https://www.ventiko.app"
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
