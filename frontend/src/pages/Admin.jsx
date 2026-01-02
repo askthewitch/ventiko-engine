@@ -107,7 +107,7 @@ function Admin() {
       {/* LEADS TABLE */}
       <section style={{ marginBottom: '4rem' }}>
         <h2 style={{ fontFamily: 'Major Mono Display', marginBottom: '1.5rem', color: '#2c3e50' }}>
-          Recent Leads (Emails)
+          recent leads (emails)
         </h2>
         <div style={{ overflowX: 'auto', background: 'white', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Roboto', fontSize: '0.9rem' }}>
@@ -135,7 +135,7 @@ function Admin() {
       {/* CLICKS TABLE */}
       <section>
         <h2 style={{ fontFamily: 'Major Mono Display', marginBottom: '1.5rem', color: '#23F0C7' }}>
-          Click Log (Money)
+          click log (Money)
         </h2>
         <div style={{ overflowX: 'auto', background: 'white', padding: '1rem', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Roboto', fontSize: '0.9rem' }}>

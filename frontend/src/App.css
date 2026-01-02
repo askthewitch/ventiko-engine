@@ -233,6 +233,29 @@ button.main-search-btn:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   border-color: var(--accent-mint);
 }
+/* --- PRODUCT IMAGE FIX --- */
+.card-image-container {
+  width: 100%;
+  height: 200px; /* Fixed height for consistency */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff; /* White background behind transparent images */
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* THE MAGIC: Prevents stretching/cropping */
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-image {
+  transform: scale(1.05); /* Gentle zoom on hover */
+}
 
 .card:nth-child(1) { animation-delay: 0.1s; }
 .card:nth-child(2) { animation-delay: 0.2s; }
@@ -305,7 +328,7 @@ button.main-search-btn:hover {
 }
 
 .footer-divider {
-  color: #e2e8f0;
+  color: #0f172a;
   font-weight: 300;
 }
 

@@ -25,7 +25,6 @@ resend.api_key = os.getenv("RESEND_API_KEY")
 SCORE_THRESHOLD = 0.35 
 
 # --- PHASE 18: THE INTENT MAP (KEYWORD EXPANDER) ---
-# This acts as a translator between "Activity" and "Gear"
 INTENT_MAP = {
     "hyrox": "crossfit functional fitness running shoes compression gear electrolytes energy gels grip chalk",
     "marathon": "long distance running shoes hydration vest anti-chafe balm energy gels running socks recovery salts",
@@ -46,25 +45,17 @@ INTENT_MAP = {
 }
 
 def expand_query_intent(user_query: str) -> str:
-    """
-    Checks if the user mentions a key activity and appends relevant gear keywords.
-    """
     query_lower = user_query.lower()
     additional_keywords = []
-
     for key, values in INTENT_MAP.items():
-        # Check if the keyword (e.g., "hyrox") is in the user's search
         if key in query_lower:
             additional_keywords.append(values)
-    
     if additional_keywords:
-        # Join them all together
         expansion = " ".join(additional_keywords)
         return f"{user_query} {expansion}"
-    
     return user_query
 
-# --- DATABASE SETUP (POSTGRESQL) ---
+# --- DATABASE SETUP ---
 class SearchLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
@@ -124,7 +115,6 @@ def on_startup():
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Added Render and Vercel URLs to CORS
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -155,20 +145,13 @@ def health_check():
 @limiter.limit("30/minute") 
 def search(request: Request, query: str, session: Session = Depends(get_session)):
     print(f"Received Query: {query}")
-    
-    # 1. FILTER: Garbage Inputs
     if len(query.strip()) < 3:
         return {"matches": []}
 
-    # 2. INTELLIGENCE: Expand the Query
-    # This turns "Hyrox" into "Hyrox crossfit running shoes..."
     expanded_query = expand_query_intent(query)
-    
     if expanded_query != query:
         print(f" -> Expanded to: {expanded_query}")
 
-    # 3. VECTOR SEARCH
-    # We search using the EXPANDED query to get better matches...
     query_vector = model.encode(expanded_query).tolist()
     results = index.query(
         vector=query_vector,
@@ -180,10 +163,8 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
     result_titles = [] 
 
     for match in results['matches']:
-        # 4. FILTER: Confidence Threshold
         if match['score'] < SCORE_THRESHOLD:
             continue
-
         m_data = match['metadata']
         final_matches.append({
             "id": match['id'],
@@ -192,12 +173,9 @@ def search(request: Request, query: str, session: Session = Depends(get_session)
         })
         result_titles.append(m_data.get('title', 'Unknown Product'))
 
-    # 5. ARCHIVE LOGIC
-    # ...But we log the ORIGINAL user query (so the Archive looks clean)
     if final_matches:
         statement = select(SearchLog).order_by(SearchLog.timestamp.desc()).limit(1)
         last_log = session.exec(statement).first()
-
         if last_log and last_log.query.lower() == query.lower():
             last_log.timestamp = datetime.datetime.utcnow()
             session.add(last_log)
@@ -235,28 +213,21 @@ def track_click(data: ClickRequest, session: Session = Depends(get_session)):
     print(f" -> CLICK TRACKED: {data.product_title}")
     return {"status": "logged"}
 
-# --- UNSUBSCRIBE ENDPOINT (New) ---
+# --- UNSUBSCRIBE ENDPOINT ---
 @app.get("/unsubscribe")
 def unsubscribe(email: str, session: Session = Depends(get_session)):
-    """
-    Deletes all records of this email from the UserLead table.
-    """
     print(f"--- UNSUBSCRIBE REQUEST: {email} ---")
     statement = select(UserLead).where(UserLead.email == email)
     results = session.exec(statement).all()
-    
     if not results:
         return {"status": "not_found", "message": "Email not found."}
-    
-    # Delete all instances (in case they signed up multiple times)
     for record in results:
         session.delete(record)
-    
     session.commit()
     print(f" -> DELETED {len(results)} records for {email}")
     return {"status": "success", "message": f"Successfully removed {email}."}
 
-# --- EMAIL CAPTURE ENDPOINT ---
+# --- EMAIL CAPTURE ENDPOINT (UPDATED TEMPLATE) ---
 class ProductItem(BaseModel):
     title: str
     link: str = "https://ventiko.app" 
@@ -270,7 +241,6 @@ class EmailRequest(BaseModel):
 @app.post("/capture-email")
 @limiter.limit("5/minute")
 def capture_email(request: Request, data: EmailRequest, session: Session = Depends(get_session)):
-    
     if not data.opt_in:
         raise HTTPException(status_code=400, detail="User must opt-in.")
 
@@ -287,48 +257,73 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # EMAIL LOGIC
-    product_list_html = ""
-    for item in data.results:
-        product_list_html += f"""
-        <li style='margin-bottom: 15px;'>
-            <a href="{item.link}" style='color: #23F0C7; text-decoration: none; font-weight: bold; font-size: 16px; border-bottom: 1px dotted #23F0C7;'>
-                {item.title} &#8594;
+    # --- NEW EMAIL HTML GENERATOR ---
+    product_rows = ""
+    for i, item in enumerate(data.results):
+        product_rows += f"""
+        <div style="background-color: #f8fafc; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: bold; color: #0f172a; margin-bottom: 5px; font-size: 16px;">{i+1}. {item.title}</div>
+            <a href="{item.link}" style="display: inline-block; color: #2563eb; text-decoration: none; font-weight: bold; font-size: 14px;">
+                View Deal &rarr;
             </a>
-        </li>
+        </div>
         """
 
-    # LINK TO FRONTEND MODAL
-    # This URL triggers the modal on your frontend
     unsubscribe_link = f"https://ventiko.app/?modal=unsubscribe"
 
     html_content = f"""
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
-        <h2 style="color: #2c3e50; text-transform: lowercase; letter-spacing: -1px; margin-top: 0;">Ventiko Finder</h2>
-        <p style="color: #64748b; font-size: 16px;">We found these products for: <strong style="color: #2c3e50;">"{data.query}"</strong></p>
-        
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        
-        <ul style="list-style-type: none; padding: 0;">
-            {product_list_html}
-        </ul>
-        
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        
-        <p style="font-size: 12px; color: #94a3b8; text-align: center;">
-            Ventiko | Isle of Man, United Kingdom <br>
-            <a href="https://ventiko.app" style="color: #94a3b8; text-decoration: none;">ventiko.app</a>
-            <br><br>
-            <a href="{unsubscribe_link}" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
-        </p>
-    </div>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f1f5f9; }}
+            .container {{ max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            .header {{ background-color: #0f172a; padding: 30px 20px; text-align: center; }}
+            .header h1 {{ color: #23F0C7; margin: 0; font-size: 24px; letter-spacing: -1px; text-transform: lowercase; font-family: monospace; }}
+            .content {{ padding: 30px 20px; color: #334155; line-height: 1.6; }}
+            .footer {{ background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }}
+            .query-box {{ background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 10px 15px; margin: 0 0 20px 0; color: #1e40af; font-weight: 500; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>ventiko engine</h1>
+            </div>
+            <div class="content">
+                <p>Hello,</p>
+                <p>Here is the bio-optimization protocol generated for your search:</p>
+                
+                <div class="query-box">
+                    "{data.query}"
+                </div>
+
+                <div style="margin-top: 20px;">
+                    {product_rows}
+                </div>
+
+                <p style="margin-top: 30px;">
+                    <a href="https://ventiko.app" style="display: block; text-align: center; background-color: #0f172a; color: #ffffff; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                        Start New Search
+                    </a>
+                </p>
+            </div>
+            <div class="footer">
+                <p>&copy; {datetime.datetime.now().year} Ventiko Ltd. All rights reserved.</p>
+                <p>
+                    <a href="{unsubscribe_link}" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
     """
 
     try:
         resend.Emails.send({
-            "from": "noreply@results.ventiko.app",
+            "from": "Ventiko Engine <noreply@results.ventiko.app>",
             "to": data.email,
-            "subject": f"Ventiko Search Results 🔎",
+            "subject": f"Protocol Generated: {data.query}",
             "html": html_content
         })
         return {"status": "success", "message": "Sent."}
@@ -336,17 +331,13 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         print(f"!!! EMAIL ERROR: {e}")
         return {"status": "partial_success", "message": "Saved, but email failed."}
 
-# --- ADMIN DASHBOARD ENDPOINT ---
+# --- ADMIN ENDPOINT ---
 @app.get("/admin-data")
 def get_admin_data(x_admin_secret: str = Header(None), session: Session = Depends(get_session)):
-    # 1. SECURITY CHECK
-    # We compare the header sent by frontend to the Env Var on Render
-    env_secret = os.getenv("ADMIN_SECRET", "ventiko_admin_2026") # Fallback if not set
-    
+    env_secret = os.getenv("ADMIN_SECRET", "ventiko_admin_2026")
     if x_admin_secret != env_secret:
         raise HTTPException(status_code=401, detail="Unauthorized Access")
 
-    # 2. FETCH DATA
     leads = session.exec(select(UserLead).order_by(UserLead.timestamp.desc())).all()
     clicks = session.exec(select(ClickLog).order_by(ClickLog.timestamp.desc())).all()
     

@@ -248,16 +248,33 @@ function Home() {
         )}
 
         {!loading && results.map((item) => (
-          <div 
-            key={item.id} 
-            className="card" 
-            onClick={() => handleProductClick(item.metadata.title, item.metadata.link)}
-            style={{ cursor: 'pointer' }}
-          >
-            <div>
-              <h3>{item.metadata.title}</h3>
-              <p>{item.metadata.description}</p>
+      <div 
+      key={item.id} 
+      className="card" 
+      onClick={() => handleProductClick(item.metadata.title, item.metadata.link)}
+      style={{ cursor: 'pointer' }}
+    >
+      <div>
+        {/* NEW IMAGE CONTAINER */}
+        {item.metadata.large_image && (
+            <div className="card-image-container">
+                <img 
+                    src={item.metadata.large_image} 
+                    alt={item.metadata.title} 
+                    className="card-image"
+                    loading="lazy" 
+                />
             </div>
+        )}
+        
+        <h3>{item.metadata.title}</h3>
+        
+        {/* Truncate description slightly for cleaner cards */}
+        <p>{item.metadata.description.length > 120 
+            ? item.metadata.description.substring(0, 120) + "..." 
+            : item.metadata.description}
+        </p>
+      </div>
             <div className="card-footer">
               <span className="price">
                 {item.metadata.price} {item.metadata.currency}
