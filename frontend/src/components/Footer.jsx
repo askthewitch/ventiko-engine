@@ -33,7 +33,7 @@ const Footer = () => {
         <div className="footer-group">
           <Link to="/" className="footer-link">HoMe</Link>
           <Link to="/about" className="footer-link">About</Link>
-          <Link to="/blog" className="footer-link">bloG</Link> {/* CHANGED: Added Blog */}
+          <Link to="/blog" className="footer-link">bloG</Link>
           <Link to="/archive" className="footer-link">ARcHiVe</Link>
         </div>
 
@@ -48,6 +48,18 @@ const Footer = () => {
         </div>
 
       </footer>
+
+      {/* COPYRIGHT ROW */}
+      <div style={{ 
+          width: '100%', 
+          textAlign: 'center', 
+          padding: '0 0 2rem 0', 
+          color: '#94a3b8', 
+          fontSize: '0.75rem',
+          fontFamily: 'Roboto, sans-serif'
+      }}>
+          © {new Date().getFullYear()} Ventiko Ltd. All rights reserved.
+      </div>
 
       {/* --- PRIVACY POLICY MODAL --- */}
       <Modal isOpen={modalType === 'privacy'} onClose={closeModal} title="privacy policy">
