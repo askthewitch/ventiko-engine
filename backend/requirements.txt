@@ -10,6 +10,7 @@ sqlmodel==0.0.16
 psycopg2-binary==2.9.9
 resend==0.8.0
 slowapi==0.1.9
-secure==0.3.0
+secure==1.0.1
 requests==2.31.0
 pydantic==2.6.1
+numpy<2.0.0
