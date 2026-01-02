@@ -44,10 +44,10 @@ function About() {
       
       {/* SEO METADATA INJECTION */}
       <Helmet>
-        <title>About Ventiko | The Bio-Optimization Engine</title>
-        <meta name="description" content="Ventiko is an AI-powered product finder for health, performance, and bio-optimization. We curate protocols, not just products." />
-        <link rel="canonical" href="https://ventiko.app/about" />
-      </Helmet>
+  <title>About Ventiko | The AI Product Discovery Engine</title>
+  <meta name="description" content="Ventiko is an intelligent product finder that cuts through the noise. We use AI to find the exact tools you need, instantly." />
+  <link rel="canonical" href="https://ventiko.app/about" />
+</Helmet>
 
       {/* SECTION 1: THE MISSION */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>

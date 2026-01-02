@@ -40,14 +40,13 @@ function Blog() {
       
       {/* SEO METADATA INJECTION */}
       <Helmet>
-        <title>The Protocol | Ventiko Blog</title>
-        <meta name="description" content="Deep dives into bio-optimization science, gear analysis, and performance protocols." />
-        <link rel="canonical" href="https://ventiko.app/blog" />
-      </Helmet>
-
+  <title>Ventiko Insights | Product Guides & Reviews</title>
+  <meta name="description" content="Deep dives into product analysis, gear comparisons, and AI-curated shopping guides." />
+  <link rel="canonical" href="https://ventiko.app/blog" />
+</Helmet>
       {/* HEADER */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
-        <h1>tHe pRotocol</h1>
+        <h1>the bloG</h1>
         
         <button 
           onClick={() => navigate('/')}
