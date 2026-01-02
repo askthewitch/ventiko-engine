@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async' // IMPORT ADDED
 
 function Blog() {
   const navigate = useNavigate();
 
-  // MOCK DATA: This is where your daily AI-generated articles will live
-  // Later, we can pull this from a database or a simple JSON file.
   const articles = [
     {
       id: 1,
@@ -39,6 +38,13 @@ function Blog() {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       
+      {/* SEO METADATA INJECTION */}
+      <Helmet>
+        <title>The Protocol | Ventiko Blog</title>
+        <meta name="description" content="Deep dives into bio-optimization science, gear analysis, and performance protocols." />
+        <link rel="canonical" href="https://ventiko.app/blog" />
+      </Helmet>
+
       {/* HEADER */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
         <h1>tHe pRotocol</h1>
@@ -72,7 +78,7 @@ function Blog() {
               flexDirection: 'column', 
               justifyContent: 'space-between' 
             }}
-            onClick={() => alert("Article Reader Coming in Phase 20!")} // Placeholder for next step
+            onClick={() => alert("Article Reader Coming in Phase 20!")} 
           >
             <div>
               <div style={{ 

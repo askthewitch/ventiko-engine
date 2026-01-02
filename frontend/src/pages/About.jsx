@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom' // CHANGED: Added hook
+import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async' // IMPORT ADDED
 
 function About() {
-  const navigate = useNavigate(); // CHANGED: Initialize hook
+  const navigate = useNavigate();
 
   // FAQ Data Structure
   const faqs = [
@@ -41,11 +42,17 @@ function About() {
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       
+      {/* SEO METADATA INJECTION */}
+      <Helmet>
+        <title>About Ventiko | The Bio-Optimization Engine</title>
+        <meta name="description" content="Ventiko is an AI-powered product finder for health, performance, and bio-optimization. We curate protocols, not just products." />
+        <link rel="canonical" href="https://ventiko.app/about" />
+      </Helmet>
+
       {/* SECTION 1: THE MISSION */}
       <section style={{ marginBottom: '4rem', textAlign: 'center' }}>
         <h1>about Ventiko</h1>
         
-        {/* CHANGED: ADDED NAVIGATION BUTTON */}
         <button 
           onClick={() => navigate('/')}
           className="main-search-btn"

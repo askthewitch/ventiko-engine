@@ -1,4 +1,4 @@
-VENTIKO ENGINE - CODE SNAPSHOT - 2026-01-02T13:05:05.910Z
+VENTIKO ENGINE - CODE SNAPSHOT - 2026-01-02T17:59:51.547Z
 
 
 
@@ -461,7 +461,13 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Added Render and Vercel URLs to CORS
-origins = ["http://localhost:5173", "http://127.0.0.1:5173", "https://ventiko.vercel.app"] 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://ventiko.vercel.app",
+    "https://ventiko.app",
+    "https://www.ventiko.app"
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -630,7 +636,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
 
     # LINK TO FRONTEND MODAL
     # This URL triggers the modal on your frontend
-    unsubscribe_link = f"https://ventiko.vercel.app/?modal=unsubscribe"
+    unsubscribe_link = f"https://ventiko.app/?modal=unsubscribe"
 
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
@@ -1274,7 +1280,7 @@ const Footer = () => {
         <div className="footer-group">
           <Link to="/" className="footer-link">HoMe</Link>
           <Link to="/about" className="footer-link">About</Link>
-          <Link to="/blog" className="footer-link">bloG</Link> {/* CHANGED: Added Blog */}
+          <Link to="/blog" className="footer-link">bloG</Link>
           <Link to="/archive" className="footer-link">ARcHiVe</Link>
         </div>
 
@@ -1289,6 +1295,18 @@ const Footer = () => {
         </div>
 
       </footer>
+
+      {/* COPYRIGHT ROW */}
+      <div style={{ 
+          width: '100%', 
+          textAlign: 'center', 
+          padding: '0 0 2rem 0', 
+          color: '#94a3b8', 
+          fontSize: '0.75rem',
+          fontFamily: 'Roboto, sans-serif'
+      }}>
+          © {new Date().getFullYear()} Ventiko Ltd. All rights reserved.
+      </div>
 
       {/* --- PRIVACY POLICY MODAL --- */}
       <Modal isOpen={modalType === 'privacy'} onClose={closeModal} title="privacy policy">
@@ -1901,7 +1919,7 @@ function Archive() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:8000/archive');
+        const res = await axios.get('https://ventiko-engine-backend.onrender.com/archive');
         setArchiveData(res.data);
       } catch (error) {
         console.error("Failed to load archive", error);
@@ -2179,7 +2197,7 @@ function Home() {
 
     try {
       // NOTE: This points to LOCALHOST. Change this to the Render URL before Vercel Deployment.
-      const response = await axios.get(`http://127.0.0.1:8000/search?query=${term}`);
+      const response = await axios.get(`https://ventiko-engine-backend.onrender.com/search?query=${term}`);
       setResults(response.data.matches);
     } catch (error) {
       console.error("Error searching:", error);
@@ -2211,7 +2229,7 @@ function Home() {
 
   // --- CLICK TRACKER ---
   const handleProductClick = (productTitle, link) => {
-    axios.post('http://127.0.0.1:8000/track-click', {
+    axios.post('https://ventiko-engine-backend.onrender.com/track-click', {
       product_title: productTitle,
       query: query || "unknown",
       link: link || "unknown"
@@ -2235,7 +2253,7 @@ function Home() {
         link: r.metadata.link || "https://ventiko.app"
       }));
 
-      await axios.post('http://127.0.0.1:8000/capture-email', {
+      await axios.post('https://ventiko-engine-backend.onrender.com/capture-email', {
         email: email,
         query: query,
         results: productData,
@@ -2253,7 +2271,7 @@ function Home() {
     if (!unsubEmail) return;
     setUnsubStatus("sending");
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/unsubscribe?email=${unsubEmail}`);
+      const res = await axios.get(`https://ventiko-engine-backend.onrender.com/unsubscribe?email=${unsubEmail}`);
       if (res.data.status === 'success') {
         setUnsubStatus("success");
         // Clear param from URL so refresh doesn't reopen modal
@@ -2361,8 +2379,8 @@ function Home() {
           fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
           borderLeft: '3px solid #23F0C7', paddingLeft: '1rem'
         }}>
-          Protocol generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
-          Analyzing {results.length} bio-optimized matches based on clinical efficacy and user reviews.
+          Results generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
+          Analyzing {results.length} matches based on price, best match and user reviews.
         </div>
       )}
 
@@ -2503,6 +2521,19 @@ function Home() {
 }
 
 export default Home
+
+================================================================
+FILE: frontend/vercel.json
+================================================================
+
+{
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
 
 ================================================================
 FILE: frontend/vite.config.js
