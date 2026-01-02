@@ -234,7 +234,7 @@ function Home() {
           borderLeft: '3px solid #23F0C7', paddingLeft: '1rem'
         }}>
           Results generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
-          Analyzing {results.length} your matches based on price, best match and user reviews.
+          Analyzing {results.length} matches based on price, best match and user reviews.
         </div>
       )}
 
