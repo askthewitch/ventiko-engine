@@ -1,7 +1,7 @@
 import os
 import datetime
 from typing import List, Optional
-from fastapi import FastAPI, Request, Depends, HTTPException
+from fastapi import FastAPI, Request, Depends, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pinecone import Pinecone
@@ -335,3 +335,26 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     except Exception as e:
         print(f"!!! EMAIL ERROR: {e}")
         return {"status": "partial_success", "message": "Saved, but email failed."}
+
+# --- ADMIN DASHBOARD ENDPOINT ---
+@app.get("/admin-data")
+def get_admin_data(x_admin_secret: str = Header(None), session: Session = Depends(get_session)):
+    # 1. SECURITY CHECK
+    # We compare the header sent by frontend to the Env Var on Render
+    env_secret = os.getenv("ADMIN_SECRET", "ventiko_admin_2026") # Fallback if not set
+    
+    if x_admin_secret != env_secret:
+        raise HTTPException(status_code=401, detail="Unauthorized Access")
+
+    # 2. FETCH DATA
+    leads = session.exec(select(UserLead).order_by(UserLead.timestamp.desc())).all()
+    clicks = session.exec(select(ClickLog).order_by(ClickLog.timestamp.desc())).all()
+    
+    return {
+        "leads": leads,
+        "clicks": clicks,
+        "stats": {
+            "total_leads": len(leads),
+            "total_clicks": len(clicks)
+        }
+    }
