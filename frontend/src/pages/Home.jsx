@@ -233,8 +233,8 @@ function Home() {
           fontFamily: 'Roboto', color: '#64748b', fontSize: '0.95rem',
           borderLeft: '3px solid #23F0C7', paddingLeft: '1rem'
         }}>
-          Protocol generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
-          Analyzing {results.length} bio-optimized matches based on clinical efficacy and user reviews.
+          Results generated for <strong style={{color: '#2c3e50'}}>{searchTerm}</strong>. 
+          Analyzing {results.length} your matches based on price, best match and user reviews.
         </div>
       )}
 
