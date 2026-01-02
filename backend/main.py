@@ -300,7 +300,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
 
     # LINK TO FRONTEND MODAL
     # This URL triggers the modal on your frontend
-    unsubscribe_link = f"https://ventiko.vercel.app/?modal=unsubscribe"
+    unsubscribe_link = f"https://ventiko.app/?modal=unsubscribe"
 
     html_content = f"""
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; background-color: #ffffff;">
