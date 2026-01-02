@@ -5,14 +5,15 @@ import './App.css'
 import Home from './pages/Home'
 import About from './pages/About'
 import Archive from './pages/Archive'
-import Blog from './pages/Blog' // CHANGED: Import Blog
+import Blog from './pages/Blog'
+import Admin from './pages/Admin' // IMPORT ADDED
 import Footer from './components/Footer'
 
 function App() {
   return (
     <Router>
       {/* NO TOP NAV! 
-         It is cleaner this way. Focus is 100% on the Search.
+          It is cleaner this way. Focus is 100% on the Search.
       */}
 
       <Routes>
@@ -24,7 +25,10 @@ function App() {
         
         <Route path="/about" element={<About />} />
         <Route path="/archive" element={<Archive />} />
-        <Route path="/blog" element={<Blog />} /> {/* CHANGED: Add Route */}
+        <Route path="/blog" element={<Blog />} />
+        
+        {/* ADMIN DASHBOARD (Hidden from Footer) */}
+        <Route path="/admin" element={<Admin />} />
       </Routes>
 
       <Footer /> 
