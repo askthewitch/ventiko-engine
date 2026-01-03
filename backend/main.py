@@ -263,7 +263,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     # --- CONFIGURATION ---
     # I am using a generator here to mimic your font immediately.
     # REPLACE THIS URL with your actual logo file (e.g., "https://ventiko.app/logo.png") later for pixel-perfect control.
-    LOGO_URL = "/Users/thomashughes/Desktop/ventiko-engine/frontend/public/ventiko_logo.png"
+    LOGO_URL = "https://ventiko.app/ventiko_logo.png"
     
     unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
 
@@ -354,7 +354,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
                             <td align="center" style="padding: 40px 0 10px 0;">
                                 <img src="{LOGO_URL}" alt="VENTIKO" width="200" style="display: block; border: 0;">
                                 <p style="margin: 5px 0 0 0; font-family: 'Courier New', monospace; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">
-                                    AI Product Finder
+                                    Your Product Finder
                                 </p>
                             </td>
                         </tr>
