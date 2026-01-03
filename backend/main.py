@@ -228,10 +228,12 @@ def unsubscribe(email: str, session: Session = Depends(get_session)):
     return {"status": "success", "message": f"Successfully removed {email}."}
 
 # --- EMAIL CAPTURE ENDPOINT (BELSTAFF CLEAN STYLE) ---
+# --- EMAIL CAPTURE ENDPOINT (VISUAL UPGRADE) ---
 class ProductItem(BaseModel):
     title: str
     link: str = "https://ventiko.app"
-    image: Optional[str] = None # Added support for image passing if frontend sends it
+    image: Optional[str] = None
+    price: Optional[str] = None
 
 class EmailRequest(BaseModel):
     email: str
@@ -258,28 +260,64 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # --- HTML GENERATION (BELSTAFF STYLE) ---
+    # --- CONFIGURATION ---
+    # I am using a generator here to mimic your font immediately.
+    # REPLACE THIS URL with your actual logo file (e.g., "https://ventiko.app/logo.png") later for pixel-perfect control.
+    LOGO_URL = "/Users/thomashughes/Desktop/ventiko-engine/frontend/public/ventiko_logo.png"
     
-    # 1. Split Data
-    hero_item = data.results[0] if data.results else None
-    secondary_items = data.results[1:3] if len(data.results) > 1 else []
     unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
 
-    # 2. Build Secondary Rows (The Grid)
+    # --- 1. HERO ITEM (The First Result) ---
+    hero_item = data.results[0] if data.results else None
+    hero_html = ""
+    
+    if hero_item:
+        # Use real image if available, else placeholder
+        hero_img_src = hero_item.image if hero_item.image else "https://via.placeholder.com/600x400?text=Top+Match"
+        hero_price = hero_item.price if hero_item.price else "View Deal"
+        
+        hero_html = f"""
+        <tr>
+            <td align="center" style="padding: 0 0 20px 0;">
+                <a href="{hero_item.link}" style="text-decoration: none;">
+                    <img src="{hero_img_src}" width="600" style="display: block; width: 100%; max-width: 600px; border-radius: 8px; object-fit: cover;" alt="{hero_item.title}">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 10px 0 30px 0; border-bottom: 1px solid #f1f5f9;">
+                <h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">{hero_item.title}</h2>
+                <p style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; color: #23F0C7; font-weight: bold; margin: 0 0 20px 0;">{hero_price}</p>
+                <a href="{hero_item.link}" style="background-color: #0f172a; color: #ffffff; padding: 14px 35px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 50px; display: inline-block;">VIEW DEAL</a>
+            </td>
+        </tr>
+        """
+
+    # --- 2. GRID ITEMS (The rest) ---
     grid_html = ""
+    secondary_items = data.results[1:3] if len(data.results) > 1 else []
+    
     if secondary_items:
         grid_content = ""
         for item in secondary_items:
+            img_src = item.image if item.image else "https://via.placeholder.com/250x200?text=Product"
+            price_tag = item.price if item.price else "Check Price"
+            
             grid_content += f"""
             <td width="50%" valign="top" style="padding: 10px;">
-                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
                     <tr>
-                        <td align="center" style="padding-bottom: 10px; border: 1px solid #f1f5f9; border-radius: 8px;">
-                             <img src="https://via.placeholder.com/250x200?text=Product" width="100%" style="display: block; border-radius: 8px 8px 0 0; max-height: 150px; object-fit: contain;" alt="{item.title}">
-                            <div style="padding: 15px;">
-                                <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; color: #0f172a; margin-bottom: 8px; height: 40px; overflow: hidden;">{item.title}</div>
-                                <a href="{item.link}" style="display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: bold; color: #2563eb; text-decoration: none; text-transform: uppercase;">View Deal &rarr;</a>
-                            </div>
+                        <td align="center" style="background-color: #ffffff; height: 200px; vertical-align: middle;">
+                            <a href="{item.link}">
+                                <img src="{img_src}" width="100%" style="display: block; max-height: 180px; width: auto; max-width: 100%; margin: 0 auto;" alt="{item.title}">
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 15px; background-color: #f8fafc;">
+                            <div style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; font-weight: bold; color: #0f172a; margin-bottom: 5px; height: 36px; overflow: hidden; line-height: 1.4;">{item.title}</div>
+                            <div style="font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #64748b; margin-bottom: 10px;">{price_tag}</div>
+                            <a href="{item.link}" style="display: block; text-align: center; font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: bold; color: #ffffff; background-color: #2c3e50; text-decoration: none; padding: 8px 0; border-radius: 4px;">VIEW &rarr;</a>
                         </td>
                     </tr>
                 </table>
@@ -297,91 +335,50 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         </tr>
         """
 
-    # 3. Build Hero HTML
-    hero_html = ""
-    if hero_item:
-        hero_html = f"""
-        <tr>
-            <td align="center" style="padding: 0 0 20px 0;">
-                <a href="{hero_item.link}" style="text-decoration: none;">
-                    <img src="https://via.placeholder.com/600x400?text=Top+Match" width="600" style="display: block; width: 100%; max-width: 600px; border-radius: 8px;" alt="{hero_item.title}">
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td align="center" style="padding: 10px 0 20px 0;">
-                <h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">{hero_item.title}</h2>
-                <a href="{hero_item.link}" style="background-color: #0f172a; color: #ffffff; padding: 12px 30px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 4px; display: inline-block;">VIEW DEAL</a>
-            </td>
-        </tr>
-        """
-
-    # 4. Full Template Assembly
+    # --- 3. ASSEMBLY ---
     html_content = f"""
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
-        <style>
-            body {{ margin: 0; padding: 0; background-color: #f8fafc; }}
-            .brand-font {{ font-family: 'Major Mono Display', monospace; }}
-        </style>
+        <title>Ventiko Results</title>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f8fafc;">
+    <body style="margin: 0; padding: 0; background-color: #f1f5f9;">
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
             <tr>
-                <td style="padding: 20px 0 30px 0;" align="center">
-                    <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <td style="padding: 20px 0 40px 0;" align="center">
+                    <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
                         
                         <tr>
-                            <td align="center" style="padding: 30px 0 20px 0; border-bottom: 1px solid #f1f5f9;">
-                                <h1 style="margin: 0; font-family: 'Courier New', monospace; font-size: 32px; color: #0f172a; letter-spacing: -1px; font-weight: bold;">
-                                    ventiko
-                                </h1>
-                                <p style="margin: 5px 0 0 0; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">
+                            <td align="center" style="padding: 40px 0 10px 0;">
+                                <img src="{LOGO_URL}" alt="VENTIKO" width="200" style="display: block; border: 0;">
+                                <p style="margin: 5px 0 0 0; font-family: 'Courier New', monospace; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">
                                     AI Product Finder
                                 </p>
                             </td>
                         </tr>
 
                         <tr>
-                            <td align="center" style="padding: 30px 20px 10px 20px;">
-                                <p style="font-family: Helvetica, Arial, sans-serif; font-size: 16px; color: #334155; margin: 0;">
-                                    We found the best matches for:
-                                </p>
-                                <div style="margin-top: 10px; background-color: #ecfdf5; color: #065f46; padding: 8px 16px; border-radius: 20px; display: inline-block; font-family: Helvetica, Arial, sans-serif; font-weight: bold;">
+                            <td align="center" style="padding: 20px 0 30px 0;">
+                                <span style="font-family: Helvetica, Arial, sans-serif; background-color: #ecfdf5; color: #065f46; padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: bold; border: 1px solid #23F0C7;">
                                     "{data.query}"
-                                </div>
+                                </span>
                             </td>
                         </tr>
 
                         {hero_html}
 
-                        <tr>
-                            <td style="padding: 0 20px;">
-                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                    <tr>
-                                        <td style="border-bottom: 1px solid #f1f5f9;"></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-
                         {grid_html}
 
                         <tr>
-                            <td bgcolor="#0f172a" style="padding: 30px 30px 30px 30px; text-align: center;">
-                                <p style="color: #23F0C7; font-family: 'Courier New', monospace; margin: 0 0 10px 0; font-size: 18px;">
-                                    ventiko
-                                </p>
-                                <p style="color: #94a3b8; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; margin: 0;">
+                            <td bgcolor="#0f172a" style="padding: 40px 30px; text-align: center;">
+                                <p style="color: #64748b; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; margin: 0;">
                                     &copy; {datetime.datetime.now().year} Ventiko Ltd.<br/>
                                     Isle of Man, United Kingdom
                                 </p>
-                                <p style="margin-top: 20px;">
-                                    <a href="{unsubscribe_link}" style="color: #64748b; font-family: Helvetica, Arial, sans-serif; font-size: 12px; text-decoration: underline;">Unsubscribe</a>
+                                <p style="margin-top: 15px;">
+                                    <a href="{unsubscribe_link}" style="color: #475569; font-family: Helvetica, Arial, sans-serif; font-size: 11px; text-decoration: underline;">Unsubscribe from updates</a>
                                 </p>
                             </td>
                         </tr>

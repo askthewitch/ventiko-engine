@@ -102,9 +102,13 @@ function Home() {
     setEmailStatus("sending");
     
     try {
+      // PACKAGING THE DATA FOR THE BACKEND
       const productData = results.map(r => ({
         title: r.metadata.title,
-        link: r.metadata.link || "https://ventiko.app"
+        link: r.metadata.link || "https://ventiko.app",
+        // NOW SENDING IMAGE AND PRICE
+        image: r.metadata.large_image || "", 
+        price: r.metadata.price ? `${r.metadata.price} ${r.metadata.currency}` : "Check Deal"
       }));
 
       await axios.post('https://ventiko-engine-backend.onrender.com/capture-email', {
