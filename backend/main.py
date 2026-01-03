@@ -263,7 +263,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     # --- CONFIGURATION ---
     # I am using a generator here to mimic your font immediately.
     # REPLACE THIS URL with your actual logo file (e.g., "https://ventiko.app/logo.png") later for pixel-perfect control.
-    LOGO_URL = "https://ventiko.app/ventiko_logo.png"
+    LOGO_URL = "https://ventiko.app/ventiko_logo2.png"
     
     unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
 
