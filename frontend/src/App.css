@@ -310,8 +310,8 @@ button.main-search-btn:hover {
 /* --- FOOTER STYLES --- */
 .site-footer {
   width: 100%;
-  padding: 4rem 0 2rem 0;
-  margin-top: auto;
+  padding: 4rem 0 3rem 0; /* More bottom padding */
+  margin-top: auto; /* Pushes to bottom if page is short */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -319,6 +319,8 @@ button.main-search-btn:hover {
   z-index: 10;
   position: relative;
   flex-wrap: wrap;
+  /* Optional: Subtle border to separate from content */
+  /* border-top: 1px solid rgba(0,0,0,0.05); */
 }
 
 .footer-group {
@@ -378,8 +380,15 @@ button.main-search-btn:hover {
 
   .site-footer {
     flex-direction: column;
-    gap: 2rem;
-    padding-bottom: 5rem; 
+    gap: 1.5rem; /* Tighter gap */
+    padding-bottom: 3rem; 
+    padding-top: 3rem;
+    margin-top: 4rem; /* Ensure distance from content */
+  }
+  
+  /* Fix the Copyright text on mobile */
+  .site-footer + div {
+      padding-bottom: 3rem !important; /* Lift it up from bottom edge */
   }
   
   .footer-divider { display: none; }

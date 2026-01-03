@@ -207,7 +207,13 @@ function Home() {
         {/* NOTE: Script tag moved out of Helmet to body below */}
       </Helmet>
 
-      <h1>Ventiko</h1>
+      {/* TITLE: Click to Reset */}
+<h1 
+  onClick={clearSearch} 
+  style={{ cursor: 'pointer', userSelect: 'none' }}
+>
+  Ventiko
+</h1>
       
       <div className="search-container">
         <div className="input-wrapper">
