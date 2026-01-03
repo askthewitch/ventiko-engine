@@ -228,7 +228,6 @@ def unsubscribe(email: str, session: Session = Depends(get_session)):
     return {"status": "success", "message": f"Successfully removed {email}."}
 
 # --- EMAIL CAPTURE ENDPOINT (BELSTAFF CLEAN STYLE) ---
-# --- EMAIL CAPTURE ENDPOINT (VISUAL UPGRADE) ---
 class ProductItem(BaseModel):
     title: str
     link: str = "https://ventiko.app"
@@ -260,43 +259,18 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # --- CONFIGURATION ---
-    # I am using a generator here to mimic your font immediately.
-    # REPLACE THIS URL with your actual logo file (e.g., "https://ventiko.app/logo.png") later for pixel-perfect control.
-    LOGO_URL = "https://ventiko.app/ventiko_logo2.png"
+    # --- HTML GENERATION (BELSTAFF STYLE) ---
     
+    # 1. Config
+    LOGO_URL = "https://ventiko.app/ventiko_logo.png" # PRODUCTION URL
     unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
 
-    # --- 1. HERO ITEM (The First Result) ---
+    # 2. Split Data
     hero_item = data.results[0] if data.results else None
-    hero_html = ""
-    
-    if hero_item:
-        # Use real image if available, else placeholder
-        hero_img_src = hero_item.image if hero_item.image else "https://via.placeholder.com/600x400?text=Top+Match"
-        hero_price = hero_item.price if hero_item.price else "View Deal"
-        
-        hero_html = f"""
-        <tr>
-            <td align="center" style="padding: 0 0 20px 0;">
-                <a href="{hero_item.link}" style="text-decoration: none;">
-                    <img src="{hero_img_src}" width="600" style="display: block; width: 100%; max-width: 600px; border-radius: 8px; object-fit: cover;" alt="{hero_item.title}">
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td align="center" style="padding: 10px 0 30px 0; border-bottom: 1px solid #f1f5f9;">
-                <h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">{hero_item.title}</h2>
-                <p style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; color: #23F0C7; font-weight: bold; margin: 0 0 20px 0;">{hero_price}</p>
-                <a href="{hero_item.link}" style="background-color: #0f172a; color: #ffffff; padding: 14px 35px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 50px; display: inline-block;">VIEW DEAL</a>
-            </td>
-        </tr>
-        """
-
-    # --- 2. GRID ITEMS (The rest) ---
-    grid_html = ""
     secondary_items = data.results[1:3] if len(data.results) > 1 else []
-    
+
+    # 3. Build Secondary Rows (The Grid)
+    grid_html = ""
     if secondary_items:
         grid_content = ""
         for item in secondary_items:
@@ -309,7 +283,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
                     <tr>
                         <td align="center" style="background-color: #ffffff; height: 200px; vertical-align: middle;">
                             <a href="{item.link}">
-                                <img src="{img_src}" width="100%" style="display: block; max-height: 180px; width: auto; max-width: 100%; margin: 0 auto;" alt="{item.title}">
+                                <img src="{img_src}" width="100%" style="display: block; max-height: 180px; width: auto; max-width: 100%; margin: 0 auto; object-fit: contain;" alt="{item.title}">
                             </a>
                         </td>
                     </tr>
@@ -335,7 +309,30 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         </tr>
         """
 
-    # --- 3. ASSEMBLY ---
+    # 4. Build Hero HTML
+    hero_html = ""
+    if hero_item:
+        hero_img_src = hero_item.image if hero_item.image else "https://via.placeholder.com/600x400?text=Top+Match"
+        hero_price = hero_item.price if hero_item.price else "View Deal"
+        
+        hero_html = f"""
+        <tr>
+            <td align="center" style="padding: 0 0 20px 0;">
+                <a href="{hero_item.link}" style="text-decoration: none;">
+                    <img src="{hero_img_src}" width="600" style="display: block; width: 100%; max-width: 600px; border-radius: 8px; object-fit: contain; max-height: 400px;" alt="{hero_item.title}">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 10px 0 30px 0; border-bottom: 1px solid #f1f5f9;">
+                <h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">{hero_item.title}</h2>
+                <p style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; color: #23F0C7; font-weight: bold; margin: 0 0 20px 0;">{hero_price}</p>
+                <a href="{hero_item.link}" style="background-color: #0f172a; color: #ffffff; padding: 14px 35px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 50px; display: inline-block;">VIEW DEAL</a>
+            </td>
+        </tr>
+        """
+
+    # 5. Full Template Assembly
     html_content = f"""
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -351,10 +348,12 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
                     <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
                         
                         <tr>
-                            <td align="center" style="padding: 40px 0 10px 0;">
-                                <img src="{LOGO_URL}" alt="VENTIKO" width="200" style="display: block; border: 0;">
+                            <td align="center" style="padding: 30px 0 10px 0;">
+                                <a href="https://ventiko.app" style="text-decoration: none;">
+                                    <img src="{LOGO_URL}" alt="VENTIKO" width="280" style="display: block; border: 0; max-width: 100%;">
+                                </a>
                                 <p style="margin: 5px 0 0 0; font-family: 'Courier New', monospace; font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px;">
-                                    Your Product Finder
+                                    AI Product Finder
                                 </p>
                             </td>
                         </tr>
@@ -378,7 +377,11 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
                                     Isle of Man, United Kingdom
                                 </p>
                                 <p style="margin-top: 15px;">
-                                    <a href="{unsubscribe_link}" style="color: #475569; font-family: Helvetica, Arial, sans-serif; font-size: 11px; text-decoration: underline;">Unsubscribe from updates</a>
+                                    <a href="https://ventiko.app" style="color: #475569; font-family: Helvetica, Arial, sans-serif; font-size: 11px; text-decoration: none;">Home</a>
+                                    <span style="color: #475569;">&nbsp;|&nbsp;</span>
+                                    <a href="mailto:support@ventiko.app" style="color: #475569; font-family: Helvetica, Arial, sans-serif; font-size: 11px; text-decoration: none;">Contact</a>
+                                    <span style="color: #475569;">&nbsp;|&nbsp;</span>
+                                    <a href="{unsubscribe_link}" style="color: #475569; font-family: Helvetica, Arial, sans-serif; font-size: 11px; text-decoration: underline;">Unsubscribe</a>
                                 </p>
                             </td>
                         </tr>
