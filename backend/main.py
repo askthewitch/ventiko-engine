@@ -262,7 +262,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     # --- HTML GENERATION (BELSTAFF STYLE) ---
     
     # 1. Config
-    LOGO_URL = "https://ventiko.app/ventiko_logo.png" # PRODUCTION URL
+    LOGO_URL = "https://ventiko.app/ventiko_logo2.png" # PRODUCTION URL
     unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
 
     # 2. Split Data
