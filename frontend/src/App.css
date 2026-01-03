@@ -1,9 +1,8 @@
 /* --- VENTIKO DESIGN SYSTEM v2 (Lovable Inspired) --- */
 :root {
-  /* A cleaner, more "solid" base palette */
   --bg-base: #f8fafc;         /* Slate-50: A solid, premium off-white */
   --accent-mint: #23F0C7;     /* High Energy Mint */
-  --accent-blue: #3b82f6;     /* Vivid Blue (Lovable style) */
+  --accent-blue: #3b82f6;     /* Vivid Blue */
   --accent-lilac: #8b5cf6;    /* Vivid Violet */
   
   --text-dark: #0f172a;       /* Slate-900: Almost black, very bold */
@@ -30,19 +29,17 @@ body {
   position: relative;
   overflow-x: hidden;
   
-  /* THE "SOLID FLUID" BACKGROUND 
-     Instead of washing out the whole screen, we create deep glow pools.
-  */
+  /* THE "SOLID FLUID" BACKGROUND */
   background-color: var(--bg-base);
   background-image: 
     radial-gradient(at 0% 0%, rgba(35, 240, 199, 0.50) 0px, transparent 50%),
     radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.50) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.50) 0px, transparent 50%);
-  background-attachment: fixed; /* Keeps the glow steady while scrolling */
+  background-attachment: fixed;
   background-size: 100% 100%;
 }
 
-/* LAYER 2: THE TECH MESH (Subtle Texture) */
+/* LAYER 2: THE TECH MESH */
 body::before {
   content: "";
   position: fixed;
@@ -52,8 +49,6 @@ body::before {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  
-  /* A tighter, sharper dot pattern */
   background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
   background-size: 30px 30px;
   mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -71,23 +66,20 @@ body::before {
   z-index: 1; 
   display: flex;
   flex-direction: column;
-  flex: 1; 
+  flex: 1; /* This forces the root to fill the screen */
 }
 
 /* --- TYPOGRAPHY UPGRADE --- */
 h1 {
   font-family: var(--font-title);
-  /* CLAMP: Minimum 3rem, Ideal 10vw, Maximum 6rem. 
-     This makes it HUGE on desktop, safe on mobile. */
   font-size: clamp(3rem, 10vw, 5.5rem); 
   text-align: center;
   margin-bottom: 2.5rem;
   color: var(--text-dark);
-  letter-spacing: -3px; /* Tighter tracking for that "Bold" look */
+  letter-spacing: -3px;
   line-height: 1;
-  font-weight: 900; /* Force thickness */
+  font-weight: 900;
   
-  /* Optional: Text Gradient like Lovable */
   background: linear-gradient(135deg, var(--text-dark) 30%, #475569 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -99,9 +91,9 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-width: 650px; /* Slightly wider */
+  max-width: 650px;
   width: 100%;
-  margin: 0 auto 4rem auto; /* More spacing */
+  margin: 0 auto 4rem auto;
   transition: all 0.5s ease;
 }
 
@@ -110,16 +102,15 @@ h1 {
   width: 100%;
 }
 
-/* The Input Field - Bolder and sharper */
 input {
   width: 100%;
   padding: 1.2rem 3rem 1.2rem 2rem;
-  border: 2px solid #e2e8f0; /* Thicker, cleaner border */
-  border-radius: 16px; /* Less rounded, more "App-like" */
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
   font-family: var(--font-body);
   font-size: 1.1rem;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px); /* Glass effect */
+  backdrop-filter: blur(12px);
   color: var(--text-dark);
   outline: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
@@ -134,7 +125,7 @@ input::placeholder {
 }
 
 input:focus {
-  border-color: var(--text-dark); /* Snap to black on focus */
+  border-color: var(--text-dark);
   transform: translateY(-2px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   background: white;
@@ -142,36 +133,33 @@ input:focus {
 
 .clear-btn {
   position: absolute;
-  right: 15px; /* Tucked nicely into the padding */
+  right: 15px;
   top: 50%;
-  transform: translateY(-50%); /* Mathematical center */
-  
-  /* FLEXBOX FIX: Forces the glyph to center within the button box */
+  transform: translateY(-50%);
   display: flex; 
   align-items: center;
   justify-content: center;
-  
   background: none;
   border: none;
   font-size: 1.2rem;
-  line-height: 1; /* Removes invisible font spacing */
-  color: #94a3b8; /* Slate-400 (Visible but subtle) */
+  line-height: 1;
+  color: #94a3b8;
   cursor: pointer;
-  padding: 8px; /* Generous click target */
+  padding: 8px;
   transition: color 0.2s;
 }
 
 .clear-btn:hover {
-  color: var(--text-dark); /* Turns black on hover */
+  color: var(--text-dark);
 }
 
 button.main-search-btn {
   align-self: center;
   padding: 1rem 3rem;
-  background-color: var(--text-dark); /* Solid Black Button */
+  background-color: var(--text-dark);
   color: white;
   border: none;
-  border-radius: 12px; /* Matching input curve */
+  border-radius: 12px;
   font-family: var(--font-body);
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -190,24 +178,20 @@ button.main-search-btn:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-
 /* --- RESULTS GRID --- */
 .grid {
   display: grid;
-  /* MOBILE DEFAULT: 1 column */
   grid-template-columns: 1fr; 
   gap: 2rem;
   width: 100%;
 }
 
-/* TABLET: 2 Columns */
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* DESKTOP: 3 Columns (Forces the "Top 3" look) */
 @media (min-width: 1024px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
@@ -233,14 +217,15 @@ button.main-search-btn:hover {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   border-color: var(--accent-mint);
 }
+
 /* --- PRODUCT IMAGE FIX --- */
 .card-image-container {
   width: 100%;
-  height: 200px; /* Fixed height for consistency */
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff; /* White background behind transparent images */
+  background-color: #fff;
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 1rem;
@@ -249,12 +234,12 @@ button.main-search-btn:hover {
 .card-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* THE MAGIC: Prevents stretching/cropping */
+  object-fit: contain;
   transition: transform 0.3s ease;
 }
 
 .card:hover .card-image {
-  transform: scale(1.05); /* Gentle zoom on hover */
+  transform: scale(1.05);
 }
 
 .card:nth-child(1) { animation-delay: 0.1s; }
@@ -263,7 +248,7 @@ button.main-search-btn:hover {
 
 .card h3 {
   font-family: var(--font-body);
-  font-weight: 800; /* Bolder */
+  font-weight: 800;
   margin: 0 0 0.8rem 0;
   color: var(--text-dark);
   font-size: 1.25rem;
@@ -302,7 +287,6 @@ button.main-search-btn:hover {
   border-bottom: 2px solid var(--accent-mint);
 }
 
-/* --- ANIMATIONS --- */
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
 }
@@ -310,8 +294,8 @@ button.main-search-btn:hover {
 /* --- FOOTER STYLES --- */
 .site-footer {
   width: 100%;
-  padding: 4rem 0 3rem 0; /* More bottom padding */
-  margin-top: auto; /* Pushes to bottom if page is short */
+  padding: 4rem 0 2rem 0;
+  margin-top: auto; /* THE SPRING: Pushes to bottom */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -319,8 +303,6 @@ button.main-search-btn:hover {
   z-index: 10;
   position: relative;
   flex-wrap: wrap;
-  /* Optional: Subtle border to separate from content */
-  /* border-top: 1px solid rgba(0,0,0,0.05); */
 }
 
 .footer-group {
@@ -330,7 +312,7 @@ button.main-search-btn:hover {
 }
 
 .footer-divider {
-  color: #0f172a;
+  color: #e2e8f0;
   font-weight: 300;
 }
 
@@ -340,7 +322,7 @@ button.main-search-btn:hover {
   border: none;
   color: var(--text-light);
   cursor: pointer;
-  font-family: var(--font-body); /* Switch to Roboto for clean footer */
+  font-family: var(--font-body);
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0;
@@ -360,7 +342,6 @@ button.main-search-btn:hover {
   }
 
   h1 {
-    /* The clamp handles sizing, but we add breathing room */
     margin-bottom: 2rem;
   }
 
@@ -378,17 +359,13 @@ button.main-search-btn:hover {
     padding: 1.2rem;
   }
 
+  /* REPAIRED FOOTER FOR MOBILE */
   .site-footer {
     flex-direction: column;
-    gap: 1.5rem; /* Tighter gap */
+    gap: 1.5rem;
     padding-bottom: 3rem; 
     padding-top: 3rem;
-    margin-top: 4rem; /* Ensure distance from content */
-  }
-  
-  /* Fix the Copyright text on mobile */
-  .site-footer + div {
-      padding-bottom: 3rem !important; /* Lift it up from bottom edge */
+    margin-top: auto; /* KEY FIX: Keep it auto so it stays at the bottom */
   }
   
   .footer-divider { display: none; }
@@ -397,5 +374,10 @@ button.main-search-btn:hover {
     width: 100%;
     justify-content: center;
     gap: 1.5rem;
+  }
+  
+  /* Lift copyright slightly on mobile */
+  .site-footer + div {
+      padding-bottom: 2rem !important;
   }
 }
