@@ -227,10 +227,11 @@ def unsubscribe(email: str, session: Session = Depends(get_session)):
     print(f" -> DELETED {len(results)} records for {email}")
     return {"status": "success", "message": f"Successfully removed {email}."}
 
-# --- EMAIL CAPTURE ENDPOINT (UPDATED TEMPLATE) ---
+# --- EMAIL CAPTURE ENDPOINT (BELSTAFF CLEAN STYLE) ---
 class ProductItem(BaseModel):
     title: str
-    link: str = "https://ventiko.app" 
+    link: str = "https://ventiko.app"
+    image: Optional[str] = None # Added support for image passing if frontend sends it
 
 class EmailRequest(BaseModel):
     email: str
@@ -257,64 +258,138 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
     session.commit()
     print(f" -> LEAD CAPTURED: {data.email}")
 
-    # --- NEW EMAIL HTML GENERATOR ---
-    product_rows = ""
-    for i, item in enumerate(data.results):
-        product_rows += f"""
-        <div style="background-color: #f8fafc; padding: 15px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
-            <div style="font-weight: bold; color: #0f172a; margin-bottom: 5px; font-size: 16px;">{i+1}. {item.title}</div>
-            <a href="{item.link}" style="display: inline-block; color: #2563eb; text-decoration: none; font-weight: bold; font-size: 14px;">
-                View Deal &rarr;
-            </a>
-        </div>
+    # --- HTML GENERATION (BELSTAFF STYLE) ---
+    
+    # 1. Split Data
+    hero_item = data.results[0] if data.results else None
+    secondary_items = data.results[1:3] if len(data.results) > 1 else []
+    unsubscribe_link = "https://ventiko.app/?modal=unsubscribe"
+
+    # 2. Build Secondary Rows (The Grid)
+    grid_html = ""
+    if secondary_items:
+        grid_content = ""
+        for item in secondary_items:
+            grid_content += f"""
+            <td width="50%" valign="top" style="padding: 10px;">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td align="center" style="padding-bottom: 10px; border: 1px solid #f1f5f9; border-radius: 8px;">
+                             <img src="https://via.placeholder.com/250x200?text=Product" width="100%" style="display: block; border-radius: 8px 8px 0 0; max-height: 150px; object-fit: contain;" alt="{item.title}">
+                            <div style="padding: 15px;">
+                                <div style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; color: #0f172a; margin-bottom: 8px; height: 40px; overflow: hidden;">{item.title}</div>
+                                <a href="{item.link}" style="display: inline-block; font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: bold; color: #2563eb; text-decoration: none; text-transform: uppercase;">View Deal &rarr;</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            """
+        grid_html = f"""
+        <tr>
+            <td style="padding: 20px 0;">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        {grid_content}
+                    </tr>
+                </table>
+            </td>
+        </tr>
         """
 
-    unsubscribe_link = f"https://ventiko.app/?modal=unsubscribe"
+    # 3. Build Hero HTML
+    hero_html = ""
+    if hero_item:
+        hero_html = f"""
+        <tr>
+            <td align="center" style="padding: 0 0 20px 0;">
+                <a href="{hero_item.link}" style="text-decoration: none;">
+                    <img src="https://via.placeholder.com/600x400?text=Top+Match" width="600" style="display: block; width: 100%; max-width: 600px; border-radius: 8px;" alt="{hero_item.title}">
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 10px 0 20px 0;">
+                <h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 24px; font-weight: bold; color: #0f172a; margin: 0 0 10px 0;">{hero_item.title}</h2>
+                <a href="{hero_item.link}" style="background-color: #0f172a; color: #ffffff; padding: 12px 30px; font-family: Helvetica, Arial, sans-serif; font-size: 14px; font-weight: bold; text-decoration: none; border-radius: 4px; display: inline-block;">VIEW DEAL</a>
+            </td>
+        </tr>
+        """
 
+    # 4. Full Template Assembly
     html_content = f"""
-    <!DOCTYPE html>
-    <html>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet">
         <style>
-            body {{ font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f1f5f9; }}
-            .container {{ max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            .header {{ background-color: #0f172a; padding: 30px 20px; text-align: center; }}
-            .header h1 {{ color: #23F0C7; margin: 0; font-size: 24px; letter-spacing: -1px; text-transform: lowercase; font-family: monospace; }}
-            .content {{ padding: 30px 20px; color: #334155; line-height: 1.6; }}
-            .footer {{ background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }}
-            .query-box {{ background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 10px 15px; margin: 0 0 20px 0; color: #1e40af; font-weight: 500; }}
+            body {{ margin: 0; padding: 0; background-color: #f8fafc; }}
+            .brand-font {{ font-family: 'Major Mono Display', monospace; }}
         </style>
     </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>ventiko engine</h1>
-            </div>
-            <div class="content">
-                <p>Hello,</p>
-                <p>Here is the bio-optimization protocol generated for your search:</p>
-                
-                <div class="query-box">
-                    "{data.query}"
-                </div>
+    <body style="margin: 0; padding: 0; background-color: #f8fafc;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td style="padding: 20px 0 30px 0;" align="center">
+                    <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        
+                        <tr>
+                            <td align="center" style="padding: 30px 0 20px 0; border-bottom: 1px solid #f1f5f9;">
+                                <h1 style="margin: 0; font-family: 'Courier New', monospace; font-size: 32px; color: #0f172a; letter-spacing: -1px; font-weight: bold;">
+                                    ventiko
+                                </h1>
+                                <p style="margin: 5px 0 0 0; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">
+                                    AI Product Finder
+                                </p>
+                            </td>
+                        </tr>
 
-                <div style="margin-top: 20px;">
-                    {product_rows}
-                </div>
+                        <tr>
+                            <td align="center" style="padding: 30px 20px 10px 20px;">
+                                <p style="font-family: Helvetica, Arial, sans-serif; font-size: 16px; color: #334155; margin: 0;">
+                                    We found the best matches for:
+                                </p>
+                                <div style="margin-top: 10px; background-color: #ecfdf5; color: #065f46; padding: 8px 16px; border-radius: 20px; display: inline-block; font-family: Helvetica, Arial, sans-serif; font-weight: bold;">
+                                    "{data.query}"
+                                </div>
+                            </td>
+                        </tr>
 
-                <p style="margin-top: 30px;">
-                    <a href="https://ventiko.app" style="display: block; text-align: center; background-color: #0f172a; color: #ffffff; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
-                        Start New Search
-                    </a>
-                </p>
-            </div>
-            <div class="footer">
-                <p>&copy; {datetime.datetime.now().year} Ventiko Ltd. All rights reserved.</p>
-                <p>
-                    <a href="{unsubscribe_link}" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
-                </p>
-            </div>
-        </div>
+                        {hero_html}
+
+                        <tr>
+                            <td style="padding: 0 20px;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td style="border-bottom: 1px solid #f1f5f9;"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        {grid_html}
+
+                        <tr>
+                            <td bgcolor="#0f172a" style="padding: 30px 30px 30px 30px; text-align: center;">
+                                <p style="color: #23F0C7; font-family: 'Courier New', monospace; margin: 0 0 10px 0; font-size: 18px;">
+                                    ventiko
+                                </p>
+                                <p style="color: #94a3b8; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 18px; margin: 0;">
+                                    &copy; {datetime.datetime.now().year} Ventiko Ltd.<br/>
+                                    Isle of Man, United Kingdom
+                                </p>
+                                <p style="margin-top: 20px;">
+                                    <a href="{unsubscribe_link}" style="color: #64748b; font-family: Helvetica, Arial, sans-serif; font-size: 12px; text-decoration: underline;">Unsubscribe</a>
+                                </p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
     </body>
     </html>
     """
@@ -323,7 +398,7 @@ def capture_email(request: Request, data: EmailRequest, session: Session = Depen
         resend.Emails.send({
             "from": "Ventiko Engine <noreply@results.ventiko.app>",
             "to": data.email,
-            "subject": f"Protocol Generated: {data.query}",
+            "subject": f"Your Results: {data.query}",
             "html": html_content
         })
         return {"status": "success", "message": "Sent."}
